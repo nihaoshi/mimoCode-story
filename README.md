@@ -60,10 +60,14 @@ git clone https://github.com/nihaoshi/mimoCode-story.git ~/.mimocode-story
 | `/story-short-write` | 写短篇小说 |
 | `/story-long-analyze` | 拆解长篇小说 |
 | `/story-short-analyze` | 拆解短篇小说 |
-| `/story-scan` | 扫榜选题 |
+| `/story-long-scan` | 长篇扫榜选题 |
+| `/story-short-scan` | 短篇扫榜选题 |
+| `/story-scan` | 扫榜选题（通用） |
+| `/story-import` | 逆向导入已有小说 |
 | `/story-deslop` | 去AI味 |
 | `/story-review` | 多角度审稿 |
 | `/story-cover` | 生成封面 |
+| `/browser-cdp` | 浏览器操控（CDP 协议） |
 
 ### 快速开始
 
@@ -89,10 +93,14 @@ mimoCode-story/
 │   ├── story-short-write/        # 短篇写作
 │   ├── story-long-analyze/       # 长篇拆文
 │   ├── story-short-analyze/      # 短篇拆文
-│   ├── story-scan/               # 扫榜选题
+│   ├── story-long-scan/          # 长篇扫榜选题
+│   ├── story-short-scan/         # 短篇扫榜选题
+│   ├── story-scan/               # 扫榜选题（通用）
+│   ├── story-import/             # 逆向导入已有小说
 │   ├── story-deslop/             # 去AI味
 │   ├── story-review/             # 审稿
 │   ├── story-cover/              # 封面
+│   ├── browser-cdp/              # 浏览器操控（CDP 协议）
 │   └── _shared/references/       # 共享参考文件
 ├── demo/                         # 使用示例
 ├── README.md
