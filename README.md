@@ -101,11 +101,64 @@ mimoCode-story/
 │   ├── story-review/             # 审稿
 │   ├── story-cover/              # 封面
 │   ├── browser-cdp/              # 浏览器操控（CDP 协议）
-│   └── _shared/references/       # 共享参考文件
+│   └── _shared/
+│       ├── references/           # 共享参考文件（48个）
+│       │   └── INDEX.md          # 知识库索引
+│       ├── templates/            # 写作模板库
+│       │   ├── dialogue-scene.md     # 对话场景模板
+│       │   ├── emotional-arc.md      # 情感线模板
+│       │   ├── villain-introduction.md # 反派出场模板
+│       │   └── worldbuilding-intro.md # 世界观构建模板
+│       ├── examples/             # 专家案例库
+│       │   ├── dialogue-examples.md  # 对话案例
+│       │   ├── emotion-examples.md   # 情感线案例
+│       │   └── villain-examples.md   # 反派案例
+│       └── checklists/           # 写作检查清单
+│           ├── dialogue-checklist.md # 对话质量检查
+│           ├── emotion-checklist.md  # 情感线检查
+│           ├── villain-checklist.md  # 反派设计检查
+│           └── worldchecklist.md     # 世界观检查
 ├── demo/                         # 使用示例
 ├── README.md
 └── LICENSE
 ```
+
+## 专家级写作辅助
+
+### 知识库索引系统
+
+`_shared/references/INDEX.md` 提供按场景快速检索功能：
+
+- 写对话时 → `dialogue-mastery.md`
+- 设计反派时 → `villain-and-reveal.md`
+- 构建世界观时 → `genre-core-mechanics.md`
+- 设计情感线时 → `emotional-arc-design.md`
+
+### 写作模板库
+
+`_shared/templates/` 提供常见场景的写作模板：
+
+- `dialogue-scene.md` - 对话场景模板
+- `emotional-arc.md` - 情感线模板
+- `villain-introduction.md` - 反派出场模板
+- `worldbuilding-intro.md` - 世界观构建模板
+
+### 专家案例库
+
+`_shared/examples/` 提供经典作品的写作案例：
+
+- `dialogue-examples.md` - 对话案例
+- `emotion-examples.md` - 情感线案例
+- `villain-examples.md` - 反派案例
+
+### 写作检查清单
+
+`_shared/checklists/` 提供写作质量自检清单：
+
+- `dialogue-checklist.md` - 对话质量检查
+- `emotion-checklist.md` - 情感线检查
+- `villain-checklist.md` - 反派设计检查
+- `worldchecklist.md` - 世界观检查
 
 ## 与原版的区别
 
