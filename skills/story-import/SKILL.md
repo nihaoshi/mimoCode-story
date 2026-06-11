@@ -76,16 +76,16 @@ metadata:
 在进入 Phase 2 之前，先检测项目是否已部署 story-setup 基础设施：
 
 - 检测 `.story-deployed` 是否存在；
-- 检测 `.claude/agents/chapter-extractor.md` 是否存在（Phase 2 长篇深度分析的并行 agent）。
+- MiMo Code 使用 actor 工具进行并行处理，无需检测 chapter-extractor agent。
 
 **未部署时**，提示用户：
 
-> 「检测到当前项目尚未部署写作基础设施。建议先运行 `/story-setup` 再回来导入，否则深度分析阶段无法使用并行 chapter-extractor agent。」
+> 「检测到当前项目尚未部署写作基础设施。建议先运行 `/story-setup` 再回来导入。」
 
 给用户两个选择：
 
 1. **先去 setup**：暂停导入，运行 `/story-setup`，部署完成后重新触发 `/story-import`；
-2. **继续导入**：接受 Phase 2 降级为串行处理（长篇逐章摘要不并行，速度较慢，但产物完整）。
+2. **继续导入**：接受 Phase 2 串行处理（速度较慢，但产物完整）。
 
 用户选择记入上下文，Phase 2 据此决定是否走并行模式。
 
@@ -114,13 +114,12 @@ metadata:
 
 #### 长篇：自动续跑过 Stage 1 停靠点
 
-story-long-analyze 在 Stage 0+1（黄金三章）后会**自动停靠**并用 AskUserQuestion 询问是否继续全量拆解（对应 story-long-analyze 的「Stage 1 停靠点」）。但导入场景需要 Stage 2-6 的全套产物（逐章摘要 / 聚合分析 / 设定关系 / 汇总报告 / 文风），缺一不可——否则 Phase 3 迁移会拿到半成品。
+story-long-analyze 在 Stage 0+1（黄金三章）后会**自动停靠**并用 question 工具询问是否继续全量拆解（对应 story-long-analyze 的「Stage 1 停靠点」）。但导入场景需要 Stage 2-6 的全套产物（逐章摘要 / 聚合分析 / 设定关系 / 汇总报告 / 文风），缺一不可——否则 Phase 3 迁移会拿到半成品。
 
 因此调用 story-long-analyze 时**必须在一开始就以「完整拆解、一次跑完、不要停下询问」模式驱动管道**，命中其「跳过询问」路径（用户开头明确说「完整拆解 / 一次跑完 / 系统拆解 / 别问」时不停靠），让管道自动从 Stage 2 续跑到 Stage 6。
 
 - 措辞示例：启动深度分析时声明「以『完整拆解、一次跑完、不要停下询问』模式拆解本书，确保 Stage 2-6 全部产出」。
 - **兜底**：若运行环境实际仍停在 Stage 1 询问处，story-import 自动选择「继续全量拆解」，**绝不把停靠询问透传给用户**。
-- 环境检测（Phase 1）发现未部署 chapter-extractor agent 且用户选择「继续导入」时，Stage 2 逐章摘要降级为串行处理，产物仍完整，仅速度变慢。
 
 #### 短篇：单一全量管道
 
@@ -551,7 +550,7 @@ name: {角色名}
 
 - 设置 `.active-book` 指向导入的书名/标题目录
 - 确认项目可以被对应写作 skill 识别（长篇 → story-long-write，短篇 → story-short-write）
-- 可选验证：如果项目已部署 story-explorer agent（检查 `.claude/agents/story-explorer.md` 是否存在），可 spawn `Agent(subagent_type: "story-explorer", prompt: "项目目录：{dir}\n查询类型：progress\n查询参数：导入验证")` 交叉验证迁移数据完整性
+- 可选验证：可使用 actor 工具 spawn explore 子代理进行迁移数据完整性验证
 
 > setup 环境检测已在 Phase 1「环境检测前置」完成，此处不再重复检测。
 
