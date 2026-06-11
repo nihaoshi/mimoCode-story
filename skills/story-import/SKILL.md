@@ -550,6 +550,7 @@ name: {角色名}
 
 - 设置 `.active-book` 指向导入的书名/标题目录
 - 确认项目可以被对应写作 skill 识别（长篇 → story-long-write，短篇 → story-short-write）
+- **选题决策.md 自动搬迁**：检查原始扫榜目录或拆文库目录是否存在 `选题决策.md`，如存在则自动复制到项目根目录。story-long-write Phase 1 依赖此文件自动读取选题建议
 - 可选验证：可使用 actor 工具 spawn explore 子代理进行迁移数据完整性验证
 
 > setup 环境检测已在 Phase 1「环境检测前置」完成，此处不再重复检测。

@@ -17,11 +17,14 @@ description: |
 | 写短篇 | 短篇、盐言、一万字 | `story-short-write` |
 | 长篇拆文 | 拆文、分析这本书、黄金三章 | `story-long-analyze` |
 | 短篇拆文 | 拆短篇、分析这个故事 | `story-short-analyze` |
-| 扫榜 | 排行、什么火、起点/番茄/晋江 | `story-scan` |
+| 长篇扫榜 | 长篇什么火、起点排行、番茄排行 | `story-long-scan` |
+| 短篇扫榜 | 短篇什么火、知乎盐言排行 | `story-short-scan` |
+| 通用扫榜 | 排行、什么火、帮我选题 | `story-scan` |
 | 去AI味 | 去AI味、太AI、去味 | `story-deslop` |
 | 审稿 | 审稿、审查、检查质量 | `story-review` |
 | 封面 | 封面、封面图 | `story-cover` |
 | 环境部署 | 准备写书、搭环境、初始化 | `story-setup` |
+| 导入已有小说 | 导入、把我的书导进来 | `story-import` |
 
 ## 路由流程
 

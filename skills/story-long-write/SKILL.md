@@ -1,4 +1,4 @@
-﻿---
+---
 name: story-long-write
 version: 1.0.0
 description: |
@@ -266,11 +266,23 @@ story-architect 属于高层级结构设计 agent。轻量题材定位优先由�
 │       │   └── 势力/
 │       │       └── {势力名}.md
 │       └── 拆文报告.md
-├── 追踪/                          ← 角色状态、伏笔、时间线
+├── 追踪/                          ← 角色状态、伏笔、时间线、物品、环境
 │   ├── 伏笔.md                    ← 跨卷追踪
 │   ├── 时间线.md                  ← 全书时间线
-│   ├── 角色状态.md                ← 角色当前状态快照
+│   ├── 角色状态.md                ← 角色当前状态快照（含穿衣、物品、身体）
+│   ├── 物品.md                    ← 关键物品位置、状态追踪
+│   ├── 环境.md                    ← 季节、天气、场景位置追踪
+│   ├── 物资.md                    ← 钱财、食物、工具追踪
 │   └── 上下文.md                  ← 正文级（日更进度摘要）
+├── 故事线/                        ← 多线并行管理（千万字支持）
+│   ├── 故事线_索引.md             ← 所有故事线列表+状态
+│   ├── 故事线_主线_XXX.md         ← 主线故事线
+│   ├── 故事线_副线A_XXX.md        ← 副线A
+│   └── 故事线_交叉点.md           ← 线与线交汇标记
+├── 跨卷追踪/                      ← 跨卷伏笔+角色弧线（千万字支持）
+│   ├── 跨卷伏笔.md               ← 需要跨卷回收的伏笔
+│   ├── 跨卷角色弧线.md            ← 角色全书成长路线
+│   └── 卷间过渡.md               ← 卷与卷衔接要点
 ├── 参考资料/
 │   └── {topic}.md             # story-researcher 输出的研究资料
 ```
@@ -286,6 +298,12 @@ story-architect 属于高层级结构设计 agent。轻量题材定位优先由�
 | 大纲/卷纲_第X卷.md | 卷 | Phase 3 | Phase 4 写卷首章前 |
 | 追踪/伏笔.md | 全书 | Phase 3 起 | Phase 4 每章写作前 |
 | 追踪/时间线.md | 全书 | Phase 3 起 | Phase 4 每章写作前 |
+| 追踪/物品.md | 全书 | Phase 3 起 | Phase 4 每章写作前（一致性检查） |
+| 追踪/环境.md | 全书 | Phase 3 起 | Phase 4 每章写作前（一致性检查） |
+| 追踪/物资.md | 全书 | Phase 3 起 | Phase 4 每章写作前（一致性检查） |
+| 故事线/故事线_索引.md | 全书 | Phase 3 起 | Phase 4 多线并行写作 |
+| 跨卷追踪/跨卷伏笔.md | 全书 | Phase 3 起 | Phase 4 跨卷伏笔回收 |
+| 跨卷追踪/跨卷角色弧线.md | 全书 | Phase 3 起 | Phase 4 角色弧线追踪 |
 | 对标/{书名}/拆文报告.md | 对标书 | 用户手动+analyze | Phase 2 核心设定、Phase 3 大纲、Phase 4 写作 |
 | 追踪/上下文.md | 全书 | Phase 4 首次日更（workflow-daily 自动创建） | 每次日更开始时 |
 | 参考资料/{topic}.md | 按需 | Phase 4（story-researcher 输出） | Phase 4 后续章节写作时复用 |
@@ -296,9 +314,11 @@ story-architect 属于高层级结构设计 agent。轻量题材定位优先由�
 
 **缺失文件回退**：所有新增文件是可选增强，缺失时按以下优先级降级，不报错不阻塞：
 1. **角色状态文件缺失** → 从角色设定文件和前文推断当前状态
-2. **对标结构化子目录缺失** → 按「对标书路径查找」规则回退（对标子目录 → 拆文库同名子目录 → 对标拆文报告.md → 跳过）
-3. **有对标书但 `文风.md` 缺失** → 日更文风召回 fail-fast，提示先运行 `/story-long-analyze` Stage 6 并 `/story-import` 同步；**完全无对标项目**则跳过文风召回，不阻塞
-4. **伏笔/时间线文件缺失** → 不检查，相关信息在卷纲或大纲中体现即可
+2. **物品/环境/物资文件缺失** → 从角色状态和前文推断，不阻塞写作
+3. **故事线/跨卷追踪文件缺失** → 从卷纲和大纲推断，不阻塞写作
+4. **对标结构化子目录缺失** → 按「对标书路径查找」规则回退（对标子目录 → 拆文库同名子目录 → 对标拆文报告.md → 跳过）
+5. **有对标书但 `文风.md` 缺失** → 日更文风召回 fail-fast，提示先运行 `/story-long-analyze` Stage 6 并 `/story-import` 同步；**完全无对标项目**则跳过文风召回，不阻塞
+6. **伏笔/时间线文件缺失** → 不检查，相关信息在卷纲或大纲中体现即可
 
 **文件组织原则：**
 - **人物一个一个文件**：`角色/角色名.md`，方便按需读取
@@ -321,10 +341,13 @@ story-architect 属于高层级结构设计 agent。轻量题材定位优先由�
    - (5) 对标书路径下 `拆文报告.md`（按对标书路径查找）— 对标参考
    - (6) `对标/{对标书名}/原文/第{N}章_*.md`（如存在）— 同位置章节参考
    - (7) `参考资料/{topic}.md`（如存在）— 历史研究资料（由 story-researcher 产出）
-   - (8) `追踪/角色状态.md`（如存在）— 角色当前状态快照
-   - (9) 对标书路径下 `剧情/故事线.md`（按对标书路径查找）— 剧情线索引，用于确定本章涉及哪些剧情线
-   - (10) 对标书路径下 `剧情/{相关剧情线}.md`（按对标书路径查找）— 从索引中选择与本章相关的剧情线文件
-   - (11) 对标书路径下 `设定/世界观/*.md`（glob，按对标书路径查找）— 从拆文产出的设定中获取参考。**回退顺序**：① glob `设定/世界观/*.md`；② 若 `设定/世界观/` 子目录不存在则读单文件 `设定/世界观.md`（早期拆文库格式）；③ 若也无则读 `设定/金手指.md` 当作最低限度参考；④ 都没有则跳过本步骤（缺失不阻塞）
+   - (8) `追踪/角色状态.md`（如存在）— 角色当前状态快照（含穿衣、物品、身体）
+   - (9) `追踪/物品.md`（如存在）— 关键物品当前位置、状态
+   - (10) `追踪/环境.md`（如存在）— 当前季节、天气、场景位置
+   - (11) `追踪/物资.md`（如存在）— 角色经济状态
+   - (12) 对标书路径下 `剧情/故事线.md`（按对标书路径查找）— 剧情线索引，用于确定本章涉及哪些剧情线
+   - (13) 对标书路径下 `剧情/{相关剧情线}.md`（按对标书路径查找）— 从索引中选择与本章相关的剧情线文件
+   - (14) 对标书路径下 `设定/世界观/*.md`（glob，按对标书路径查找）— 从拆文产出的设定中获取参考。**回退顺序**：① glob `设定/世界观/*.md`；② 若 `设定/世界观/` 子目录不存在则读单文件 `设定/世界观.md`（早期拆文库格式）；③ 若也无则读 `设定/金手指.md` 当作最低限度参考；④ 都没有则跳过本步骤（缺失不阻塞）
 3. **准备层**（下面的 3 步是核心方法在单章写作中的落地：筛选状态 → 召回模块 → 确认意图）：
    - 3.1 **状态筛选**：从 `追踪/角色状态.md` 中筛选本章涉及角色的当前状态，从 `追踪/伏笔.md` 中筛选本章需要回收/推进的伏笔。输出最简记忆包（参考 state-tracking.md）。如果角色状态文件不存在，从角色设定和前文推断
    - 3.2 **模块召回与文风召回**：
@@ -342,7 +365,15 @@ story-architect 属于高层级结构设计 agent。轻量题材定位优先由�
 8. **字数验证**（写作完成后的第一件事）：优先用跨平台 Python 字符统计本章实际字数 `for PYBIN in python3 python py; do "$PYBIN" -c "" 2>/dev/null && break; done; "$PYBIN" -c "from pathlib import Path; print(len(Path('正文文件路径').read_text(encoding='utf-8')))"`（**勿直接用 `python3`**：Windows 上它会触发 Microsoft Store 占位程序、exit 49 失败，探测会按 `python3→python→py` 选可用解释器）；macOS/Linux 可用 `wc -m` 备选。如果字数 < 细纲目标的 90%，**回到细纲补充更多子事件/情节点**，然后用三维度织入将这些新子事件写成正文，并按镜头断段控制单段密度，直到字数达标后再进入步骤 9。
 9. **检查**：章尾是否有钩子、爽点是否到位
 10. **禁用词扫描**：对照 `references/banned-words.md` 检查本章，一级词（高频AI腔）命中即替换；二级词（低频/语境相关）高频出现时替换，偶发可参考 `references/anti-ai-writing.md` 定性裁定
-11. **更新追踪**：写完后即时更新 `追踪/伏笔.md`（新增/回收伏笔）、`追踪/时间线.md`（记录事件时序）和 `追踪/角色状态.md`（如本章引起角色状态变化——身份、能力、关系、公众形象——则更新对应角色条目并追加变更记录）。本章若首次引入会复用的具名角色/势力，按 Phase 3「细纲后设定补全」规则补建对应 `设定/` 档案。角色状态更新规则详见 state-tracking.md。
+11. **更新追踪**：写完后即时更新以下追踪文件（参考 `references/consistency-tracking.md`）：
+    - `追踪/伏笔.md`：新增/回收伏笔，更新紧迫度
+    - `追踪/时间线.md`：记录事件时序，更新季节/时间
+    - `追踪/角色状态.md`：更新角色身份、穿衣、身体状态、物品位置、关系变化，追加变更记录
+    - `追踪/物品.md`：更新物品位置、状态变化，新增物品（如本章获得新物品）
+    - `追踪/环境.md`：更新季节、天气、场景位置，更新环境细节
+    - `追踪/物资.md`：更新钱财、食物、工具状态（如本章有经济活动）
+    - `追踪/上下文.md`：更新进度摘要
+    本章若首次引入会复用的具名角色/势力，按 Phase 3「细纲后设定补全」规则补建对应 `设定/` 档案。角色状态更新规则详见 state-tracking.md。
 12. **中途快照**（长篇写作安全网）：每连续写完 3 章，在继续前执行以下快照操作：
    - 将当前进度写入 `追踪/上下文.md`（只更新进度元信息——当前位置、最近决策、待处理线索——不重复角色状态/伏笔的具体内容）
    - 用 `ls -la 正文/` 确认最近 3 个章节文件已成功写入磁盘且大小正常（>100 bytes）
@@ -471,6 +502,17 @@ story-architect 属于高层级结构设计 agent。轻量题材定位优先由�
 | 写作技法全程参考 | `references/writing-craft.md` |
 | 格式与结构规范 | `references/format-and-structure.md`（仅对话/段落格式适用长篇） |
 | 状态追踪协议 | `references/state-tracking.md` |
+| 一致性追踪系统 | `references/consistency-tracking.md` |
+| 故事线管理 | `references/story-line-management.md` |
+| 跨卷追踪 | `references/cross-volume-tracking.md` |
+| 结构化索引层 | `references/structured-indexing.md` |
+| 流水线并行 | `references/pipeline-parallelism.md` |
+| 自适应批量 | `references/adaptive-batch-sizing.md` |
+| 质量监控 | `references/quality-monitoring.md` |
+| 版本管理 | `references/version-management.md` |
+| 数据分析 | `references/data-analytics.md` |
+| 自动化检测 | `references/auto-detection.md` |
+| 用户体验 | `references/user-experience.md` |
 
 ### Phase 5：质量检查
 
@@ -496,6 +538,11 @@ story-architect 属于高层级结构设计 agent。轻量题材定位优先由�
 | 人物 | **`references/character-basics.md`**（主角/配角/反派/动机模板速填） | `references/character-design-methods.md`（三层标签反差/九维深化）· `references/character-relations.md`（关系类型/感情线） |
 | 女频写作 | **`references/female-audience-writing.md`**（女频长篇：核心原则/文案/题材/感情线长线/平台） | `references/genre-readers.md`（读者心理/平台差异）· `references/character-relations.md`（感情线总框架） |
 | 去AI味 | **`references/anti-ai-writing.md`**（AI指纹/核心规则/Show Don't Tell） | `references/banned-words.md`（禁用词扫描）· `references/quality-checklist.md`（成稿检查） |
+| 一致性追踪 | **`references/consistency-tracking.md`**（物品/环境/物资/角色状态追踪） | `references/state-tracking.md`（角色状态快照格式）· `references/story-line-management.md`（故事线管理）· `references/cross-volume-tracking.md`（跨卷追踪） |
+| 千万字性能 | **`references/structured-indexing.md`**（结构化索引层：上下文加载提速3-5x） | `references/pipeline-parallelism.md`（流水线并行：单章耗时降低30-40%）· `references/adaptive-batch-sizing.md`（自适应批量：长会话稳定性提升） |
+| 质量监控 | **`references/quality-monitoring.md`**（质量监控：一致性/爽点/AI腔） | `references/auto-detection.md`（自动化检测脚本）· `references/data-analytics.md`（数据分析仪表盘） |
+| 版本管理 | **`references/version-management.md`**（Git自动提交+变更日志） | - |
+| 用户体验 | **`references/user-experience.md`**（项目仪表盘+快捷恢复+反馈循环） | - |
 
 ---
 
