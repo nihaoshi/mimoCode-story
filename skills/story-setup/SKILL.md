@@ -1,6 +1,6 @@
 ---
 name: story-setup
-version: 2.0.0
+version: 3.0.0
 description: |
   网文写作工具集基础设施部署。一键部署写作项目结构。
   触发方式：/story-setup、「准备写书」「帮我搭一下环境」
@@ -22,9 +22,35 @@ description: |
    - 有 → 识别为长篇项目，显示当前信息
    - 无 → 识别为新项目
 
-## Phase 2：部署基础设施
+## Phase 2：配置选项
 
-### 2.1 创建项目结构
+### 2.1 询问用户偏好
+
+问用户：**「你需要以下功能吗？」**
+
+| 功能 | 说明 | 默认值 |
+|------|------|--------|
+| Git 版本控制 | 自动提交章节、创建 hooks | 开 |
+| MiMo Code 记忆 | 跨会话状态持久化 | 开 |
+| 自动检查点 | 每3章自动保存进度 | 开 |
+| 并行章节处理 | 用子代理并行写作 | 关 |
+
+### 2.2 保存配置
+
+根据用户选择，创建 `.mimocode/mimocode.json`：
+
+```json
+{
+  "version_control": true/false,
+  "memory": true/false,
+  "auto_checkpoint": true/false,
+  "parallel_chapters": true/false
+}
+```
+
+## Phase 3：部署基础设施
+
+### 3.1 创建项目结构
 
 根据用户选择的项目类型（长篇/短篇），创建对应的目录结构。
 
@@ -49,15 +75,15 @@ description: |
 │   ├── 伏笔.md
 │   ├── 时间线.md
 │   ├── 角色状态.md
-│   ├── 物品.md          ← 关键物品位置、状态追踪
-│   ├── 环境.md          ← 季节、天气、场景位置追踪
-│   ├── 物资.md          ← 钱财、食物、工具追踪
+│   ├── 物品.md
+│   ├── 环境.md
+│   ├── 物资.md
 │   └── 上下文.md
-├── 故事线/                ← 多线并行管理（千万字支持）
+├── 故事线/
 │   ├── 故事线_索引.md
 │   ├── 故事线_主线_XXX.md
 │   └── 故事线_交叉点.md
-├── 跨卷追踪/              ← 跨卷伏笔+角色弧线（千万字支持）
+├── 跨卷追踪/
 │   ├── 跨卷伏笔.md
 │   ├── 跨卷角色弧线.md
 │   └── 卷间过渡.md
@@ -74,21 +100,50 @@ description: |
 └── 对标/
 ```
 
-### 2.2 创建 .story-deployed 标记
+### 3.2 创建 .story-deployed 标记
 
 ```
 deployed_at: <ISO timestamp>
-version: 2.0.0
+version: 3.0.0
 target: mimocode
+version_control: true/false
 ```
 
-### 2.3 创建 .active-book
+### 3.3 创建 .active-book
 
 写入当前书目的相对路径。
 
+### 3.4 Git 初始化（仅当 version_control=true）
+
+```bash
+git init
+cp .githooks/* .git/hooks/ 2>/dev/null || true
+chmod +x .git/hooks/* 2>/dev/null || true
+```
+
+### 3.5 MiMo Code 记忆初始化（仅当 memory=true）
+
+创建 `MEMORY.md` 初始文件：
+
+```markdown
+# 项目记忆
+
+## 书名
+{书名}
+
+## 题材
+{题材类型}
+
+## 当前进度
+尚未开始写作
+
+## 重要决策
+无
+```
+
 ---
 
-## Phase 3：验证安装
+## Phase 4：验证安装
 
 1. 验证目录结构完整
 2. 输出安装报告

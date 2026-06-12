@@ -1,0 +1,53 @@
+{
+  "name": "mimocode-story",
+  "version": "2.0.0",
+  "description": "MiMo Code 网文写作技能包。覆盖长篇与短篇网络小说的扫榜、拆文、写作、去AI味、审稿全流程。",
+  "family": "bundle-plugin",
+  "configSchema": {
+    "version_control": {
+      "type": "boolean",
+      "required": false,
+      "default": true,
+      "description": "是否启用 Git 版本控制。关闭后不会自动提交、不会创建 hooks。"
+    },
+    "auto_checkpoint": {
+      "type": "boolean",
+      "required": false,
+      "default": true,
+      "description": "是否启用自动检查点保存。"
+    },
+    "parallel_chapters": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "是否启用并行章节处理（需要 compose 模式）。"
+    }
+  },
+  "skills": [
+    "skills/story",
+    "skills/story-setup",
+    "skills/story-long-write",
+    "skills/story-short-write",
+    "skills/story-long-analyze",
+    "skills/story-short-analyze",
+    "skills/story-long-scan",
+    "skills/story-short-scan",
+    "skills/story-scan",
+    "skills/story-import",
+    "skills/story-deslop",
+    "skills/story-review",
+    "skills/story-cover",
+    "skills/browser-cdp"
+  ],
+  "shared_deps": [
+    "skills/_shared/references",
+    "skills/_shared/templates",
+    "skills/_shared/examples",
+    "skills/_shared/checklists"
+  ],
+  "openclaw": {
+    "compat": {
+      "pluginApi": ">=2026.4.0"
+    }
+  }
+}

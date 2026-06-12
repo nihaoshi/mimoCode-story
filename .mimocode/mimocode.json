@@ -1,0 +1,20 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {},
+  "permission": {},
+  "mcp": {},
+  "checkpoint": {
+    "enabled": true,
+    "autoSave": true,
+    "budgetTokens": 8000
+  },
+  "memory": {
+    "enabled": true,
+    "projectMemory": true,
+    "sessionCheckpoint": true
+  },
+  "task": {
+    "enabled": true,
+    "treeTracking": true
+  }
+}

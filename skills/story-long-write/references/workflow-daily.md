@@ -133,8 +133,9 @@
      - `追踪/物资.md`（更新钱财、食物、工具状态，如有经济活动）
      - `追踪/上下文.md`（只更新进度元信息：当前位置+已写字数+本次变更，不写详细角色状态/伏笔内容）
    - **质检提示**（可选）：本章写作完成。如需一致性检查，运行 `/story-review lean`。批量写作模式跳过此步骤，全部写完后再统一审查。
-   - **版本提交**：`git add 正文/第{N}章_*.md 追踪/*.md && git commit -m "Ch{N}: {章名} ({字数}字)"`
+   - **版本提交**（仅当 version_control=true）：检查项目配置中的 `version_control` 字段。如果为 true，执行 `git add 正文/第{N}章_*.md 追踪/*.md && git commit -m "Ch{N}: {章名} ({字数}字)"`；如果为 false 或不存在，跳过 git 操作
    - **自动化检测**：运行 `scripts/consistency-check.js` + `scripts/style-lint.js` + `scripts/foreshadow-check.js`
+   - **MiMo Code 记忆更新**（仅当 memory=true）：将本次写作的关键决策和进度写入 `MEMORY.md`，供下次会话自动读取
    - **数据采集**：采集本章数据，更新 `追踪/写作数据.md`
 3. **不中断但不并发**：一章写完不问用户，直接写下一章（除非用户要求逐章确认）；下一章必须读取上一章刚写入的正文和追踪更新后再开始。
 

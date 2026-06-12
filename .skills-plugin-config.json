@@ -1,0 +1,60 @@
+{
+  "mimocodeStoryRoot": "D:\\mimocode-story",
+  "behaviorRules": [
+    "story 路由在用户意图模糊时触发，根据关键词自动分发到具体 skill",
+    "story-long-write 的日更流程中，每章写完后必须更新追踪文件（伏笔/时间线/角色状态/物品/环境/上下文）",
+    "story-long-write 的日更流程中，每章写完后必须运行一致性检查脚本",
+    "version_control 配置为 false 时，跳过所有 git 操作（commit/push/hooks）",
+    "跨会话恢复时，必须先读取追踪/上下文.md、追踪/角色状态.md、追踪/伏笔.md",
+    "写对话前必须检查角色的性格锚点（在追踪/角色状态.md中）"
+  ],
+  "skills": [
+    {
+      "name": "story",
+      "path": "D:\\mimocode-story\\skills\\story\\SKILL.md",
+      "trigger": "always",
+      "inject": true,
+      "description": "网文工具箱路由入口。根据用户意图自动分发到具体写作 skill。",
+      "triggerHints": [
+        "写小说",
+        "写网文",
+        "开书",
+        "日更",
+        "续写",
+        "扫榜",
+        "拆文",
+        "去AI味",
+        "审稿",
+        "封面",
+        "导入小说"
+      ]
+    },
+    {
+      "name": "story-state-guard",
+      "path": "D:\\mimocode-story\\skills\\_shared\\references\\state-tracking.md",
+      "trigger": "always",
+      "inject": true,
+      "description": "角色状态和性格锚点守护。写对话前自动检查角色一致性。",
+      "triggerHints": [
+        "对话",
+        "角色",
+        "性格",
+        "说话"
+      ]
+    },
+    {
+      "name": "story-consistency-guard",
+      "path": "D:\\mimocode-story\\skills\\_shared\\references\\consistency-tracking.md",
+      "trigger": "always",
+      "inject": true,
+      "description": "一致性追踪守护。防止物品/环境/角色状态跨章节矛盾。",
+      "triggerHints": [
+        "追踪",
+        "一致性",
+        "物品",
+        "环境"
+      ]
+    }
+  ],
+  "resolver": "D:\\mimocode-story\\skills\\story\\SKILL.md"
+}

@@ -2,7 +2,7 @@
 
 MiMo Code 网文写作技能包。覆盖长篇与短篇网络小说的扫榜、拆文、写作、去AI味、审稿全流程。
 
-基于 [oh-story-claudecode](https://github.com/nihaoshi/oh-story-claudecode) 适配，专为 [MiMo Code](https://github.com/XiaomiMiMo) 设计。
+基于 [oh-story-claudecode](https://github.com/nihaoshi/oh-story-claudecode) 适配，专为 [MiMo Code](https://github.com/XiaomiMiMo/MiMo-Code) 设计。
 
 ## 安装方式
 
@@ -60,19 +60,19 @@ git clone https://github.com/nihaoshi/mimoCode-story.git ~/.mimocode-story
 | `/story-short-write` | 写短篇小说 |
 | `/story-long-analyze` | 拆解长篇小说 |
 | `/story-short-analyze` | 拆解短篇小说 |
+| `/story-scan` | 扫榜选题（通用） |
 | `/story-long-scan` | 长篇扫榜选题 |
 | `/story-short-scan` | 短篇扫榜选题 |
-| `/story-scan` | 扫榜选题（通用） |
-| `/story-import` | 逆向导入已有小说 |
 | `/story-deslop` | 去AI味 |
 | `/story-review` | 多角度审稿 |
 | `/story-cover` | 生成封面 |
+| `/story-import` | 导入已有小说 |
 | `/browser-cdp` | 浏览器操控（CDP 协议） |
 
 ### 快速开始
 
 ```
-# 1. 初始化项目
+# 1. 初始化项目（会询问是否启用版本控制）
 /story-setup
 
 # 2. 开始写长篇
@@ -82,13 +82,69 @@ git clone https://github.com/nihaoshi/mimoCode-story.git ~/.mimocode-story
 /story-short-write
 ```
 
+## MiMo Code 深度适配
+
+本技能包针对 MiMo Code 平台进行了深度适配，充分利用其独特能力：
+
+### 核心能力映射
+
+| MiMo Code 能力 | 写作场景 | 实现方式 |
+|---------------|---------|---------|
+| **持久化记忆** | 跨会话状态连续 | `MEMORY.md` 自动保存/恢复写作进度和决策 |
+| **智能上下文管理** | 长篇写作不丢失上下文 | 自动检查点 + 预算化注入 |
+| **任务追踪** | 进度管理 | 树状任务系统追踪每章写作状态 |
+| **子智能体** | 并行处理 | 拆文/审稿/研究可并行执行 |
+| **Goal 停止条件** | 自主写作控制 | `/goal` 命令设置写作停止条件 |
+| **Dream & Distill** | 自我进化 | `/dream` 提取写作经验，`/distill` 发现重复工作流 |
+
+### 版本控制（可选）
+
+版本控制功能默认开启，用户可在部署时选择关闭：
+
+```
+/story-setup
+→ 询问：你需要 Git 版本控制吗？
+→ 选择：是/否
+```
+
+**关闭后的行为**：
+- 跳过 `git add` / `git commit` / `git push`
+- 不创建 `.githooks/`
+- 追踪文件仍正常更新（与版本控制无关）
+
+### 插件系统
+
+本技能包支持 MiMo Code 插件系统：
+
+```json
+// openclaw.plugin.json
+{
+  "name": "mimocode-story",
+  "version": "2.0.0",
+  "configSchema": {
+    "version_control": { "type": "boolean", "default": true },
+    "auto_checkpoint": { "type": "boolean", "default": true },
+    "parallel_chapters": { "type": "boolean", "default": false }
+  }
+}
+```
+
+### 自动触发规则
+
+通过 `.skills-plugin-config.json` 配置自动触发：
+
+| 触发器 | 行为 |
+|--------|------|
+| `trigger: "always"` + `inject: true` | 每条消息自动注入角色状态和一致性守护 |
+| 关键词匹配 | 匹配到写作关键词时自动路由到对应 skill |
+
 ## 目录结构
 
 ```
 mimoCode-story/
 ├── skills/
 │   ├── story/                    # 主入口路由
-│   ├── story-setup/              # 环境部署
+│   ├── story-setup/              # 环境部署（支持版本控制可选）
 │   ├── story-long-write/         # 长篇写作（核心）
 │   │   ├── references/           # 专属参考文档
 │   │   └── scripts/              # 自动化脚本
@@ -114,9 +170,13 @@ mimoCode-story/
 │       ├── templates/            # 写作模板库（4个）
 │       ├── examples/             # 专家案例库（3个）
 │       └── checklists/           # 写作检查清单（4个）
-├── .githooks/                    # Git Hooks（防遗漏）
+├── .githooks/                    # Git Hooks（防遗漏，可选）
 │   ├── pre-commit                # 提交前检查
 │   └── post-commit               # 提交后提醒
+├── .mimocode/                    # MiMo Code 配置
+│   └── mimocode.json             # 项目配置（版本控制/记忆/检查点）
+├── openclaw.plugin.json          # 插件清单
+├── .skills-plugin-config.json    # 技能触发配置
 ├── demo/                         # 使用示例
 ├── AGENTS.md                     # AI agent 指令文件
 └── README.md
@@ -170,14 +230,12 @@ mimoCode-story/
 | `style-lint.js` | 文风检查（禁用词/排比/AI腔） | `node scripts/style-lint.js 正文/第XXX章.md` |
 | `detect-python.js` | 跨平台Python检测 | `node scripts/detect-python.js` |
 
-### Git Hooks（防遗漏）
+### Git Hooks（防遗漏，可选）
 
-`.githooks/` 提供提交时自动检查：
+`.githooks/` 提供提交时自动检查（仅当 version_control=true）：
 
 - `pre-commit`：检查章节文件格式和完整性
 - `post-commit`：提醒更新追踪文件
-
-安装方式：`cp .githooks/* .git/hooks/`
 
 ### 角色性格锚点
 
@@ -192,20 +250,16 @@ mimoCode-story/
 | 维度 | 原版 (oh-story-claudecode) | 本版 (mimocode-story) |
 |------|---------------------------|----------------------|
 | 平台 | Claude Code / OpenClaw | **MiMo Code** |
-| Hooks | 6 个 shell hooks | **2 个 git hooks**（pre-commit + post-commit） |
-| Agents | 7 个 Claude Code agents | **去掉**（用 actor 替代） |
-| 插件格式 | `.claude-plugin/marketplace.json` | **MiMo Code skills 目录** |
+| Hooks | 6 个 shell hooks | **2 个 git hooks**（可选）+ **插件触发器** |
+| Agents | 7 个 Claude Code agents | **MiMo Code 子智能体** |
+| 插件格式 | `.claude-plugin/marketplace.json` | **openclaw.plugin.json** |
 | 安装方式 | `npx skills add` | **git clone + 手动加载** |
 | 知识库 | 100+ 份方法论文档 | **完整保留**（60 份共享参考） |
-| Memory | 无 | **支持**（跨会话状态持久化） |
-| Web 搜索 | 无 | **支持**（扫榜集成 webfetch） |
-| 千万字支持 | 基础 | **S+级**（分片+索引+并行+监控） |
-| 一致性追踪 | 无 | **5维追踪**（物品/环境/物资/角色/伏笔） |
-| 故事线管理 | 无 | **多线并行**（独立文件+交叉点标记） |
-| 跨卷追踪 | 无 | **完整支持**（伏笔/角色弧线/卷间过渡） |
-| 质量监控 | 无 | **实时监控**（一致性/爽点/AI腔趋势） |
-| 版本管理 | 无 | **Git集成**（自动提交+变更日志） |
-| 数据分析 | 无 | **数据驱动**（写作指标仪表盘） |
+| Memory | 无 | **MiMo Code 持久化记忆** |
+| 任务追踪 | 无 | **MiMo Code 树状任务系统** |
+| 上下文管理 | 无 | **MiMo Code 智能上下文管理** |
+| 版本控制 | 强制 | **可选**（用户选择是否启用） |
+| 自我进化 | 无 | **Dream & Distill** |
 
 ## 核心功能
 
@@ -273,4 +327,4 @@ MIT
 ## 致谢
 
 - [oh-story-claudecode](https://github.com/nihaoshi/oh-story-claudecode) - 原版网文写作技能包
-- [MiMo Code](https://github.com/XiaomiMiMo) - MiMo Code 平台
+- [MiMo Code](https://github.com/XiaomiMiMo/MiMo-Code) - MiMo Code 平台
