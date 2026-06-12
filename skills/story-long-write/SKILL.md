@@ -530,73 +530,73 @@ story-architect 属于高层级结构设计。轻量题材定位优先由主会�
 
 ### Phase 1：选题方向
 
-| 场景 | 加载文件 |
-|------|---------|
-| 确定题材类型 | `references/genre-catalog.md` |
-| 判断市场方向 | `references/genre-readers.md` |
-| 特殊题材考量 | `references/plot-special-topics.md` |
-| 女频长篇（题材/文案/平台/感情线） | `references/female-audience-writing.md` |
+| 场景 | 加载文件 | 优先级 |
+|------|---------|--------|
+| 确定题材类型 | `references/genre-catalog.md` | **必读** |
+| 判断市场方向 | `references/genre-readers.md` | 按需 |
+| 特殊题材考量 | `references/plot-special-topics.md` | 按需 |
+| 女频长篇（题材/文案/平台/感情线） | `references/female-audience-writing.md` | 按需 |
 
 ### Phase 2：核心设定
 
-| 场景 | 加载文件 |
-|------|---------|
-| 设定人物 | `references/character-basics.md` |
-| 设计关系 | `references/character-relations.md` |
-| 题材框架与定位 | `references/genre-catalog.md` + `references/genre-core-mechanics.md` |
-| 创建 artifact | `references/artifact-protocols.md` |
+| 场景 | 加载文件 | 优先级 |
+|------|---------|--------|
+| 设定人物 | `references/character-basics.md` | **必读** |
+| 设计关系 | `references/character-relations.md` | 按需 |
+| 题材框架与定位 | `references/genre-catalog.md` + `references/genre-core-mechanics.md` | **必读** |
+| 创建 artifact | `references/artifact-protocols.md` | 按需 |
 
 ### Phase 3：大纲搭建
 
-| 场景 | 加载文件 |
-|------|---------|
-| 搭建大纲 | `references/outline-methods.md` |
-| 设计矛盾与结构 | `references/outline-conflict.md` |
-| 深度结构设计 | `references/outline-structure-theory.md` |
-| 节奏与升级感 | `references/outline-rhythm.md` |
-| 小纲与卡文 | `references/plot-core-methods.md` |
-| 选择叙事框架 | `references/plot-frameworks.md` |
-| 题材写作公式 | `references/genre-writing-formulas.md` |
-| 黄金三章 | `references/opening-design.md` |
-| 情绪弧线 | `references/emotional-arc-design.md` |
-| 反转设计 | `references/reversal-toolkit.md` |
+| 场景 | 加载文件 | 优先级 |
+|------|---------|--------|
+| 搭建大纲 | `references/outline-methods.md` | **必读** |
+| 设计矛盾与结构 | `references/outline-conflict.md` | 按需 |
+| 深度结构设计 | `references/outline-structure-theory.md` | 按需 |
+| 节奏与升级感 | `references/outline-rhythm.md` | 按需 |
+| 小纲与卡文 | `references/plot-core-methods.md` | 按需 |
+| 选择叙事框架 | `references/plot-frameworks.md` | 按需 |
+| 题材写作公式 | `references/genre-writing-formulas.md` | 按需 |
+| 黄金三章 | `references/opening-design.md` | **必读** |
+| 情绪弧线 | `references/emotional-arc-design.md` | 按需 |
+| 反转设计 | `references/reversal-toolkit.md` | 按需 |
 
 ### Phase 4：正文写作
 
-| 场景 | 加载文件 |
-|------|---------|
-| 章节钩子 | `references/hooks-chapter.md` |
-| 悬念设计 | `references/hooks-suspense.md` |
-| 段落级钩子 | `references/hooks-paragraph.md` |
-| 题材风格 | `references/style-genre-modules.md` |
-| 打斗/装逼 | `references/style-combat-face.md` |
-| 写作技法 | `references/style-craft.md` |
-| 商业创作核心方法 | `references/commercial-core-methods.md` |
-| 对话 | `references/dialogue-mastery.md` |
-| 人物深化 | `references/character-design-methods.md` |
-| 情绪技法 + 叙事单元 | `references/plot-emotion-system.md` + `references/emotional-methods.md` |
-| 写作技法全程参考 | `references/writing-craft.md` |
-| 格式与结构规范 | `references/format-and-structure.md`（仅对话/段落格式适用长篇） |
-| 状态追踪协议 | `references/state-tracking.md` |
-| 一致性追踪系统 | `references/consistency-tracking.md` |
-| 故事线管理 | `references/story-line-management.md` |
-| 跨卷追踪 | `references/cross-volume-tracking.md` |
-| 结构化索引层 | `references/structured-indexing.md` |
-| 流水线并行 | `references/pipeline-parallelism.md` |
-| 自适应批量 | `references/adaptive-batch-sizing.md` |
-| 质量监控 | `references/quality-monitoring.md` |
-| 版本管理 | `references/version-management.md` |
-| 数据分析 | `references/data-analytics.md` |
-| 自动化检测 | `references/auto-detection.md` |
-| 用户体验 | `references/user-experience.md` |
+| 场景 | 加载文件 | 优先级 |
+|------|---------|--------|
+| 章节钩子 | `references/hooks-chapter.md` | **必读** |
+| 悬念设计 | `references/hooks-suspense.md` | 按需 |
+| 段落级钩子 | `references/hooks-paragraph.md` | 按需 |
+| 题材风格 | `references/style-genre-modules.md` | 按需 |
+| 打斗/装逼 | `references/style-combat-face.md` | 按需 |
+| 写作技法 | `references/style-craft.md` | 按需 |
+| 商业创作核心方法 | `references/commercial-core-methods.md` | 按需 |
+| 对话 | `references/dialogue-mastery.md` | **必读** |
+| 人物深化 | `references/character-design-methods.md` | 按需 |
+| 情绪技法 + 叙事单元 | `references/plot-emotion-system.md` + `references/emotional-methods.md` | 按需 |
+| 写作技法全程参考 | `references/writing-craft.md` | 按需 |
+| 格式与结构规范 | `references/format-and-structure.md`（仅对话/段落格式适用长篇） | 按需 |
+| 状态追踪协议 | `references/state-tracking.md` | 按需 |
+| 一致性追踪系统 | `references/consistency-tracking.md` | 按需 |
+| 故事线管理 | `references/story-line-management.md` | 按需 |
+| 跨卷追踪 | `references/cross-volume-tracking.md` | 按需 |
+| 结构化索引层 | `references/structured-indexing.md` | 按需 |
+| 流水线并行 | `references/pipeline-parallelism.md` | 按需 |
+| 自适应批量 | `references/adaptive-batch-sizing.md` | 按需 |
+| 质量监控 | `references/quality-monitoring.md` | 按需 |
+| 版本管理 | `references/version-management.md` | 按需 |
+| 数据分析 | `references/data-analytics.md` | 按需 |
+| 自动化检测 | `references/auto-detection.md` | 按需 |
+| 用户体验 | `references/user-experience.md` | 按需 |
 
 ### Phase 5：质量检查
 
-| 场景 | 加载文件 |
-|------|---------|
-| 质量检查 | `references/quality-checklist.md` |
-| 禁用词扫描 | `references/banned-words.md` |
-| 去AI味 | `references/anti-ai-writing.md` |
+| 场景 | 加载文件 | 优先级 |
+|------|---------|--------|
+| 质量检查 | `references/quality-checklist.md` | 按需 |
+| 禁用词扫描 | `references/banned-words.md` | **必读** |
+| 去AI味 | `references/anti-ai-writing.md` | **必读** |
 
 ### 按主题快速定位（横切主题）
 

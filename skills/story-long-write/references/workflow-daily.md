@@ -30,6 +30,15 @@
 
 ## Step 1：快速上下文加载
 
+**Memory 恢复（跨会话持久化）**：新会话开始时，先用 memory 工具搜索上次进度：
+
+```
+memory({ operation: "search", query: "writing-progress", scope: "projects" })
+memory({ operation: "search", query: "character-states", scope: "projects" })
+```
+
+MiMo Code 的 checkpoint 恢复机制会自动注入 memory 内容，但如果 memory 中有写作进度，优先使用 memory 中的状态确定"上次写到第几章"。
+
 **可选：使用子智能体批量加载上下文**。如需使用子智能体，通过 MiMo Code 的 actor 工具 spawn（prompt: "项目目录：{dir}\n查询类型：context_load\n查询参数：准备写第 {N} 章") 执行 `context_load` 查询，一次获取全部写作上下文。返回后直接使用其 results，跳过下方手动加载步骤。如子智能体不可用或返回不完整，回退到下方手动加载。
 
 手动加载（默认方式）：
@@ -110,6 +119,11 @@
 
 1. **读取细纲**：加载本次要写的 2-3 章细纲
 2. **逐章执行**（以下每步在每章循环内执行）：
+   - **Task 追踪**：创建 MiMo Code task 追踪本章进度
+     ```
+     task create "写第{N}章：{章名}" → 拿到 TID
+     task start {TID}
+     ```
    - 读细纲 → 按需加载角色设定
    - **2.1 标题预检**：扫描既有章节标题；如本章标题同名或明显重复，先按本章核心事件改名，并同步细纲标题与正文文件名
    - **2.2 状态筛选**：每章开始前必须确认以下来源已经在本轮 workflow 中读取或刚更新：本章细纲、上一章正文（或上一章刚写入的正文）、`追踪/上下文.md`、`追踪/伏笔.md`、`追踪/时间线.md`；涉及角色时，还必须确认 `追踪/角色状态.md` 或对应 `设定/角色/{角色名}.md` 的来源。"已加载"只指本轮 workflow 内实际读取/更新过的文件，不得用未标明来源的聊天记忆替代。角色最新状态优先从 `追踪/角色状态.md` 筛选（如不存在则从角色设定推断），待回收/推进伏笔从 `追踪/伏笔.md` 筛选；细纲不存在时仍按下方补建流程处理，不允许直接写正文
@@ -134,8 +148,18 @@
      - `追踪/上下文.md`（只更新进度元信息：当前位置+已写字数+本次变更，不写详细角色状态/伏笔内容）
    - **质检提示**（可选）：本章写作完成。如需一致性检查，运行 `/story-review lean`。批量写作模式跳过此步骤，全部写完后再统一审查。
    - **版本提交**（仅当 version_control=true）：检查 `.story-config.json` 中的 `version_control` 字段。如果为 true，执行 `git add 正文/第{N}章_*.md 追踪/*.md && git commit -m "Ch{N}: {章名} ({字数}字)"`；如果为 false 或不存在，跳过 git 操作
-   - **自动化检测**：运行 `scripts/consistency-check.js` + `scripts/style-lint.js` + `scripts/foreshadow-check.js`
-   - **MiMo Code 记忆更新**：将本次写作的关键决策和进度写入 `MEMORY.md`，供下次会话自动读取
+    - **自动化检测**：运行 `scripts/consistency-check.js` + `scripts/style-lint.js` + `scripts/foreshadow-check.js`
+    - **Task 完成**：标记本章 task 完成
+      ```
+      task done {TID}
+      ```
+    - **Memory 更新**：将本章进度写入 memory（跨会话持久化）
+      ```
+      memory({ operation: "search", query: "writing-progress", scope: "projects" })
+      → 更新：最新章节、总字数、关键决策
+      memory({ operation: "search", query: "character-states", scope: "projects" })
+      → 更新：本章涉及角色的状态变更
+      ```
    - **数据采集**：采集本章数据，更新 `追踪/写作数据.md`
 3. **不中断但不并发**：一章写完不问用户，直接写下一章（除非用户要求逐章确认）；下一章必须读取上一章刚写入的正文和追踪更新后再开始。
 

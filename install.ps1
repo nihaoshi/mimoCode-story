@@ -22,7 +22,7 @@ if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
     exit 1
 }
 
-Write-Host "[1/4] Cloning repo..." -ForegroundColor Yellow
+Write-Host "[1/5] Cloning repo..." -ForegroundColor Yellow
 if (Test-Path $InstallDir) {
     Write-Host "  Directory exists, pulling latest..."
     Push-Location $InstallDir
@@ -49,13 +49,27 @@ if (-not (Test-Path $skillsSrc)) {
     exit 1
 }
 
-Write-Host "[2/4] Creating skill directory..." -ForegroundColor Yellow
+Write-Host "[2/5] Creating skill directory..." -ForegroundColor Yellow
 New-Item -ItemType Directory -Force -Path $SkillDir | Out-Null
 
-Write-Host "[3/4] Copying skills..." -ForegroundColor Yellow
+Write-Host "[3/5] Copying skills..." -ForegroundColor Yellow
 Copy-Item -Path (Join-Path $skillsSrc "*") -Destination ($SkillDir + "\") -Recurse -Force
 
-Write-Host "[4/4] Verifying..." -ForegroundColor Yellow
+Write-Host "[4/5] Checking agent-browser..." -ForegroundColor Yellow
+if (-not (Get-Command agent-browser -ErrorAction SilentlyContinue)) {
+    Write-Host "  Installing agent-browser (rank scraper dependency)..."
+    npm install -g agent-browser 2>&1 | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "  Warning: agent-browser install failed. Rank scraping will not work." -ForegroundColor Yellow
+        Write-Host "  Try manually: npm install -g agent-browser" -ForegroundColor Yellow
+    } else {
+        Write-Host "  agent-browser installed." -ForegroundColor Green
+    }
+} else {
+    Write-Host "  agent-browser already installed." -ForegroundColor Green
+}
+
+Write-Host "[5/5] Verifying..." -ForegroundColor Yellow
 $skills = @(
     "story", "story-setup", "story-long-write", "story-short-write",
     "story-long-analyze", "story-short-analyze", "story-scan",
