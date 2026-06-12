@@ -36,6 +36,27 @@ metadata:
 
 ---
 
+## MiMo Code 内置技能整合
+
+本 skill 可与 MiMo Code 内置技能协同工作，提升写作质量和效率：
+
+| 内置技能 | 写作场景 | 用法 |
+|---------|---------|------|
+| `compose:subagent` | 并行拆解多个章节 | 批量拆文时，每个章节用独立子代理处理 |
+| `compose:verify` | 写完后自动验证 | 每章写完后验证字数、禁用词、追踪文件更新 |
+| `compose:review` | 专业审稿 | 调用子代理进行多维度质量评审 |
+| `compose:task` | 进度追踪 | 用 task 工具追踪每章写作进度 |
+| `compose:memory` | 跨会话状态 | 将关键决策保存到 memory，下次会话自动读取 |
+
+### 集成点
+
+1. **Phase 4 写作时**：用 `compose:task` 追踪每章进度（open → in_progress → done）
+2. **每章写完后**：用 `compose:verify` 验证质量（字数、禁用词、追踪更新）
+3. **批量写完后**：用 `compose:review` 进行专业审稿
+4. **跨会话时**：用 `compose:memory` 保存/读取关键状态
+
+---
+
 ## 写作流程
 
 根据用户意图和项目状态选择场景：
