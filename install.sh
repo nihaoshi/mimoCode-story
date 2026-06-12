@@ -19,23 +19,38 @@ if ! command -v mimo &>/dev/null; then
   exit 1
 fi
 
+# 检查 git 是否安装
+if ! command -v git &>/dev/null; then
+  echo "错误: 未找到 git 命令。请先安装 Git。"
+  exit 1
+fi
+
 echo "[1/4] 克隆仓库..."
 if [ -d "$INSTALL_DIR" ]; then
   echo "  目录已存在，拉取最新代码..."
   cd "$INSTALL_DIR" && git pull --quiet
 else
-  git clone --quiet "$REPO" "$INSTALL_DIR"
+  if ! git clone --quiet "$REPO" "$INSTALL_DIR"; then
+    echo "错误: git clone 失败。请检查网络连接后重试。"
+    echo "  如果无法访问 GitHub，可以手动下载 ZIP:"
+    echo "  https://github.com/nihaoshi/mimoCode-story/archive/refs/heads/main.zip"
+    exit 1
+  fi
+fi
+
+# 验证克隆结果
+if [ ! -d "$INSTALL_DIR/skills" ]; then
+  echo "错误: 克隆成功但未找到 skills 目录，请重新运行安装脚本。"
+  exit 1
 fi
 
 echo "[2/4] 创建技能目录..."
 mkdir -p "$SKILL_DIR"
 
 echo "[3/4] 复制 skills..."
-# 复制所有 skill 目录（排除 _shared 以外的隐藏文件）
 cp -r "$INSTALL_DIR"/skills/* "$SKILL_DIR/"
 
 echo "[4/4] 验证安装..."
-# 检查关键 skill 文件是否存在
 SKILLS=(story story-setup story-long-write story-short-write story-long-analyze story-short-analyze story-scan story-long-scan story-short-scan story-deslop story-review story-cover story-import browser-cdp)
 MISSING=()
 for s in "${SKILLS[@]}"; do

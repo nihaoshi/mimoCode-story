@@ -7,8 +7,6 @@ param(
     [string]$SkillDir = "$HOME\.config\mimocode\skills"
 )
 
-$ErrorActionPreference = "Stop"
-
 Write-Host "=== MiMo Code 网文写作技能包 安装 ===" -ForegroundColor Cyan
 Write-Host ""
 
@@ -30,10 +28,27 @@ Write-Host "[1/4] 克隆仓库..." -ForegroundColor Yellow
 if (Test-Path $InstallDir) {
     Write-Host "  目录已存在，拉取最新代码..."
     Push-Location $InstallDir
-    git pull --quiet
+    git pull --quiet 2>&1 | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+        Pop-Location
+        Write-Host "错误: git pull 失败。请检查网络连接后重试。" -ForegroundColor Red
+        exit 1
+    }
     Pop-Location
 } else {
-    git clone --quiet $Repo $InstallDir
+    git clone --quiet $Repo $InstallDir 2>&1 | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "错误: git clone 失败。请检查网络连接后重试。" -ForegroundColor Red
+        Write-Host "  如果无法访问 GitHub，可以手动下载 ZIP:" -ForegroundColor Yellow
+        Write-Host "  https://github.com/nihaoshi/mimoCode-story/archive/refs/heads/main.zip"
+        exit 1
+    }
+}
+
+# 验证克隆结果
+if (-not (Test-Path "$InstallDir\skills")) {
+    Write-Host "错误: 克隆成功但未找到 skills 目录，请重新运行安装脚本。" -ForegroundColor Red
+    exit 1
 }
 
 Write-Host "[2/4] 创建技能目录..." -ForegroundColor Yellow
