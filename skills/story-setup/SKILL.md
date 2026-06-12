@@ -31,20 +31,18 @@ description: |
 | 功能 | 说明 | 默认值 |
 |------|------|--------|
 | Git 版本控制 | 自动提交章节、创建 hooks | 开 |
-| MiMo Code 记忆 | 跨会话状态持久化 | 开 |
-| 自动检查点 | 每3章自动保存进度 | 开 |
 | 并行章节处理 | 用子代理并行写作 | 关 |
+
+> **MiMo Code 记忆和自动检查点**是平台内置功能，无需手动配置。
 
 ### 2.2 保存配置
 
-根据用户选择，创建 `.mimocode/mimocode.json`：
+根据用户选择，创建 `.story-config.json`（项目级写作配置，不写入 MiMo Code 的 `mimocode.json`）：
 
 ```json
 {
-  "version_control": true/false,
-  "memory": true/false,
-  "auto_checkpoint": true/false,
-  "parallel_chapters": true/false
+  "version_control": true,
+  "parallel_chapters": false
 }
 ```
 
@@ -117,29 +115,25 @@ version_control: true/false
 
 ```bash
 git init
+```
+
+然后安装 hooks（跨平台）：
+
+**macOS / Linux：**
+```bash
 cp .githooks/* .git/hooks/ 2>/dev/null || true
 chmod +x .git/hooks/* 2>/dev/null || true
 ```
 
-### 3.5 MiMo Code 记忆初始化（仅当 memory=true）
-
-创建 `MEMORY.md` 初始文件：
-
-```markdown
-# 项目记忆
-
-## 书名
-{书名}
-
-## 题材
-{题材类型}
-
-## 当前进度
-尚未开始写作
-
-## 重要决策
-无
+**Windows (PowerShell)：**
+```powershell
+Copy-Item .githooks\* .git\hooks\ -Force -ErrorAction SilentlyContinue
 ```
+
+### 3.5 MiMo Code 记忆初始化
+
+MiMo Code 的记忆系统是平台内置功能，会自动在 `MEMORY.md` 中保存项目知识。
+首次写作时，story-long-write 会自动创建 `MEMORY.md` 初始文件。
 
 ---
 

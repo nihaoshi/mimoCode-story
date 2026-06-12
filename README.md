@@ -4,48 +4,80 @@ MiMo Code 网文写作技能包。覆盖长篇与短篇网络小说的扫榜、�
 
 基于 [oh-story-claudecode](https://github.com/nihaoshi/oh-story-claudecode) 适配，专为 [MiMo Code](https://github.com/XiaomiMiMo/MiMo-Code) 设计。
 
+## 前置依赖
+
+| 依赖 | 用途 | 是否必需 |
+|------|------|---------|
+| [MiMo Code](https://github.com/XiaomiMiMo/MiMo-Code) | 运行平台 | 必需 |
+| Node.js 12+ | 一致性检查/文风检查/伏笔检查脚本 | 必需（长篇写作） |
+| Python 3 | 字数统计（跨平台） | 必需（长篇写作） |
+| Git | 版本控制（可选） | 可选 |
+| [agent-browser](https://www.npmjs.com/package/agent-browser) | 浏览器操控（CDP 协议） | 可选（仅 browser-cdp skill） |
+
 ## 安装方式
 
-### 方式一：Git 克隆（推荐）
+### 方式零：一键安装（最快）
 
-在 MiMo Code 会话中告诉它：
+```bash
+# macOS / Linux
+curl -fsSL https://raw.githubusercontent.com/nihaoshi/mimoCode-story/main/install.sh | bash
 
+# Windows PowerShell
+irm https://raw.githubusercontent.com/nihaoshi/mimoCode-story/main/install.ps1 | iex
 ```
-帮我克隆这个仓库到本地：https://github.com/nihaoshi/mimoCode-story.git
-```
 
-或者在终端手动执行：
+### 方式一：手动安装
+
+**第一步：克隆仓库**
 
 ```bash
 git clone https://github.com/nihaoshi/mimoCode-story.git ~/mimoCode-story
 ```
 
-克隆完成后，在 MiMo Code 中加载 skills：
+**第二步：复制 skills 到 MiMo Code 用户技能目录**
 
-```
-加载这个目录的 skills：~/mimoCode-story/skills
-```
+MiMo Code 从两个位置加载 skill，推荐放到用户目录（不会被 MiMo Code 更新覆盖）：
 
-### 方式二：直接下载
-
-1. 下载仓库 ZIP 文件
-2. 解压到本地目录（如 `C:\Users\你的用户名\mimoCode-story`）
-3. 在 MiMo Code 中加载 skills：
-
-```
-加载这个目录的 skills：C:\Users\你的用户名\mimoCode-story\skills
+**macOS / Linux：**
+```bash
+mkdir -p ~/.config/mimocode/skills
+cp -r ~/mimoCode-story/skills/* ~/.config/mimocode/skills/
 ```
 
-### 方式三：全局安装
+**Windows (PowerShell)：**
+```powershell
+New-Item -ItemType Directory -Force -Path "$HOME\.config\mimocode\skills"
+Copy-Item -Path "$HOME\mimoCode-story\skills\*" -Destination "$HOME\.config\mimocode\skills\" -Recurse -Force
+```
 
-如果你希望在所有项目中都能使用：
+> **备选路径**：也可以放到 `~/.local/share/mimocode/compose/0.1.0/skills/`，但该目录存放 MiMo Code 内置技能，更新时可能被覆盖。
+
+**第三步：验证安装**
+
+重启 MiMo Code，运行以下命令验证：
+
+```
+/mimo debug skill
+```
+
+应能在列表中看到 `story`、`story-long-write`、`story-short-write` 等 14 个写作 skill。
+
+### 方式二：通过 MiMo Code 会话安装
+
+在 MiMo Code 会话中告诉它：
+
+```
+帮我把这个仓库的 skills 目录复制到 MiMo Code 的用户技能目录：
+~/mimoCode-story/skills
+目标位置：~/.config/mimocode/skills/
+```
+
+### 更新技能包
 
 ```bash
-# 克隆到固定位置
-git clone https://github.com/nihaoshi/mimoCode-story.git ~/.mimocode-story
-
-# 然后在 MiMo Code 中加载
-加载这个目录的 skills：~/.mimocode-story/skills
+cd ~/mimoCode-story && git pull
+# 重新复制到 MiMo Code 目录
+cp -r skills/* ~/.config/mimocode/skills/
 ```
 
 ## 使用方式
@@ -81,6 +113,22 @@ git clone https://github.com/nihaoshi/mimoCode-story.git ~/.mimocode-story
 # 或者写短篇
 /story-short-write
 ```
+
+### 项目配置
+
+写作项目通过 `.story-config.json` 管理配置（由 `/story-setup` 自动创建）：
+
+```json
+{
+  "version_control": true,
+  "parallel_chapters": false
+}
+```
+
+| 字段 | 说明 | 默认值 |
+|------|------|--------|
+| `version_control` | 启用 Git 版本控制（自动提交章节） | `true` |
+| `parallel_chapters` | 启用子智能体并行写作 | `false` |
 
 ## MiMo Code 深度适配
 
@@ -142,7 +190,7 @@ git clone https://github.com/nihaoshi/mimoCode-story.git ~/.mimocode-story
 
 ```
 mimoCode-story/
-├── skills/
+├── skills/                         # 技能目录（安装时复制到 ~/.config/mimocode/skills/）
 │   ├── story/                    # 主入口路由
 │   ├── story-setup/              # 环境部署（支持版本控制可选）
 │   ├── story-long-write/         # 长篇写作（核心）
@@ -165,7 +213,7 @@ mimoCode-story/
 │   ├── story-cover/              # 封面
 │   ├── browser-cdp/              # 浏览器操控（CDP 协议）
 │   └── _shared/                  # 共享资源
-│       ├── references/           # 共享参考文件（60个）
+│       ├── references/           # 共享参考文件（68个）
 │       │   └── INDEX.md          # 知识库索引
 │       ├── templates/            # 写作模板库（4个）
 │       ├── examples/             # 专家案例库（3个）
@@ -174,9 +222,12 @@ mimoCode-story/
 │   ├── pre-commit                # 提交前检查
 │   └── post-commit               # 提交后提醒
 ├── .mimocode/                    # MiMo Code 配置
-│   └── mimocode.json             # 项目配置（版本控制/记忆/检查点）
+│   └── mimocode.json             # MiMo Code 项目配置
+├── install.sh                    # macOS/Linux 一键安装脚本
+├── install.ps1                   # Windows 一键安装脚本
+├── package.json                  # npm 包配置
 ├── openclaw.plugin.json          # 插件清单
-├── .skills-plugin-config.json    # 技能触发配置
+├── .skills-plugin-config.json    # 技能注册配置
 ├── demo/                         # 使用示例
 ├── AGENTS.md                     # AI agent 指令文件
 └── README.md
@@ -254,7 +305,7 @@ mimoCode-story/
 | Agents | 7 个 Claude Code agents | **MiMo Code 子智能体** |
 | 插件格式 | `.claude-plugin/marketplace.json` | **openclaw.plugin.json** |
 | 安装方式 | `npx skills add` | **git clone + 手动加载** |
-| 知识库 | 100+ 份方法论文档 | **完整保留**（60 份共享参考） |
+| 知识库 | 100+ 份方法论文档 | **完整保留**（68 份共享参考） |
 | Memory | 无 | **MiMo Code 持久化记忆** |
 | 任务追踪 | 无 | **MiMo Code 树状任务系统** |
 | 上下文管理 | 无 | **MiMo Code 智能上下文管理** |
@@ -274,7 +325,7 @@ story-scan  story-*   story-*   story-   story-
 
 ### 知识库
 
-包含完整的网文写作知识体系（60份共享参考文档）：
+包含完整的网文写作知识体系（68份共享参考文档）：
 
 - **题材与市场**：题材框架、核心梗设计、读者心理、扫榜选题
 - **人物设计**：角色设定、关系映射、动机链、反派系统

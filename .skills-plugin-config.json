@@ -1,60 +1,85 @@
 {
-  "mimocodeStoryRoot": "D:\\mimocode-story",
-  "behaviorRules": [
-    "story 路由在用户意图模糊时触发，根据关键词自动分发到具体 skill",
-    "story-long-write 的日更流程中，每章写完后必须更新追踪文件（伏笔/时间线/角色状态/物品/环境/上下文）",
-    "story-long-write 的日更流程中，每章写完后必须运行一致性检查脚本",
-    "version_control 配置为 false 时，跳过所有 git 操作（commit/push/hooks）",
-    "跨会话恢复时，必须先读取追踪/上下文.md、追踪/角色状态.md、追踪/伏笔.md",
-    "写对话前必须检查角色的性格锚点（在追踪/角色状态.md中）"
-  ],
+  "name": "mimocode-story",
+  "version": "2.0.0",
+  "description": "MiMo Code 网文写作技能包",
   "skills": [
     {
       "name": "story",
-      "path": "D:\\mimocode-story\\skills\\story\\SKILL.md",
-      "trigger": "always",
-      "inject": true,
-      "description": "网文工具箱路由入口。根据用户意图自动分发到具体写作 skill。",
-      "triggerHints": [
-        "写小说",
-        "写网文",
-        "开书",
-        "日更",
-        "续写",
-        "扫榜",
-        "拆文",
-        "去AI味",
-        "审稿",
-        "封面",
-        "导入小说"
-      ]
+      "path": "skills/story/SKILL.md",
+      "description": "网文工具箱路由入口"
     },
     {
-      "name": "story-state-guard",
-      "path": "D:\\mimocode-story\\skills\\_shared\\references\\state-tracking.md",
-      "trigger": "always",
-      "inject": true,
-      "description": "角色状态和性格锚点守护。写对话前自动检查角色一致性。",
-      "triggerHints": [
-        "对话",
-        "角色",
-        "性格",
-        "说话"
-      ]
+      "name": "story-setup",
+      "path": "skills/story-setup/SKILL.md",
+      "description": "初始化写作项目"
     },
     {
-      "name": "story-consistency-guard",
-      "path": "D:\\mimocode-story\\skills\\_shared\\references\\consistency-tracking.md",
-      "trigger": "always",
-      "inject": true,
-      "description": "一致性追踪守护。防止物品/环境/角色状态跨章节矛盾。",
-      "triggerHints": [
-        "追踪",
-        "一致性",
-        "物品",
-        "环境"
-      ]
+      "name": "story-long-write",
+      "path": "skills/story-long-write/SKILL.md",
+      "description": "长篇网文写作"
+    },
+    {
+      "name": "story-short-write",
+      "path": "skills/story-short-write/SKILL.md",
+      "description": "短篇网文写作"
+    },
+    {
+      "name": "story-long-analyze",
+      "path": "skills/story-long-analyze/SKILL.md",
+      "description": "长篇拆文"
+    },
+    {
+      "name": "story-short-analyze",
+      "path": "skills/story-short-analyze/SKILL.md",
+      "description": "短篇拆文"
+    },
+    {
+      "name": "story-long-scan",
+      "path": "skills/story-long-scan/SKILL.md",
+      "description": "长篇扫榜"
+    },
+    {
+      "name": "story-short-scan",
+      "path": "skills/story-short-scan/SKILL.md",
+      "description": "短篇扫榜"
+    },
+    {
+      "name": "story-scan",
+      "path": "skills/story-scan/SKILL.md",
+      "description": "通用扫榜"
+    },
+    {
+      "name": "story-import",
+      "path": "skills/story-import/SKILL.md",
+      "description": "导入已有小说"
+    },
+    {
+      "name": "story-deslop",
+      "path": "skills/story-deslop/SKILL.md",
+      "description": "去AI味"
+    },
+    {
+      "name": "story-review",
+      "path": "skills/story-review/SKILL.md",
+      "description": "审稿"
+    },
+    {
+      "name": "story-cover",
+      "path": "skills/story-cover/SKILL.md",
+      "description": "封面生成"
+    },
+    {
+      "name": "browser-cdp",
+      "path": "skills/browser-cdp/SKILL.md",
+      "description": "浏览器操控（CDP协议）"
     }
   ],
-  "resolver": "D:\\mimocode-story\\skills\\story\\SKILL.md"
+  "behaviorRules": [
+    "story 路由在用户意图模糊时触发，根据关键词自动分发到具体 skill",
+    "story-long-write 的日更流程中，每章写完后必须更新追踪文件",
+    "story-long-write 的日更流程中，每章写完后必须运行一致性检查脚本",
+    "跨会话恢复时，必须先读取追踪/上下文.md、追踪/角色状态.md、追踪/伏笔.md",
+    "写对话前必须检查角色的性格锚点（在追踪/角色状态.md中）"
+  ],
+  "resolver": "skills/story/SKILL.md"
 }

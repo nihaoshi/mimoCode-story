@@ -30,7 +30,7 @@
 
 ## Step 1：快速上下文加载
 
-**可选：使用 story-explorer agent 批量加载上下文**。如果项目已部署 story-explorer agent（检查 `.claude/agents/story-explorer.md` 是否存在），可以用 `Agent(subagent_type: "story-explorer", prompt: "项目目录：{dir}\n查询类型：context_load\n查询参数：准备写第 {N} 章")` 执行 `context_load` 查询，一次获取全部写作上下文。spawn 返回后直接使用其 results，跳过下方手动加载步骤。如果 agent 不可用或返回不完整，回退到下方手动加载。
+**可选：使用子智能体批量加载上下文**。如需使用子智能体，通过 MiMo Code 的 actor 工具 spawn（prompt: "项目目录：{dir}\n查询类型：context_load\n查询参数：准备写第 {N} 章") 执行 `context_load` 查询，一次获取全部写作上下文。返回后直接使用其 results，跳过下方手动加载步骤。如子智能体不可用或返回不完整，回退到下方手动加载。
 
 手动加载（默认方式）：
 
@@ -133,9 +133,9 @@
      - `追踪/物资.md`（更新钱财、食物、工具状态，如有经济活动）
      - `追踪/上下文.md`（只更新进度元信息：当前位置+已写字数+本次变更，不写详细角色状态/伏笔内容）
    - **质检提示**（可选）：本章写作完成。如需一致性检查，运行 `/story-review lean`。批量写作模式跳过此步骤，全部写完后再统一审查。
-   - **版本提交**（仅当 version_control=true）：检查项目配置中的 `version_control` 字段。如果为 true，执行 `git add 正文/第{N}章_*.md 追踪/*.md && git commit -m "Ch{N}: {章名} ({字数}字)"`；如果为 false 或不存在，跳过 git 操作
+   - **版本提交**（仅当 version_control=true）：检查 `.story-config.json` 中的 `version_control` 字段。如果为 true，执行 `git add 正文/第{N}章_*.md 追踪/*.md && git commit -m "Ch{N}: {章名} ({字数}字)"`；如果为 false 或不存在，跳过 git 操作
    - **自动化检测**：运行 `scripts/consistency-check.js` + `scripts/style-lint.js` + `scripts/foreshadow-check.js`
-   - **MiMo Code 记忆更新**（仅当 memory=true）：将本次写作的关键决策和进度写入 `MEMORY.md`，供下次会话自动读取
+   - **MiMo Code 记忆更新**：将本次写作的关键决策和进度写入 `MEMORY.md`，供下次会话自动读取
    - **数据采集**：采集本章数据，更新 `追踪/写作数据.md`
 3. **不中断但不并发**：一章写完不问用户，直接写下一章（除非用户要求逐章确认）；下一章必须读取上一章刚写入的正文和追踪更新后再开始。
 
@@ -205,14 +205,14 @@
 
 在日更流程中可调用 MiMo Code 内置技能提升质量：
 
-### 进度追踪（compose:task）
+### 进度追踪（task 工具）
 
 每章写作前用 task 工具追踪：
 ```
 task create "写第{N}章：{章名}"  →  task start {TID}  →  写作  →  task done {TID}
 ```
 
-### 质量验证（compose:verify）
+### 质量验证（验证步骤）
 
 每章写完后用 verify 验证：
 - 字数是否达标
@@ -220,7 +220,7 @@ task create "写第{N}章：{章名}"  →  task start {TID}  →  写作  →  
 - 追踪文件是否更新
 - 章尾钩子是否存在
 
-### 专业审稿（compose:review）
+### 专业审稿（审稿流程）
 
 批量写完后用 review 进行多维度评审：
 - 结构审查（钩子/节奏/反转）
@@ -228,7 +228,7 @@ task create "写第{N}章：{章名}"  →  task start {TID}  →  写作  →  
 - 文笔审查（AI味/对话/描写）
 - 一致性审查（事实/时间线/伏笔）
 
-### 跨会话状态（compose:memory）
+### 跨会话状态（memory 系统）
 
 关键决策保存到 memory：
 - 本次写作的主要变更

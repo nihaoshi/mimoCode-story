@@ -127,7 +127,7 @@
 
 | 文件 | 大小 | 说明 |
 |------|------|------|
-| material-decomposition.md | 36KB | 最大的文件，拆文方法论 |
+| material-decomposition.md | 36KB | 拆文方法论 |
 | genre-writing-formulas.md | 23KB | 题材写作公式 |
 | output-templates.md | 25KB | 输出模板 |
 | anti-ai-writing.md | 17KB | 去AI味指南 |

@@ -42,7 +42,7 @@
 
 ### 阶段1：准备阶段（只读）
 
-**执行者**：story-explorer agent（或主会话降级执行）
+**执行者**：story-explorer 子智能体（通过 MiMo Code 的 actor 工具 spawn，或主会话降级执行）
 
 **输入**：
 - 项目目录
@@ -89,7 +89,7 @@
 
 ### 阶段2：写作阶段（读+写）
 
-**执行者**：narrative-writer agent（或主会话降级执行）
+**执行者**：narrative-writer 子智能体（通过 MiMo Code 的 actor 工具 spawn，或主会话降级执行）
 
 **输入**：
 - 准备阶段输出（JSON）
@@ -104,7 +104,7 @@
 
 ### 阶段3：检查阶段（只读）
 
-**执行者**：consistency-checker agent（或主会话降级执行）
+**执行者**：consistency-checker 子智能体（通过 MiMo Code 的 actor 工具 spawn，或主会话降级执行）
 
 **输入**：
 - 本章正文

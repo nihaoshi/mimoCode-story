@@ -73,7 +73,14 @@ skill-name/
 ### Git Hooks 安装
 
 在写作项目中安装 hooks（仅需一次）：
+
+**macOS / Linux：**
 ```bash
 cp .githooks/* .git/hooks/
 chmod +x .git/hooks/*
+```
+
+**Windows (PowerShell)：**
+```powershell
+Copy-Item .githooks\* .git\hooks\ -Force
 ```

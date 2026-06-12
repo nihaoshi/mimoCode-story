@@ -46,8 +46,6 @@
     "skills/_shared/checklists"
   ],
   "openclaw": {
-    "compat": {
-      "pluginApi": ">=2026.4.0"
-    }
+    "compat": {}
   }
 }

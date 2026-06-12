@@ -1,0 +1,18 @@
+{
+  "name": "mimocode-story",
+  "version": "2.0.0",
+  "description": "MiMo Code 网文写作技能包。覆盖长篇与短篇网络小说的扫榜、拆文、写作、去AI味、审稿全流程。",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nihaoshi/mimoCode-story.git"
+  },
+  "keywords": [
+    "mimocode",
+    "mimo-code",
+    "skill",
+    "writing",
+    "novel",
+    "web-fiction"
+  ]
+}
