@@ -56,6 +56,7 @@ description: |
 
 ```
 {书名}/
+├── AGENTS.md
 ├── 设定/
 │   ├── 世界观/
 │   ├── 角色/
@@ -92,6 +93,7 @@ description: |
 
 ```
 {短篇标题}/
+├── AGENTS.md
 ├── 设定.md
 ├── 小节大纲.md
 ├── 正文.md
@@ -111,7 +113,86 @@ version_control: true/false
 
 写入当前书目的相对路径。
 
-### 3.4 Git 初始化（仅当 version_control=true）
+### 3.4 创建项目 AGENTS.md
+
+在写作项目根目录创建 `AGENTS.md`，包含 Writing Project Rules。内容如下：
+
+```markdown
+# AGENTS.md
+
+## Writing Project Rules（写作项目强制规则）
+
+以下规则适用于本写作项目，AI 每次会话自动读取：
+
+### 写完每章必须执行
+
+1. 更新 `追踪/伏笔.md` — 新增/回收伏笔
+2. 更新 `追踪/时间线.md` — 记录事件时序
+3. 更新 `追踪/角色状态.md` — 更新角色状态 + 性格锚点（如有变化）
+4. 更新 `追踪/物品.md` — 物品位置/状态变化
+5. 更新 `追踪/环境.md` — 季节/天气/场景
+6. 更新 `追踪/上下文.md` — 进度摘要
+7. 运行 `node skills/story-long-write/scripts/consistency-check.js`
+8. 运行 `node skills/story-long-write/scripts/style-lint.js`
+9. 运行 `node skills/story-long-write/scripts/foreshadow-check.js`
+
+### 跨会话恢复规则
+
+新会话开始时，必须先读取：
+1. `追踪/上下文.md` — 上次进度
+2. `追踪/角色状态.md` — 角色当前状态（含性格锚点）
+3. `追踪/伏笔.md` — 待回收伏笔
+
+### 性格一致性规则
+
+写对话和行为描写前，必须检查角色的"性格锚点"（在 `追踪/角色状态.md` 中）。不得让角色说出/做出违背锚点的事，除非有充分铺垫。
+
+### 一级禁用词（写正文时必查，命中即替换）
+
+不禁、竟然、居然、事实上、实际上、显而易见、毫无疑问、可想而知、不言而喻、与此同时、值得注意的是、需要指出的是、不可否认、嘴角勾起、嘴角上扬、嘴角微扬、眼中闪过、眼底闪过、目光中闪过、深吸一口气、长舒一口气、吐出一口浊气、缓缓开口、淡淡说道、轻声说道、仿佛、宛如、恰似、犹如、值得一提、不得不说、总而言之
+
+### 写作铁律（不可违反）
+
+1. 写正文前必须用 Read 工具读细纲，不得凭记忆写
+2. 续写前必须用 Read 工具读上一章正文，不得凭记忆接
+3. 写对话前必须查角色性格锚点（`追踪/角色状态.md`）
+4. 参考文档标记"必读"的必须实际用 Read 工具加载，不得跳过
+5. 字数未达标（< 细纲目标 90%）不得结束本章
+
+### 参考文档速查（按场景→文件名）
+
+| 场景 | 文件 |
+|------|------|
+| 写对话 | `dialogue-mastery.md` |
+| 设角色 | `character-basics.md` |
+| 写大纲 | `outline-methods.md` |
+| 开篇设计 | `opening-design.md` |
+| 钩子设计 | `hooks-chapter.md` |
+| 反转设计 | `reversal-toolkit.md` |
+| 去AI味 | `anti-ai-writing.md` + `banned-words.md` |
+| 情感线 | `emotional-arc-design.md` |
+| 题材公式 | `genre-writing-formulas.md` |
+| 爽点设计 | `plot-emotion-system.md` |
+
+### Git Hooks 安装
+
+在写作项目中安装 hooks（仅需一次）：
+
+**macOS / Linux：**
+\```bash
+cp .githooks/* .git/hooks/
+chmod +x .git/hooks/*
+\```
+
+**Windows (PowerShell)：**
+\```powershell
+Copy-Item .githooks\* .git\hooks\ -Force
+\```
+```
+
+> **注意**：如果用户写作项目根目录已存在 AGENTS.md，则跳过此步骤，提示用户手动合并 Writing Project Rules。
+
+### 3.5 Git 初始化（仅当 version_control=true）
 
 ```bash
 git init
@@ -130,7 +211,7 @@ chmod +x .git/hooks/* 2>/dev/null || true
 Copy-Item .githooks\* .git\hooks\ -Force -ErrorAction SilentlyContinue
 ```
 
-### 3.5 MiMo Code 记忆初始化
+### 3.6 MiMo Code 记忆初始化
 
 MiMo Code 的记忆系统是平台内置功能，会自动在 `MEMORY.md` 中保存项目知识。
 首次写作时，story-long-write 会自动创建 `MEMORY.md` 初始文件。
