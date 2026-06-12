@@ -90,6 +90,13 @@ mimoCode-story/
 │   ├── story/                    # 主入口路由
 │   ├── story-setup/              # 环境部署
 │   ├── story-long-write/         # 长篇写作（核心）
+│   │   ├── references/           # 专属参考文档
+│   │   └── scripts/              # 自动化脚本
+│   │       ├── consistency-check.js   # 一致性检查
+│   │       ├── foreshadow-check.js    # 伏笔检查
+│   │       ├── style-lint.js          # 文风检查
+│   │       ├── normalize-punctuation.js # 标点规范化
+│   │       └── detect-python.js       # 跨平台Python检测
 │   ├── story-short-write/        # 短篇写作
 │   ├── story-long-analyze/       # 长篇拆文
 │   ├── story-short-analyze/      # 短篇拆文
@@ -101,26 +108,18 @@ mimoCode-story/
 │   ├── story-review/             # 审稿
 │   ├── story-cover/              # 封面
 │   ├── browser-cdp/              # 浏览器操控（CDP 协议）
-│       └── _shared/
+│   └── _shared/                  # 共享资源
 │       ├── references/           # 共享参考文件（60个）
 │       │   └── INDEX.md          # 知识库索引
-│       ├── templates/            # 写作模板库
-│       │   ├── dialogue-scene.md     # 对话场景模板
-│       │   ├── emotional-arc.md      # 情感线模板
-│       │   ├── villain-introduction.md # 反派出场模板
-│       │   └── worldbuilding-intro.md # 世界观构建模板
-│       ├── examples/             # 专家案例库
-│       │   ├── dialogue-examples.md  # 对话案例
-│       │   ├── emotion-examples.md   # 情感线案例
-│       │   └── villain-examples.md   # 反派案例
-│       └── checklists/           # 写作检查清单
-│           ├── dialogue-checklist.md # 对话质量检查
-│           ├── emotion-checklist.md  # 情感线检查
-│           ├── villain-checklist.md  # 反派设计检查
-│           └── world-checklist.md    # 世界观检查
+│       ├── templates/            # 写作模板库（4个）
+│       ├── examples/             # 专家案例库（3个）
+│       └── checklists/           # 写作检查清单（4个）
+├── .githooks/                    # Git Hooks（防遗漏）
+│   ├── pre-commit                # 提交前检查
+│   └── post-commit               # 提交后提醒
 ├── demo/                         # 使用示例
-├── README.md
-└── LICENSE
+├── AGENTS.md                     # AI agent 指令文件
+└── README.md
 ```
 
 ## 专家级写作辅助
@@ -160,12 +159,40 @@ mimoCode-story/
 - `villain-checklist.md` - 反派设计检查
 - `world-checklist.md` - 世界观检查
 
+### 自动化检查脚本
+
+`story-long-write/scripts/` 提供写作质量自动检测：
+
+| 脚本 | 功能 | 用法 |
+|------|------|------|
+| `consistency-check.js` | 一致性检查（物品/环境/角色状态） | `node scripts/consistency-check.js 正文/第XXX章.md` |
+| `foreshadow-check.js` | 伏笔健康检查（超期伏笔预警） | `node scripts/foreshadow-check.js 正文/第XXX章.md` |
+| `style-lint.js` | 文风检查（禁用词/排比/AI腔） | `node scripts/style-lint.js 正文/第XXX章.md` |
+| `detect-python.js` | 跨平台Python检测 | `node scripts/detect-python.js` |
+
+### Git Hooks（防遗漏）
+
+`.githooks/` 提供提交时自动检查：
+
+- `pre-commit`：检查章节文件格式和完整性
+- `post-commit`：提醒更新追踪文件
+
+安装方式：`cp .githooks/* .git/hooks/`
+
+### 角色性格锚点
+
+`追踪/角色状态.md` 中的「性格锚点」字段防止跨章节性格漂移：
+- 核心性格（2-3个关键词）
+- 说话风格（口头禅、用词习惯）
+- 行为模式（遇事反应方式）
+- 禁忌（绝对不会做的事）
+
 ## 与原版的区别
 
 | 维度 | 原版 (oh-story-claudecode) | 本版 (mimocode-story) |
 |------|---------------------------|----------------------|
 | 平台 | Claude Code / OpenClaw | **MiMo Code** |
-| Hooks | 6 个 shell hooks | **去掉**（用 MiMo Code 原生能力） |
+| Hooks | 6 个 shell hooks | **2 个 git hooks**（pre-commit + post-commit） |
 | Agents | 7 个 Claude Code agents | **去掉**（用 actor 替代） |
 | 插件格式 | `.claude-plugin/marketplace.json` | **MiMo Code skills 目录** |
 | 安装方式 | `npx skills add` | **git clone + 手动加载** |
