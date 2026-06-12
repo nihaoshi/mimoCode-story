@@ -25,6 +25,8 @@ description: |
 | 封面 | 封面、封面图 | `story-cover` |
 | 环境部署 | 准备写书、搭环境、初始化 | `story-setup` |
 | 导入已有小说 | 导入、把我的书导进来 | `story-import` |
+| 简介/文案 | 简介、文案、写简介、帮我写简介 | `story-synopsis` |
+| 导出 | 导出、导出TXT、导出EPUB、导出校对稿 | `story-export` |
 
 ## 路由流程
 

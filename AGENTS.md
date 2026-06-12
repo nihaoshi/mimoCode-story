@@ -55,9 +55,11 @@ skill-name/
 4. 更新 `追踪/物品.md` — 物品位置/状态变化
 5. 更新 `追踪/环境.md` — 季节/天气/场景
 6. 更新 `追踪/上下文.md` — 进度摘要
-7. 运行 `node skills/story-long-write/scripts/consistency-check.js`
-8. 运行 `node skills/story-long-write/scripts/style-lint.js`
-9. 运行 `node skills/story-long-write/scripts/foreshadow-check.js`
+7. 运行质量门禁：`node skills/story-long-write/scripts/quality-gate.js <章节文件>`
+
+**质量门禁规则**：退出码 2（阻断）时**不得标记任务完成**，必须修复后重新运行。退出码 0 = 全部通过，1 = 有警告（可继续），2 = 有阻断项（必须修复）。
+
+门禁自动检查：禁用词、一致性（物品/环境/角色/时间线）、伏笔逾期、字数达标。
 
 ### 跨会话恢复规则
 

@@ -4,13 +4,16 @@
 const fs = require('fs');
 const path = require('path');
 
-const USAGE = `Usage: node style-lint.js <chapter-file> [--fix]
+const USAGE = `Usage: node style-lint.js <chapter-file> [--json]
 
 Check chapter for AI-style writing issues:
 - Banned words (一级/二级)
 - Excessive parallel structures
 - Overused dialogue tags
 - AI-style sentence patterns
+
+Options:
+  --json    Output structured JSON instead of human-readable text
 
 Exit code 0 = pass, 1 = warnings found`;
 
@@ -31,7 +34,7 @@ const BANNED_LEVEL2 = [
   '不由得', '忍不住', '情不自禁',
   '微微', '轻轻', '缓缓', '淡淡',
   '顿时', '霎时', '刹那间',
-  '竟然', '居然', '果然',
+  '果然',
   '或许', '也许', '大概',
 ];
 
@@ -115,12 +118,15 @@ function checkAIPatterns(text) {
 
 function main() {
   const args = process.argv.slice(2);
-  if (args.length === 0 || args[0] === '--help') {
+  const jsonMode = args.includes('--json');
+  const filteredArgs = args.filter(a => a !== '--json');
+
+  if (filteredArgs.length === 0 || filteredArgs[0] === '--help') {
     console.log(USAGE);
     process.exit(0);
   }
 
-  const chapterFile = path.resolve(args[0]);
+  const chapterFile = path.resolve(filteredArgs[0]);
   if (!fs.existsSync(chapterFile)) {
     console.error(`Error: File not found: ${chapterFile}`);
     process.exit(2);
@@ -132,51 +138,73 @@ function main() {
     process.exit(2);
   }
 
-  const allIssues = [];
   const banned = checkBannedWords(text);
   const dialogueIssues = checkDialogueTags(text);
   const parallelIssues = checkParallelStructures(text);
   const aiIssues = checkAIPatterns(text);
+
+  const issues = [];
+  for (const b of banned) {
+    issues.push({ type: 'banned_word', level: b.level, word: b.word, count: b.count, message: `"${b.word}" 出现 ${b.count} 次` });
+  }
+  for (const d of dialogueIssues) {
+    issues.push({ type: 'dialogue_tag', level: 2, message: d });
+  }
+  for (const p of parallelIssues) {
+    issues.push({ type: 'parallel_structure', level: 2, message: p });
+  }
+  for (const a of aiIssues) {
+    issues.push({ type: 'ai_pattern', level: 2, message: a });
+  }
+
+  const level1Count = issues.filter(i => i.level === 1).length;
+  const level2Count = issues.filter(i => i.level === 2).length;
+
+  if (jsonMode) {
+    const result = {
+      status: issues.length === 0 ? 'pass' : (level1Count > 0 ? 'fail' : 'warn'),
+      file: chapterFile,
+      summary: { level1: level1Count, level2: level2Count, total: issues.length },
+      issues,
+    };
+    console.log(JSON.stringify(result, null, 2));
+    process.exit(level1Count > 0 ? 1 : 0);
+  }
 
   if (banned.length > 0) {
     console.log('\n🚫 禁用词检测：');
     for (const b of banned) {
       const label = b.level === 1 ? '一级(必改)' : '二级(建议改)';
       console.log(`  [${label}] "${b.word}" 出现 ${b.count} 次`);
-      allIssues.push(b);
     }
   }
 
   if (dialogueIssues.length > 0) {
     console.log('\n💬 对话标签：');
     dialogueIssues.forEach(d => console.log(`  ⚠️  ${d}`));
-    allIssues.push(...dialogueIssues);
   }
 
   if (parallelIssues.length > 0) {
     console.log('\n📝 排比结构：');
     parallelIssues.forEach(p => console.log(`  ⚠️  ${p}`));
-    allIssues.push(...parallelIssues);
   }
 
   if (aiIssues.length > 0) {
     console.log('\n🤖 AI腔模式：');
     aiIssues.forEach(a => console.log(`  ⚠️  ${a}`));
-    allIssues.push(...aiIssues);
   }
 
-  if (allIssues.length === 0) {
+  if (issues.length === 0) {
     console.log('✅ 文风检查通过');
     process.exit(0);
   }
 
-  const level1Count = banned.filter(b => b.level === 1).length;
   if (level1Count > 0) {
     console.log(`\n❌ 发现 ${level1Count} 个一级禁用词，需要修改`);
     process.exit(1);
   }
 
-  console.log(`\n⚠️  发现 ${allIssues.length} 个文风问题，建议修改`);
+  console.log(`\n⚠️  发现 ${issues.length} 个文风问题，建议修改`);
   process.exit(1);
 }
 

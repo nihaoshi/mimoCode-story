@@ -51,6 +51,8 @@
 | 情感弧线设计 | `emotional-arc-design.md` | 整体 |
 | 情感技法 | `emotional-methods.md` | 整体 |
 | 情绪系统设计 | `plot-emotion-system.md` | 整体 |
+| 情绪曲线设计 | `emotion-curve-design.md` | 整体 |
+| 节奏控制 | `pacing-mastery.md` | 整体 |
 | 女频写作技法 | `female-audience-writing.md` | 情感线 |
 
 ### 设计剧情时

@@ -72,6 +72,16 @@
       "name": "browser-cdp",
       "path": "skills/browser-cdp/SKILL.md",
       "description": "浏览器操控（CDP协议）"
+    },
+    {
+      "name": "story-synopsis",
+      "path": "skills/story-synopsis/SKILL.md",
+      "description": "简介/文案生成"
+    },
+    {
+      "name": "story-export",
+      "path": "skills/story-export/SKILL.md",
+      "description": "多格式导出"
     }
   ],
   "behaviorRules": [

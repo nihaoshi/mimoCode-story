@@ -4,12 +4,15 @@
 const fs = require('fs');
 const path = require('path');
 
-const USAGE = `Usage: node foreshadow-check.js <chapter-file> [project-dir]
+const USAGE = `Usage: node foreshadow-check.js <chapter-file> [project-dir] [--json]
 
 Check chapter against foreshadowing tracking:
 - Verify new foreshadowings are recorded
 - Check if foreshadowings mentioned in chapter are tracked
 - Flag overdue foreshadowings (buried > 50 chapters without recovery)
+
+Options:
+  --json    Output structured JSON instead of human-readable text
 
 Exit code 0 = pass, 1 = warnings, 2 = errors`;
 
@@ -64,13 +67,16 @@ function parseForeshadowTable(text) {
 
 function main() {
   const args = process.argv.slice(2);
-  if (args.length === 0 || args[0] === '--help') {
+  const jsonMode = args.includes('--json');
+  const filteredArgs = args.filter(a => a !== '--json');
+
+  if (filteredArgs.length === 0 || filteredArgs[0] === '--help') {
     console.log(USAGE);
     process.exit(0);
   }
 
-  const chapterFile = path.resolve(args[0]);
-  const projectDir = args[1] ? path.resolve(args[1]) : path.resolve(path.dirname(chapterFile), '..');
+  const chapterFile = path.resolve(filteredArgs[0]);
+  const projectDir = filteredArgs[1] ? path.resolve(filteredArgs[1]) : path.resolve(path.dirname(chapterFile), '..');
 
   if (!fs.existsSync(chapterFile)) {
     die(`Chapter file not found: ${chapterFile}`);
@@ -86,13 +92,21 @@ function main() {
 
   const trackingDir = path.join(projectDir, '追踪');
   if (!fs.existsSync(trackingDir)) {
-    console.log('⚠️  追踪目录不存在，跳过伏笔检查');
+    if (jsonMode) {
+      console.log(JSON.stringify({ status: 'skip', file: chapterFile, summary: { total: 0, recovered: 0, pending: 0, overdue: 0 }, issues: [], reason: '追踪目录不存在' }, null, 2));
+    } else {
+      console.log('⚠️  追踪目录不存在，跳过伏笔检查');
+    }
     process.exit(0);
   }
 
   const foreshadowFile = readFile(path.join(trackingDir, '伏笔.md'));
   if (!foreshadowFile) {
-    console.log('⚠️  伏笔.md 不存在，跳过伏笔检查');
+    if (jsonMode) {
+      console.log(JSON.stringify({ status: 'skip', file: chapterFile, summary: { total: 0, recovered: 0, pending: 0, overdue: 0 }, issues: [], reason: '伏笔.md 不存在' }, null, 2));
+    } else {
+      console.log('⚠️  伏笔.md 不存在，跳过伏笔检查');
+    }
     process.exit(0);
   }
 
@@ -106,16 +120,27 @@ function main() {
   });
 
   for (const f of overdue) {
-    warnings.push(`伏笔 ${f.id}("${f.content.substring(0, 20)}...") 已埋设 ${currentChapter - parseInt(f.chapter.replace(/\D/g, ''), 10)} 章未回收`);
+    warnings.push({ type: 'overdue', level: 1, id: f.id, content: f.content.substring(0, 20), buried_chapters: currentChapter - parseInt(f.chapter.replace(/\D/g, ''), 10), message: `伏笔 ${f.id}("${f.content.substring(0, 20)}...") 已埋设 ${currentChapter - parseInt(f.chapter.replace(/\D/g, ''), 10)} 章未回收` });
   }
 
   const unrecovered = tracked.filter(f =>
     !f.status.includes('已回收') && !f.status.includes('已过期')
   );
 
+  if (jsonMode) {
+    const result = {
+      status: warnings.length > 0 ? 'warn' : 'pass',
+      file: chapterFile,
+      summary: { total: tracked.length, recovered: tracked.length - unrecovered.length, pending: unrecovered.length, overdue: overdue.length },
+      issues: warnings,
+    };
+    console.log(JSON.stringify(result, null, 2));
+    process.exit(warnings.length > 0 ? 1 : 0);
+  }
+
   if (warnings.length > 0) {
     console.log(`\n⚠️  伏笔检查发现 ${warnings.length} 个问题：`);
-    warnings.forEach((w, i) => console.log(`  ${i + 1}. ${w}`));
+    warnings.forEach((w, i) => console.log(`  ${i + 1}. ${w.message}`));
     console.log(`\n📊 伏笔统计：共 ${tracked.length} 条，已回收 ${tracked.length - unrecovered.length} 条，待回收 ${unrecovered.length} 条`);
     process.exit(1);
   }
