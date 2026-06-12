@@ -358,6 +358,7 @@ story-architect 属于高层级结构设计 agent。轻量题材定位优先由�
      - (d) <!-- cross-book-recall:trigger:execution-output --> 输出"对标召回摘要 + 文风召回指令 + 原文锚点片段引用"（合计 ≤10 条），作为 narrative-writer 的输入。**多对标书时**参 `references/cross-book-recall.md`，进 prompt 的只主对标（副对标不入正文）
      - **快捷路径**：项目已部署 story-explorer agent 时（检查 `.claude/agents/story-explorer.md`），直接 spawn `Agent(subagent_type: "story-explorer", prompt: "项目目录：{dir}\n查询类型：benchmark_style_load\n查询参数：我要写第 {N} 章；这一章按细纲偏{紧张/热血/轻松等}，目标字数约 {N}，爽点类型={如有}")` 一次拿到 `{style_profile_path, style_profile_summary, matched_chapter_K, matched_chapter_techniques, anchor_excerpts, gaps}`；准备层必须原样保留 `gaps`，若 `gaps.matched_deep_dive_missing: true`，文风召回指令必须说明已用黄金三章/文风文件里的技巧回退
    - 3.3 **指令确认**：综合细纲+最简记忆包+模块召回结果，确认本章节奏（快/慢）和情绪目标，用一句话概括本章写作意图。例：「快节奏打脸——读者等了三章，这章必须一拳到位。技法=信息差揭示（hooks-suspense.md），用于第2-4段。」
+   - 3.4 **性格锚点检查**（⚠️ 不可跳过）：写对话和行为描写前，从 `追踪/角色状态.md` 读取本章涉及角色的"性格锚点"（核心性格/说话风格/行为模式/禁忌）。如果角色没有性格锚点，从 `设定/角色/{角色名}.md` 提取初始锚点并补录到角色状态文件。写作时严格遵守锚点约束，不得让角色说出/做出违背锚点的事（除非有充分铺垫的性格转变剧情）
 4. **资料研究**（按需）：如果写作中遇到需要查证的外部事实（历史年代、地理方位、职业细节等），spawn `story-researcher` agent 搜索并输出到 `参考资料/` 目录。研究完成后再继续写作。
 5. **标题预检**：写正文前从细纲读取章名；如与既有章节同名或明显重复，先按本章核心事件改名，并同步细纲标题与正文文件名。
 6. **写作**：第 1 章如果以内心戏、设定认知或独处开场，必须先把内心变化外化为可见事件（决定、误判、对话、物件变化、外部压力），再按字数目标展开；不得用大段心理独白凑字。若第 1 章低于目标，优先补“外部事件/对话/选择代价”，不要补解释性内心戏。

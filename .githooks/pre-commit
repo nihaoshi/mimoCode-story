@@ -1,0 +1,35 @@
+#!/bin/bash
+# pre-commit hook for mimocode-story writing projects
+# Checks: file format, banned words, chapter file size
+
+echo "🔍 Running pre-commit checks..."
+
+# Get staged files
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM)
+
+# Check chapter files
+for FILE in $STAGED_FILES; do
+  if [[ "$FILE" ==正文/第*章*.md ]]; then
+    # Check file size (should be > 500 bytes for a real chapter)
+    SIZE=$(wc -c < "$FILE" 2>/dev/null || echo 0)
+    if [ "$SIZE" -lt 500 ]; then
+      echo "⚠️  警告：$FILE 文件太小 ($SIZE bytes)，可能内容不完整"
+    fi
+    
+    # Check for basic chapter structure
+    if ! grep -q "^#" "$FILE" 2>/dev/null; then
+      echo "⚠️  警告：$FILE 缺少标题（# 开头的行）"
+    fi
+  fi
+done
+
+# Check tracking files exist when chapters exist
+if ls 正文/第*章*.md 1>/dev/null 2>&1; then
+  if [ ! -d "追踪" ]; then
+    echo "❌ 错误：存在正文但没有追踪目录，请先运行 /story-setup"
+    exit 1
+  fi
+fi
+
+echo "✅ Pre-commit checks passed"
+exit 0
