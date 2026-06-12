@@ -87,6 +87,15 @@
 | 质量检查清单 | `quality-checklist.md` | 整体 |
 | 文风技法 | `style-craft.md` | 整体 |
 | 商业创作方法 | `writing-craft.md` | 整体 |
+| 文风档案生成 | `style-profile-generator.md` | 整体 |
+| 文风档案格式 | `style-profile-protocol.md` | 整体 |
+
+### 短篇写作时
+
+| 场景 | 文件 | 章节 |
+|------|------|------|
+| 短篇工作流 | `writing-workflow.md` | 整体 |
+| 拆文输出契约 | `output-contract.md` | 整体 |
 
 ---
 

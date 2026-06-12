@@ -117,7 +117,7 @@ mimoCode-story/
 │           ├── dialogue-checklist.md # 对话质量检查
 │           ├── emotion-checklist.md  # 情感线检查
 │           ├── villain-checklist.md  # 反派设计检查
-│           └── worldchecklist.md     # 世界观检查
+│           └── world-checklist.md    # 世界观检查
 ├── demo/                         # 使用示例
 ├── README.md
 └── LICENSE
@@ -158,7 +158,7 @@ mimoCode-story/
 - `dialogue-checklist.md` - 对话质量检查
 - `emotion-checklist.md` - 情感线检查
 - `villain-checklist.md` - 反派设计检查
-- `worldchecklist.md` - 世界观检查
+- `world-checklist.md` - 世界观检查
 
 ## 与原版的区别
 
