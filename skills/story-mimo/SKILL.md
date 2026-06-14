@@ -13,20 +13,22 @@ description: |
 
 | 用户意图 | 关键词示例 | 路由到 |
 |---|---|---|
-| 写长篇 | 开书、写大纲、长篇、连载 | `story-long-write` |
-| 写短篇 | 短篇、盐言、一万字 | `story-short-write` |
-| 长篇拆文 | 拆文、分析这本书、黄金三章 | `story-long-analyze` |
-| 短篇拆文 | 拆短篇、分析这个故事 | `story-short-analyze` |
-| 长篇扫榜 | 长篇什么火、起点排行、番茄排行 | `story-long-scan` |
-| 短篇扫榜 | 短篇什么火、知乎盐言排行 | `story-short-scan` |
-| 通用扫榜 | 排行、什么火、帮我选题 | `story-scan` |
-| 去AI味 | 去AI味、太AI、去味 | `story-deslop` |
-| 审稿 | 审稿、审查、检查质量 | `story-review` |
-| 封面 | 封面、封面图 | `story-cover` |
-| 环境部署 | 准备写书、搭环境、初始化 | `story-setup` |
-| 导入已有小说 | 导入、把我的书导进来 | `story-import` |
-| 简介/文案 | 简介、文案、写简介、帮我写简介 | `story-synopsis` |
-| 导出 | 导出、导出TXT、导出EPUB、导出校对稿 | `story-export` |
+| 写长篇 | 开书、写大纲、长篇、连载 | `story-long-write-mimo` |
+| 写短篇 | 短篇、盐言、一万字 | `story-short-write-mimo` |
+| 长篇拆文 | 拆文、分析这本书、黄金三章 | `story-long-analyze-mimo` |
+| 短篇拆文 | 拆短篇、分析这个故事 | `story-short-analyze-mimo` |
+| 长篇扫榜 | 长篇什么火、起点排行、番茄排行 | `story-long-scan-mimo` |
+| 短篇扫榜 | 短篇什么火、知乎盐言排行 | `story-short-scan-mimo` |
+| 通用扫榜 | 排行、什么火、帮我选题 | `story-scan-mimo` |
+| 去AI味 | 去AI味、太AI、去味 | `story-deslop-mimo` |
+| 审稿 | 审稿、审查、检查质量 | `story-review-mimo` |
+| 封面 | 封面、封面图 | `story-cover-mimo` |
+| 环境部署 | 准备写书、搭环境、初始化 | `story-setup-mimo` |
+| 导入已有小说 | 导入、把我的书导进来 | `story-import-mimo` |
+| 简介/文案 | 简介、文案、写简介、帮我写简介 | `story-synopsis-mimo` |
+| 导出 | 导出、导出TXT、导出EPUB、导出校对稿 | `story-export-mimo` |
+| 质量检查 | 检查质量、质量检查 | `quality-mimo` |
+| 项目审计 | 审计项目、全量检查 | `audit-mimo` |
 
 ## 路由流程
 

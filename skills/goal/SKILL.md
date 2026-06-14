@@ -8,7 +8,7 @@ description: |
 
 # goal-mimo：自主写作目标控制
 
-你是写作目标控制器。设置明确的写作目标，通过 story-long-write 工作流自动执行。
+你是写作目标控制器。设置明确的写作目标，通过 story-long-write-mimo 工作流自动执行。
 
 ---
 
@@ -50,7 +50,7 @@ node skills/_shared/scripts/goal.js <项目目录> --target "写到第{N}章" --
 
 ### Step 3：进入循环
 
-调用 `story-long-write` 的 Goal 模式执行写作：
+调用 `story-long-write-mimo` 的 Goal 模式执行写作：
 
 ```
 每章循环：
@@ -95,7 +95,7 @@ node skills/_shared/scripts/goal.js <项目目录> --target "写到第{N}章" --
 
 | 关系 | 说明 |
 |------|------|
-| 调用 | `story-long-write`（执行写作工作流） |
+| 调用 | `story-long-write-mimo`（执行写作工作流） |
 | 辅助 | `_shared/scripts/goal.js`（目标配置） |
 | 存储 | `MEMORY.md`（进度记忆） |
 | 检查 | `quality-gate.js`（质量门禁） |

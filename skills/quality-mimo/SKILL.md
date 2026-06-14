@@ -32,7 +32,7 @@ description: |
 
 **调用方式**：
 ```bash
-node skills/story-long-write/scripts/quality-gate.js <章节文件> <项目目录>
+node skills/story-long-write-mimo/scripts/quality-gate.js <章节文件> <项目目录>
 ```
 
 **检查项目**：
@@ -46,7 +46,7 @@ node skills/story-long-write/scripts/quality-gate.js <章节文件> <项目目�
 
 **增强模式**：
 ```bash
-node skills/story-long-write/scripts/quality-gate.js --full <章节文件> <项目目录>
+node skills/story-long-write-mimo/scripts/quality-gate.js --full <章节文件> <项目目录>
 ```
 
 增加：身份一致性、追踪文件完整性、时间线逻辑
@@ -59,7 +59,7 @@ node skills/story-long-write/scripts/quality-gate.js --full <章节文件> <项�
 
 **调用方式**：
 ```bash
-node skills/story-long-write/scripts/full-consistency-audit.js <项目目录>
+node skills/story-long-write-mimo/scripts/full-consistency-audit.js <项目目录>
 ```
 
 **检查内容**：
@@ -73,9 +73,9 @@ node skills/story-long-write/scripts/full-consistency-audit.js <项目目录>
 
 | 检查类型 | 命令 |
 |---------|------|
-| 文风检查 | `node skills/story-long-write/scripts/style-lint.js <文件>` |
-| 一致性检查 | `node skills/story-long-write/scripts/consistency-check.js <文件> <项目目录>` |
-| 伏笔检查 | `node skills/story-long-write/scripts/foreshadow-check.js <文件> <项目目录>` |
+| 文风检查 | `node skills/story-long-write-mimo/scripts/style-lint.js <文件>` |
+| 一致性检查 | `node skills/story-long-write-mimo/scripts/consistency-check.js <文件> <项目目录>` |
+| 伏笔检查 | `node skills/story-long-write-mimo/scripts/foreshadow-check.js <文件> <项目目录>` |
 | 标点检查 | `node skills/_shared/scripts/punctuation-normalize.js <文件> --check` |
 
 ---

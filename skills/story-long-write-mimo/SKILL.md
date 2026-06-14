@@ -646,7 +646,7 @@ story-architect 属于高层级结构设计。轻量题材定位优先由主会�
 
 #### 自动检测缺失脚本
 
-每次执行写作流程时，自动检测项目中 `skills/story-long-write/scripts/` 目录的脚本完整性：
+每次执行写作流程时，自动检测项目中 `skills/story-long-write-mimo/scripts/` 目录的脚本完整性：
 
 ```
 检测到以下脚本缺失：
@@ -668,7 +668,7 @@ story-architect 属于高层级结构设计。轻量题材定位优先由主会�
 ```
 
 执行流程：
-1. 扫描项目 `skills/story-long-write/scripts/` 目录
+1. 扫描项目 `skills/story-long-write-mimo/scripts/` 目录
 2. 对比工具源码目录的脚本
 3. 复制缺失的脚本到项目
 4. 输出修复报告

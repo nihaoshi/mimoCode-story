@@ -35,7 +35,7 @@ function detectToolSourceDir() {
   const possiblePaths = [
     path.join(__dirname, '..'),  // 当前脚本的上级目录
     path.join(__dirname, '..', '..'),  // 上两级
-    'D:\\mimoCode-story\\skills\\story-long-write',  // 固定路径（备用）
+    'D:\\mimoCode-story\\skills\\story-long-write-mimo',  // 固定路径（备用）
   ];
   
   for (const p of possiblePaths) {
@@ -49,7 +49,7 @@ function detectToolSourceDir() {
 }
 
 function getProjectScriptsDir(projectDir) {
-  return path.join(projectDir, 'skills', 'story-long-write', 'scripts');
+  return path.join(projectDir, 'skills', 'story-long-write-mimo', 'scripts');
 }
 
 function checkMissingScripts(projectScriptsDir) {
