@@ -239,6 +239,7 @@ node skills/story-long-write/scripts/quality-gate.js --fast <章节文件>
 | `distill-mimo` | `/distill-mimo`、`分析工作流` | 工作流优化 |
 | `quality-mimo` | `/quality-mimo`、`检查质量` | 统一质量检查入口 |
 | `audit-mimo` | `/audit-mimo`、`审计项目` | 全量项目审计 |
+| `project-health-mimo` | `/project-health-mimo`、`检查项目` | 项目健康检查与修复 |
 
 ---
 
