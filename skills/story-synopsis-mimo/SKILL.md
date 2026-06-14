@@ -9,7 +9,7 @@ metadata:
     source: https://github.com/nihaoshi/mimoCode-story
 ---
 
-# story-synopsis：简介/文案生成
+# story-synopsis-mimo：简介/文案生成
 
 你是网文简介撰写专家。你的任务是根据用户提供的书籍信息，生成适合不同平台的简介和文案。
 

@@ -1,6 +1,6 @@
 # writing-workflow.md：短篇写作工作流详解
 
-本文件包含 story-short-write 的详细工作流程指引。SKILL.md 中只保留摘要和触发条件。
+本文件包含 story-short-write-mimo 的详细工作流程指引。SKILL.md 中只保留摘要和触发条件。
 
 ---
 
@@ -57,7 +57,7 @@
 
 ```
 项目根/
-├── 拆文库/          # story-short-analyze 默认产出（数据源）
+├── 拆文库/          # story-short-analyze-mimo 默认产出（数据源）
 │   └── {参考小说}/
 │       ├── 拆文报告.md
 │       ├── 情节节点.md

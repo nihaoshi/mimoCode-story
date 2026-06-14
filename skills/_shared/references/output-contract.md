@@ -1,18 +1,18 @@
 ---
 name: output-contract
 description: |
-  story-short-analyze 输出契约。定义 Stage → 文件映射、_meta.json schema、
-  下游消费规范（story-short-write 读全套 markdown + 原文 + _meta.json 写新短篇）。
-sync-source: skills/story-short-analyze/references/output-contract.md
+  story-short-analyze-mimo 输出契约。定义 Stage → 文件映射、_meta.json schema、
+  下游消费规范（story-short-write-mimo 读全套 markdown + 原文 + _meta.json 写新短篇）。
+sync-source: skills/story-short-analyze-mimo/references/output-contract.md
 sync-policy: |
-  本文件在 story-short-analyze 与 story-short-write 之间需保持字节一致（byte-equal）。
+  本文件在 story-short-analyze-mimo 与 story-short-write-mimo 之间需保持字节一致（byte-equal）。
   修改任一副本后，必须同步另一副本，并通过 bash scripts/check-shared-files.sh 验证。
   禁止把本文件加入 IGNORE_NAMES 列表——它必须保持同步，不属于 intentional differences。
 ---
 
-# 输出契约：story-short-analyze ↔ story-short-write
+# 输出契约：story-short-analyze-mimo ↔ story-short-write-mimo
 
-`story-short-analyze` 拆完一篇短篇后，产物落盘到 `拆文库/{书名}/`。`story-short-write`
+`story-short-analyze-mimo` 拆完一篇短篇后，产物落盘到 `拆文库/{书名}/`。`story-short-write-mimo`
 写下一篇同题材短篇时，**同时**读这个目录下的全部产出。
 
 ---
@@ -28,7 +28,7 @@ sync-policy: |
 └── _meta.json             # 管道元数据 + 结构计数（resume + Phase 7 门控数值依据）
 ```
 
-**文件名约定**：`拆文报告.md / 情节节点.md / 写作手法.md` 由 `story-short-write` 硬编码
+**文件名约定**：`拆文报告.md / 情节节点.md / 写作手法.md` 由 `story-short-write-mimo` 硬编码
 消费，不可重命名。分析叙事走 markdown，数字/枚举走 `_meta.json.structure_counts`。
 
 ---
@@ -113,21 +113,21 @@ Stage 6 内容写完后、`stages_completed[6]` append 前，跑三道门控：
 
 > 情节节点数（15-60 个，按字数分档）走 `情节节点.md` 自己的密度校验（见 material-decomposition.md），不在本表。`beats` 是结构段数，不是情节节点数。
 
-### 7.3 `story-short-analyze/references/output-templates.md` BLOCK 项扫描
+### 7.3 `story-short-analyze-mimo/references/output-templates.md` BLOCK 项扫描
 
-扫 `story-short-analyze/references/output-templates.md` 所有 `[BLOCK]` 标注项对应的产出段是否在 `拆文报告.md` 出现。
+扫 `story-short-analyze-mimo/references/output-templates.md` 所有 `[BLOCK]` 标注项对应的产出段是否在 `拆文报告.md` 出现。
 任一缺失 → 阻断。`[WARN]` 项 → 写入拆文报告末尾「待补」清单，不阻断。
 
 ### 7.4 通过
 
 清空 `_meta.json.last_stage_in_progress`，append `6` 到 `stages_completed[]`，提示
-用户「拆解完成，可调用 `/story-short-write` 写下一篇」。
+用户「拆解完成，可调用 `/story-short-write-mimo` 写下一篇」。
 
 ---
 
-## 下游消费规范（story-short-write 怎么用）
+## 下游消费规范（story-short-write-mimo 怎么用）
 
-> `story-short-write` 当前硬编码读 `拆文报告.md / 情节节点.md / 写作手法.md` 三个 markdown。
+> `story-short-write-mimo` 当前硬编码读 `拆文报告.md / 情节节点.md / 写作手法.md` 三个 markdown。
 > `_meta.json` 是可选增强：read 容忍，不存在不阻塞写作。
 
 | 文件 | 角色 | 怎么读 |
@@ -150,9 +150,9 @@ Stage 6 内容写完后、`stages_completed[6]` append 前，跑三道门控：
 
 ```bash
 ls 拆文库/{书名}/   # 应有：原文/ 拆文报告.md 情节节点.md 写作手法.md _meta.json
-/story-short-write 拆文库/{书名}/
+/story-short-write-mimo 拆文库/{书名}/
 # 通过：输出 8000+ 字同题材新短篇，prose 有源文对话节奏和画面感
-# 失败：写得像填空 / 或 short-write 找不到三个 markdown
+# 失败：写得像填空 / 或 short-write-mimo 找不到三个 markdown
 ```
 
 ---

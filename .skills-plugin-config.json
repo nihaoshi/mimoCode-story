@@ -4,92 +4,122 @@
   "description": "MiMo Code 网文写作技能包",
   "skills": [
     {
-      "name": "story",
-      "path": "skills/story/SKILL.md",
+      "name": "story-mimo",
+      "path": "skills/story-mimo/SKILL.md",
       "description": "网文工具箱路由入口"
     },
     {
-      "name": "story-setup",
-      "path": "skills/story-setup/SKILL.md",
+      "name": "story-setup-mimo",
+      "path": "skills/story-setup-mimo/SKILL.md",
       "description": "初始化写作项目"
     },
     {
-      "name": "story-long-write",
-      "path": "skills/story-long-write/SKILL.md",
+      "name": "story-long-write-mimo",
+      "path": "skills/story-long-write-mimo/SKILL.md",
       "description": "长篇网文写作"
     },
     {
-      "name": "story-short-write",
-      "path": "skills/story-short-write/SKILL.md",
+      "name": "story-short-write-mimo",
+      "path": "skills/story-short-write-mimo/SKILL.md",
       "description": "短篇网文写作"
     },
     {
-      "name": "story-long-analyze",
-      "path": "skills/story-long-analyze/SKILL.md",
+      "name": "story-long-analyze-mimo",
+      "path": "skills/story-long-analyze-mimo/SKILL.md",
       "description": "长篇拆文"
     },
     {
-      "name": "story-short-analyze",
-      "path": "skills/story-short-analyze/SKILL.md",
+      "name": "story-short-analyze-mimo",
+      "path": "skills/story-short-analyze-mimo/SKILL.md",
       "description": "短篇拆文"
     },
     {
-      "name": "story-long-scan",
-      "path": "skills/story-long-scan/SKILL.md",
+      "name": "story-long-scan-mimo",
+      "path": "skills/story-long-scan-mimo/SKILL.md",
       "description": "长篇扫榜"
     },
     {
-      "name": "story-short-scan",
-      "path": "skills/story-short-scan/SKILL.md",
+      "name": "story-short-scan-mimo",
+      "path": "skills/story-short-scan-mimo/SKILL.md",
       "description": "短篇扫榜"
     },
     {
-      "name": "story-scan",
-      "path": "skills/story-scan/SKILL.md",
+      "name": "story-scan-mimo",
+      "path": "skills/story-scan-mimo/SKILL.md",
       "description": "通用扫榜"
     },
     {
-      "name": "story-import",
-      "path": "skills/story-import/SKILL.md",
+      "name": "story-import-mimo",
+      "path": "skills/story-import-mimo/SKILL.md",
       "description": "导入已有小说"
     },
     {
-      "name": "story-deslop",
-      "path": "skills/story-deslop/SKILL.md",
+      "name": "story-deslop-mimo",
+      "path": "skills/story-deslop-mimo/SKILL.md",
       "description": "去AI味"
     },
     {
-      "name": "story-review",
-      "path": "skills/story-review/SKILL.md",
+      "name": "story-review-mimo",
+      "path": "skills/story-review-mimo/SKILL.md",
       "description": "审稿"
     },
     {
-      "name": "story-cover",
-      "path": "skills/story-cover/SKILL.md",
+      "name": "story-cover-mimo",
+      "path": "skills/story-cover-mimo/SKILL.md",
       "description": "封面生成"
     },
     {
-      "name": "browser-cdp",
-      "path": "skills/browser-cdp/SKILL.md",
+      "name": "browser-cdp-mimo",
+      "path": "skills/browser-cdp-mimo/SKILL.md",
       "description": "浏览器操控（CDP协议）"
     },
     {
-      "name": "story-synopsis",
-      "path": "skills/story-synopsis/SKILL.md",
+      "name": "story-synopsis-mimo",
+      "path": "skills/story-synopsis-mimo/SKILL.md",
       "description": "简介/文案生成"
     },
     {
-      "name": "story-export",
-      "path": "skills/story-export/SKILL.md",
+      "name": "story-export-mimo",
+      "path": "skills/story-export-mimo/SKILL.md",
       "description": "多格式导出"
+    },
+    {
+      "name": "audit-mimo",
+      "path": "skills/audit-mimo/SKILL.md",
+      "description": "全量项目审计"
+    },
+    {
+      "name": "quality-mimo",
+      "path": "skills/quality-mimo/SKILL.md",
+      "description": "统一质量检查"
+    },
+    {
+      "name": "project-health-mimo",
+      "path": "skills/project-health-mimo/SKILL.md",
+      "description": "项目健康检查与修复"
+    },
+    {
+      "name": "distill-mimo",
+      "path": "skills/distill/SKILL.md",
+      "description": "工作流优化"
+    },
+    {
+      "name": "dream-mimo",
+      "path": "skills/dream/SKILL.md",
+      "description": "写作经验沉淀"
+    },
+    {
+      "name": "goal-mimo",
+      "path": "skills/goal/SKILL.md",
+      "description": "自主写作目标控制"
     }
   ],
   "behaviorRules": [
-    "story 路由在用户意图模糊时触发，根据关键词自动分发到具体 skill",
-    "story-long-write 的日更流程中，每章写完后必须更新追踪文件",
-    "story-long-write 的日更流程中，每章写完后必须运行一致性检查脚本",
+    "story-mimo 路由在用户意图模糊时触发，根据关键词自动分发到具体 skill",
+    "story-long-write-mimo 的日更流程中，每章写完后必须更新追踪文件",
+    "story-long-write-mimo 的日更流程中，每章写完后必须运行一致性检查脚本",
     "跨会话恢复时，必须先读取追踪/上下文.md、追踪/角色状态.md、追踪/伏笔.md",
     "写对话前必须检查角色的性格锚点（在追踪/角色状态.md中）"
   ],
-  "resolver": "skills/story/SKILL.md"
+  "resolver": "skills/story-mimo/SKILL.md"
 }

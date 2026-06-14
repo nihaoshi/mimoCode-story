@@ -191,7 +191,7 @@
 
 ## 与 review skill 的集成
 
-story-review 的"结构审查"维度应检查：
+story-review-mimo 的"结构审查"维度应检查：
 
 1. 情绪曲线是否有起伏（不平坦）
 2. 压制-释放比例是否合理

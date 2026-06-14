@@ -176,9 +176,9 @@
 
 ---
 
-## browser-cdp流程
+## browser-cdp-mimo流程
 
-1. 启动browser-cdp打开目标榜单
+1. 启动browser-cdp-mimo打开目标榜单
 2. 等待列表元素出现
 3. 提取列表页数据
 4. 判断翻页（起点通常单页50-100条，番茄按题材逐页cap≈20）

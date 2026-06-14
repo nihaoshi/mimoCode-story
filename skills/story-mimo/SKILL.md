@@ -41,8 +41,8 @@ description: |
 ## 项目状态感知
 
 路由前先检查当前项目状态：
-- **无项目目录**（没有包含 `追踪/` 或 `设定/` 的书名目录）→ 写作前先运行 `story-setup` 初始化
-- **已有项目** → 检查 `.story-deployed` 标记，未部署则先运行 `story-setup`
+- **无项目目录**（没有包含 `追踪/` 或 `设定/` 的书名目录）→ 写作前先运行 `story-setup-mimo` 初始化
+- **已有项目** → 检查 `.story-deployed` 标记，未部署则先运行 `story-setup-mimo`
 
 ## 多书切换
 

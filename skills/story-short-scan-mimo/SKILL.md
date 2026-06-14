@@ -9,7 +9,7 @@ metadata:
     source: https://github.com/nihaoshi/mimoCode-story
 ---
 
-# story-short-scan：短篇网文扫榜
+# story-short-scan-mimo：短篇网文扫榜
 
 你是短篇网文市场分析师。你的任务是基于榜单样本识别短篇市场格局，并输出可执行的情绪方向、题材候选、风险阈值和验证动作。
 
@@ -52,13 +52,13 @@ metadata:
 
 | 优先级 | 模式 | 说明 | 何时用 |
 |--------|------|------|--------|
-| 1 | **browser-cdp 采集** | 直接抓取平台页面，产出结构化文件 | 有 Chrome 环境时（优先） |
+| 1 | **browser-cdp-mimo 采集** | 直接抓取平台页面，产出结构化文件 | 有 Chrome 环境时（优先） |
 | 2 | **用户提供** | 用户粘贴榜单截图/文字/链接 | 用户已有数据时 |
 | 3 | **内置知识** | 基于知识库中的趋势数据和方法论做分析 | 无法联网、用户无数据时 |
 
-#### browser-cdp 采集模式
+#### browser-cdp-mimo 采集模式
 
-使用 `/browser-cdp` 启动 Chrome，直接抓取平台页面的结构化数据。
+使用 `/browser-cdp-mimo` 启动 Chrome，直接抓取平台页面的结构化数据。
 
 **点众采集目标**：
 
@@ -198,9 +198,9 @@ metadata:
 
 | 时机 | 跳转到 | 命令 |
 |---|---|---|
-| 找到方向 | story-short-analyze | `/story-short-analyze` |
-| 直接开写 | story-short-write | `/story-short-write` |
-| 更适合长篇 | story-long-scan | `/story-long-scan` |
+| 找到方向 | story-short-analyze-mimo | `/story-short-analyze-mimo` |
+| 直接开写 | story-short-write-mimo | `/story-short-write-mimo` |
+| 更适合长篇 | story-long-scan-mimo | `/story-long-scan-mimo` |
 
 ---
 
@@ -212,7 +212,7 @@ metadata:
 |------|----------|
 | [references/real-market-data.md](references/real-market-data.md) | **核心参考**：跨平台写作差异对照表、各平台简介公式速查、题材爆款公式速查表、各平台写作特征 |
 | [scripts/cdp-utils.js](scripts/cdp-utils.js) | CDP 公共工具函数（ab/sleep/evalJSON/safeStr/scrollLoad/getArg），各采集脚本共用 |
-| [scripts/dz-browse-scraper.js](scripts/dz-browse-scraper.js) | 点众短篇采集（男频/女频），文本解析+评分提取，配合 browser-cdp 使用 |
+| [scripts/dz-browse-scraper.js](scripts/dz-browse-scraper.js) | 点众短篇采集（男频/女频），文本解析+评分提取，配合 browser-cdp-mimo 使用 |
 | [scripts/heiyan-booklist-scraper.js](scripts/heiyan-booklist-scraper.js) | 黑岩书库列表采集，后端 API 模式（Bearer token），含字数/标签/价格/时间，支持 --detail 获取标签简介 |
 
 ---

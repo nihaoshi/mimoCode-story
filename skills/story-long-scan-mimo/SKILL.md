@@ -9,7 +9,7 @@ metadata:
     source: https://github.com/nihaoshi/mimoCode-story
 ---
 
-# story-long-scan：长篇网文扫榜
+# story-long-scan-mimo：长篇网文扫榜
 
 你是网络小说市场分析师。你的任务是基于榜单样本识别长篇网文市场格局，并输出可执行的题材候选、风险阈值和验证动作。
 
@@ -58,10 +58,10 @@ metadata:
 
 #### 脚本采集模式
 
-优先运行对应平台脚本直接采集结构化数据。起点使用移动端 SSR pageContext，默认不需要 Chrome/CDP；番茄等需要浏览器态的平台再使用 `/browser-cdp` 启动 Chrome。
+优先运行对应平台脚本直接采集结构化数据。起点使用移动端 SSR pageContext，默认不需要 Chrome/CDP；番茄等需要浏览器态的平台再使用 `/browser-cdp-mimo` 启动 Chrome。
 
 **采集流程**：
-1. 选择平台脚本；起点直接运行 `scripts/qidian-rank-scraper.js`，番茄/七猫/晋江等按需启动 browser-cdp
+1. 选择平台脚本；起点直接运行 `skills/story-long-scan-mimo/scripts/qidian-rank-scraper.js`，番茄/七猫/晋江等按需启动 browser-cdp-mimo
 2. 等待列表元素或 SSR 数据加载，逐条提取字段（排名、书名、作者、题材、字数、推荐/在读数等）
 3. 需要补充数据时（标签、简介、最新更新），进入详情页提取
 4. 按规范格式写入 Markdown 文件
@@ -69,7 +69,7 @@ metadata:
 
 **输出规范**：详见 [references/scan-output-format.md](references/scan-output-format.md)，包含各平台字段定义、输出模板、文件命名规范。
 
-**起点采集目标**（优先运行 `node scripts/qidian-rank-scraper.js --type {榜单} --outdir {输出目录}`；默认 `--mode auto` 会先用 `https://m.qidian.com` 移动端 SSR，PC/CDP 只作回退）：
+**起点采集目标**（优先运行 `node skills/story-long-scan-mimo/scripts/qidian-rank-scraper.js --type {榜单} --outdir {输出目录}`；默认 `--mode auto` 会先用 `https://m.qidian.com` 移动端 SSR，PC/CDP 只作回退）：
 
 | 榜单 | URL | 核心字段 |
 |------|-----|----------|
@@ -92,7 +92,7 @@ metadata:
 | 男频新书榜 | fanqienovel.com/rank/1_1_{cat_id} | 新风向信号 |
 | 女频新书榜 | fanqienovel.com/rank/0_1_{cat_id} | 新风向信号 |
 
-URL 参数：`/rank/{channel}_{type}_{cat_id}`，channel 0=女频/1=男频，type 1=新书榜/2=阅读榜。番茄有字体反爬，需用 `scripts/fanqie-rank-scraper.js`（通过详情页获取可读标题，绕过字体反爬，配合 browser-cdp 使用）。
+URL 参数：`/rank/{channel}_{type}_{cat_id}`，channel 0=女频/1=男频，type 1=新书榜/2=阅读榜。番茄有字体反爬，需用 `skills/story-long-scan-mimo/scripts/fanqie-rank-scraper.js`（通过详情页获取可读标题，绕过字体反爬，配合 browser-cdp-mimo 使用）。
 
 **七猫采集目标**：
 
@@ -273,7 +273,7 @@ URL 参数：`/rank/{channel}_{type}_{cat_id}`，channel 0=女频/1=男频，typ
 
 **如信息不足，向用户补齐项目条件：**「目标平台、已有素材、擅长题材/写作约束、计划篇幅是什么？」
 
-按 `topic-decision.md` 的选题四步产出 2-3 个推荐选题（能爆的原因 → 市场验证 → 差异化定位 → 可行性+失败风险+验证动作），写入**本次扫榜输出目录** `{outdir}/选题决策.md`，并告知用户路径与下一步：「开书时把 `选题决策.md` 放到小说项目根目录，写作会自动读取；想确认"能爆的原因"先 `/story-long-analyze` 拆对标书。」
+按 `topic-decision.md` 的选题四步产出 2-3 个推荐选题（能爆的原因 → 市场验证 → 差异化定位 → 可行性+失败风险+验证动作），写入**本次扫榜输出目录** `{outdir}/选题决策.md`，并告知用户路径与下一步：「开书时把 `选题决策.md` 放到小说项目根目录，写作会自动读取；想确认"能爆的原因"先 `/story-long-analyze-mimo` 拆对标书。」
 
 **硬规则：**
 - 可行性上限：背靠榜单标了 `[数据稀疏]` 或同方向样本 <15（小平台<10）⇒ 不许给"高"，强制降到"中" + 写明先验证；内置知识模式一律给"中"。
@@ -301,11 +301,11 @@ URL 参数：`/rank/{channel}_{type}_{cat_id}`，channel 0=女频/1=男频，typ
 
 | 时机 | 跳转到 | 命令 |
 |---|---|---|
-| 找到方向 | story-long-analyze | `/story-long-analyze` |
-| 直接开写 | story-long-write | `/story-long-write` |
-| 更适合短篇 | story-short-scan | `/story-short-scan` |
+| 找到方向 | story-long-analyze-mimo | `/story-long-analyze-mimo` |
+| 直接开写 | story-long-write-mimo | `/story-long-write-mimo` |
+| 更适合短篇 | story-short-scan-mimo | `/story-short-scan-mimo` |
 
-> **选题决策.md 交接**：Phase 4 产出的 `选题决策.md` 写在扫榜输出目录（扫榜常在没有小说项目时进行）。开书时把它搬到小说项目根目录，story-long-write Phase 1 会自动读取；拆文（story-long-analyze）会在汇总报告产出后回填对应选题的"能爆的原因"。
+> **选题决策.md 交接**：Phase 4 产出的 `选题决策.md` 写在扫榜输出目录（扫榜常在没有小说项目时进行）。开书时把它搬到小说项目根目录，story-long-write-mimo Phase 1 会自动读取；拆文（story-long-analyze-mimo）会在汇总报告产出后回填对应选题的"能爆的原因"。
 
 ## 参考资料
 
@@ -319,7 +319,7 @@ URL 参数：`/rank/{channel}_{type}_{cat_id}`，channel 0=女频/1=男频，typ
 | [references/publishing-guide.md](references/publishing-guide.md) | 平台适配+推荐机制校验+数据指标+简介设计 |
 | [references/scan-output-format.md](references/scan-output-format.md) | 脚本/CDP 采集字段定义+输出模板+文件命名规范 |
 | [scripts/cdp-utils.js](scripts/cdp-utils.js) | CDP 公共工具函数（ab/sleep/evalJSON/safeStr/scrollLoad/getArg），各采集脚本共用 |
-| [scripts/fanqie-rank-scraper.js](scripts/fanqie-rank-scraper.js) | 番茄榜单采集，通过详情页绕过字体反爬，配合 browser-cdp 使用 |
+| [scripts/fanqie-rank-scraper.js](scripts/fanqie-rank-scraper.js) | 番茄榜单采集，通过详情页绕过字体反爬，配合 browser-cdp-mimo 使用 |
 | [scripts/qidian-rank-scraper.js](scripts/qidian-rank-scraper.js) | 起点榜单采集（畅销/月票/新书等），默认移动端 SSR 提取，PC/CDP 回退 |
 | [scripts/qimao-rank-scraper.js](scripts/qimao-rank-scraper.js) | 七猫榜单采集（大热/新书/完结等），tab 切换+滚动加载 |
 | [scripts/jjwxc-rank-scraper.js](scripts/jjwxc-rank-scraper.js) | 晋江榜单采集（收入金榜/月榜等），按频道分组提取 |

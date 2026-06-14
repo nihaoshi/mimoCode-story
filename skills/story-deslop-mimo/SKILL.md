@@ -189,8 +189,8 @@ AI味是风格问题——过于书面化、过于对仗工整、过于面面俱
 
 | 时机 | 跳转到 |
 |------|--------|
-| 继续写作 | `story-long-write` / `story-short-write` |
-| 发现结构问题 | `story-long-analyze` |
+| 继续写作 | `story-long-write-mimo` / `story-short-write-mimo` |
+| 发现结构问题 | `story-long-analyze-mimo` |
 
 ---
 

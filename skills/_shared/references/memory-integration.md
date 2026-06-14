@@ -114,7 +114,7 @@ scope: projects
 
 ### 1. 初始化项目
 
-在 `story-setup` 中，创建 memory 条目：
+在 `story-setup-mimo` 中，创建 memory 条目：
 
 ```
 memory({

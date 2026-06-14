@@ -24,7 +24,7 @@
 
 复用 `state-tracking.md` 规则：**只追踪出场 ≥3 次或有独立剧情线的角色**。
 
-对照 story-import 角色分级表：
+对照 story-import-mimo 角色分级表：
 
 | 等级 | 是否进入角色状态.md |
 |------|-------------------|
@@ -84,7 +84,7 @@
 
 ## 四、输出格式
 
-本节即为 `角色状态.md` 的标准模板（与 story-long-write 同名 artifact 字段一致），逐字段一一对应，不新增、不删减字段。
+本节即为 `角色状态.md` 的标准模板（与 story-long-write-mimo 同名 artifact 字段一致），逐字段一一对应，不新增、不删减字段。
 
 ```markdown
 # 角色状态追踪

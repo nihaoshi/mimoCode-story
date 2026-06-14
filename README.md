@@ -36,7 +36,7 @@
 |------|------|
 | **全流程覆盖** | 从选题到发布，16 个技能覆盖网文创作全生命周期 |
 | **长篇 + 短篇** | 同时支持长篇连载和短篇创作，按篇幅自动分流 |
-| **智能路由** | `/story` 主入口自动识别用户意图，分发到对应技能 |
+| **智能路由** | `/story-mimo` 主入口自动识别用户意图，分发到对应技能 |
 | **7 重质量门禁** | 禁用词、一致性、伏笔、字数、角色声音、情绪曲线、爽点密度 |
 | **Writing Project Rules** | 自动部署写作强制规则到项目，AI 每次会话自动读取 |
 | **跨会话连续** | 基于 MiMo Code 持久化记忆，写作进度自动保存/恢复 |
@@ -113,7 +113,7 @@ Copy-Item -Path "$HOME\mimoCode-story\skills\*" -Destination "$HOME\.config\mimo
 /mimo debug skill
 ```
 
-应在列表中看到 `story`、`story-long-write`、`story-short-write` 等 16 个技能。
+应在列表中看到 `story-mimo`、`story-long-write-mimo`、`story-short-write-mimo` 等 16 个技能。
 
 ---
 
@@ -141,7 +141,7 @@ cd ~/mimoCode-story; git pull; Copy-Item -Path "skills\*" -Destination "$HOME\.c
 
 | 更新类型 | 说明 |
 |---------|------|
-| 脚本更新 | `skills/story-long-write/scripts/` 下的自动化脚本 |
+| 脚本更新 | `skills/story-long-write-mimo/scripts/` 下的自动化脚本 |
 | 技能更新 | `skills/*/SKILL.md` 下的技能定义 |
 | 知识库更新 | `skills/_shared/references/` 下的参考文档 |
 | 模板更新 | `skills/_shared/templates/` 下的写作模板 |
@@ -151,7 +151,7 @@ cd ~/mimoCode-story; git pull; Copy-Item -Path "skills\*" -Destination "$HOME\.c
 如果已有写作项目需要使用新版本的技能包：
 
 1. 更新技能包（按上述步骤）
-2. 重新运行质量门禁：`node skills/story-long-write/scripts/quality-gate.js <章节文件>`
+2. 重新运行质量门禁：`node skills/story-long-write-mimo/scripts/quality-gate.js <章节文件>`
 3. 如需更新 AGENTS.md 中的规则，手动复制新规则到项目的 AGENTS.md
 
 ---
@@ -206,10 +206,10 @@ cd ~/mimoCode-story; git pull; Copy-Item -Path "skills\*" -Destination "$HOME\.c
 
 ```
 # 统一质量门禁（7 重检查）
-node skills/story-long-write/scripts/quality-gate.js <章节文件>
+node skills/story-long-write-mimo/scripts/quality-gate.js <章节文件>
 
 # 快速模式（仅阻断项检查）
-node skills/story-long-write/scripts/quality-gate.js --fast <章节文件>
+node skills/story-long-write-mimo/scripts/quality-gate.js --fast <章节文件>
 ```
 
 ---
@@ -281,23 +281,23 @@ node skills/story-long-write/scripts/quality-gate.js --fast <章节文件>
 
 ```bash
 # 运行统一质量门禁
-node skills/story-long-write/scripts/quality-gate.js 正文/第001章_XXX.md
+node skills/story-long-write-mimo/scripts/quality-gate.js 正文/第001章_XXX.md
 
 # JSON 格式输出（供自动化流水线使用）
-node skills/story-long-write/scripts/quality-gate.js --json 正文/第001章_XXX.md
+node skills/story-long-write-mimo/scripts/quality-gate.js --json 正文/第001章_XXX.md
 
 # 快速模式（跳过警告项检查）
-node skills/story-long-write/scripts/quality-gate.js --fast 正文/第001章_XXX.md
+node skills/story-long-write-mimo/scripts/quality-gate.js --fast 正文/第001章_XXX.md
 
 # 单独运行某个检查
-node skills/story-long-write/scripts/style-lint.js --json 正文/第001章_XXX.md
-node skills/story-long-write/scripts/consistency-check.js --json 正文/第001章_XXX.md
+node skills/story-long-write-mimo/scripts/style-lint.js --json 正文/第001章_XXX.md
+node skills/story-long-write-mimo/scripts/consistency-check.js --json 正文/第001章_XXX.md
 
 # 情绪曲线可视化
-node skills/story-long-write/scripts/emotion-analyzer.js 正文/第001章_XXX.md
+node skills/story-long-write-mimo/scripts/emotion-analyzer.js 正文/第001章_XXX.md
 
 # 字数节奏指导
-node skills/story-long-write/scripts/wordcount-pacer.js 大纲/细纲_第001章.md
+node skills/story-long-write-mimo/scripts/wordcount-pacer.js 大纲/细纲_第001章.md
 ```
 
 ---
@@ -427,14 +427,14 @@ node skills/story-long-write/scripts/wordcount-pacer.js 大纲/细纲_第001章.
 │
 ├── 对标/                  # 拆文引用视图
 ├── 参考资料/              # story-researcher 输出
-└── 导出/                  # story-export 输出
+└── 导出/                  # story-export-mimo 输出
 ```
 
 ---
 
 ## Writing Project Rules
 
-`story-setup` 自动部署的 AGENTS.md 包含以下强制规则：
+`story-setup-mimo` 自动部署的 AGENTS.md 包含以下强制规则：
 
 ### 写完每章必须执行
 
@@ -444,7 +444,7 @@ node skills/story-long-write/scripts/wordcount-pacer.js 大纲/细纲_第001章.
 4. 更新 `追踪/物品.md` — 物品位置/状态变化
 5. 更新 `追踪/环境.md` — 季节/天气/场景
 6. 更新 `追踪/上下文.md` — 进度摘要
-7. 运行质量门禁：`node skills/story-long-write/scripts/quality-gate.js <章节文件>`
+7. 运行质量门禁：`node skills/story-long-write-mimo/scripts/quality-gate.js <章节文件>`
 
 ### 质量门禁规则
 
@@ -525,7 +525,7 @@ node skills/story-long-write/scripts/wordcount-pacer.js 大纲/细纲_第001章.
 /story-long-write
 
 # 5. 质量检查
-node skills/story-long-write/scripts/quality-gate.js 正文/第001章_XXX.md
+node skills/story-long-write-mimo/scripts/quality-gate.js 正文/第001章_XXX.md
 
 # 6. 去AI味
 /story-deslop
@@ -570,8 +570,8 @@ node skills/story-long-write/scripts/quality-gate.js 正文/第001章_XXX.md
 | 情绪分析 | 无 | `emotion-analyzer.js` |
 | 爽点检测 | 无 | `satisfaction-meter.js` |
 | 角色声音 | 无 | `voice-check.js` |
-| 简介生成 | 无 | `story-synopsis` |
-| 导出功能 | 无 | `story-export` |
+| 简介生成 | 无 | `story-synopsis-mimo` |
+| 导出功能 | 无 | `story-export-mimo` |
 | 节奏指导 | 无 | `wordcount-pacer.js` + `pacing-mastery.md` |
 | 情绪曲线 | 无 | `emotion-curve-design.md` |
 | 记忆集成 | 无 | 深度集成 MiMo Code 记忆系统 |
@@ -580,6 +580,13 @@ node skills/story-long-write/scripts/quality-gate.js 正文/第001章_XXX.md
 ---
 
 ## 更新日志
+
+### v3.1.1（2026-06-14）
+
+**引用修复**：
+- 修复所有技能文件中的技能名称引用，确保统一使用 `-mimo` 后缀
+- 修复脚本路径引用，确保完整路径正确
+- 修复配置文件（`.skills-plugin-config.json`、`openclaw.plugin.json`）中的技能路径
 
 ### v3.1.0（2026-06-14）
 
@@ -617,8 +624,8 @@ node skills/story-long-write/scripts/quality-gate.js 正文/第001章_XXX.md
 - `wordcount-pacer.js` — 字数节奏指导（标准/开篇/高潮/过渡四种模板）
 
 **新增技能（2 个）**：
-- `story-synopsis` — 简介/文案生成（起点/番茄/晋江/知乎四平台 + A/B 测试）
-- `story-export` — 多格式导出（TXT/平台TXT/校对稿/章节目录）
+- `story-synopsis-mimo` — 简介/文案生成（起点/番茄/晋江/知乎四平台 + A/B 测试）
+- `story-export-mimo` — 多格式导出（TXT/平台TXT/校对稿/章节目录）
 
 **新增参考文档（2 个）**：
 - `emotion-curve-design.md` — 情绪曲线设计（V/W/递进/延迟满足四种模型）

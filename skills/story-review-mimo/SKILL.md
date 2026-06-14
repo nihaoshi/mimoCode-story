@@ -117,8 +117,8 @@ description: |
 
 | 时机 | 跳转到 |
 |------|--------|
-| 审完修改 | `story-long-write` / `story-short-write` |
-| 发现AI味 | `story-deslop` |
+| 审完修改 | `story-long-write-mimo` / `story-short-write-mimo` |
+| 发现AI味 | `story-deslop-mimo` |
 
 ---
 

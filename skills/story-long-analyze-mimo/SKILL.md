@@ -101,8 +101,8 @@ Stage 0+1 完成后，管道自动停靠，产出快速预览报告。
 
 | 时机 | 跳转到 |
 |------|--------|
-| 准备开写 | `story-long-write` |
-| 需要市场数据 | `story-scan` |
+| 准备开写 | `story-long-write-mimo` |
+| 需要市场数据 | `story-scan-mimo` |
 
 ---
 

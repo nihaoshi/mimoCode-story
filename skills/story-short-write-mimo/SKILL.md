@@ -134,13 +134,13 @@ description: |
 
 ```bash
 # 基础检查
-node skills/story-short-write/scripts/quality-gate.js <章节文件> --min-words 8000
+node skills/story-short-write-mimo/scripts/quality-gate.js <章节文件> --min-words 8000
 
 # 完整检查（含标点符号）
-node skills/story-short-write/scripts/quality-gate.js <章节文件> --min-words 8000 --check-punctuation
+node skills/story-short-write-mimo/scripts/quality-gate.js <章节文件> --min-words 8000 --check-punctuation
 
 # JSON输出（用于自动化）
-node skills/story-short-write/scripts/quality-gate.js <章节文件> --json
+node skills/story-short-write-mimo/scripts/quality-gate.js <章节文件> --json
 ```
 
 #### 标点符号规范化
@@ -197,9 +197,9 @@ node skills/_shared/scripts/punctuation-normalize.js <文件> --fix
 
 | 时机 | 跳转到 |
 |------|--------|
-| 有参考小说 | `story-short-analyze` |
-| 写完去AI味 | `story-deslop` |
-| 设定太大 | `story-long-write` |
+| 有参考小说 | `story-short-analyze-mimo` |
+| 写完去AI味 | `story-deslop-mimo` |
+| 设定太大 | `story-long-write-mimo` |
 
 ---
 

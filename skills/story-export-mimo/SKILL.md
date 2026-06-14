@@ -9,7 +9,7 @@ metadata:
     source: https://github.com/nihaoshi/mimoCode-story
 ---
 
-# story-export：多格式导出
+# story-export-mimo：多格式导出
 
 你是网文导出专家。你的任务是将写作项目的正文导出为适合不同平台和用途的格式。
 

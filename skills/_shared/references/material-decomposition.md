@@ -684,7 +684,7 @@
 - **SKILL.md** = 路由逻辑 + 管道概要（Phase 1 用户交互 + 字数路由 + Stage 2-6 管道表 + Phase 7 门控验收）
 - **本文件（material-decomposition.md）** = 方法论细节（Stage 2-6 操作步骤 + 情节节点 + 写作手法 + 情感线 + 节奏 + 共鸣）+ **质量标准唯一权威**（阈值/数值/计算方式）
 - **output-templates.md** = 具体输出格式模板（每个 Stage 的 markdown 模板 + 质量门控逐项 checklist 含 `[BLOCK]`/`[WARN]` 标注 + Stage 6 `_meta.json.structure_counts` 产出模板，数值引用本文件）
-- **output-contract.md** = 输出契约 SSOT：定义 Stage → 文件映射 + `_meta.json` schema（含 `structure_counts`）+ 下游 `story-short-write` 消费规范 + Phase 7 门控接入点。与 `story-short-write` 副本字节一致，由 `scripts/check-shared-files.sh` 守护
+- **output-contract.md** = 输出契约 SSOT：定义 Stage → 文件映射 + `_meta.json` schema（含 `structure_counts`）+ 下游 `story-short-write-mimo` 消费规范 + Phase 7 门控接入点。与 `story-short-write-mimo` 副本字节一致，由 `scripts/check-shared-files.sh` 守护
 - **quality-checklist.md** = 短篇拆书的质量自检清单（评估**源文**质量时用，数值引用本文件）
 - **anti-ai-writing.md + banned-words.md** = 拆文报告**本身**的 AI 腔守门员（Phase 7.1 调用扫描 `拆文报告.md`，不是源文滤镜）
 

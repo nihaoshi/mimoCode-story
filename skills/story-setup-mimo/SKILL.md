@@ -214,7 +214,7 @@ Copy-Item .githooks\* .git\hooks\ -Force -ErrorAction SilentlyContinue
 ### 3.6 MiMo Code 记忆初始化
 
 MiMo Code 的记忆系统是平台内置功能，会自动在 `MEMORY.md` 中保存项目知识。
-首次写作时，story-long-write 会自动创建 `MEMORY.md` 初始文件。
+首次写作时，story-long-write-mimo 会自动创建 `MEMORY.md` 初始文件。
 
 ---
 
@@ -222,7 +222,7 @@ MiMo Code 的记忆系统是平台内置功能，会自动在 `MEMORY.md` 中保
 
 1. 验证目录结构完整
 2. 输出安装报告
-3. 提示用户可以开始使用 `/story-long-write` 或 `/story-short-write`
+3. 提示用户可以开始使用 `/story-long-write-mimo` 或 `/story-short-write-mimo`
 
 ---
 

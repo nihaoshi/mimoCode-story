@@ -132,8 +132,8 @@ webfetch("https://www.google.com/search?q=番茄小说热门分类", "text")
 
 | 时机 | 跳转到 |
 |------|--------|
-| 选好方向，准备写 | `story-long-write` |
-| 需要拆文验证 | `story-long-analyze` |
+| 选好方向，准备写 | `story-long-write-mimo` |
+| 需要拆文验证 | `story-long-analyze-mimo` |
 
 ---
 

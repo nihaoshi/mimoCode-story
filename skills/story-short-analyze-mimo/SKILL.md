@@ -109,8 +109,8 @@ description: |
 
 | 时机 | 跳转到 |
 |------|--------|
-| 拆完想写 | `story-short-write` |
-| 拆完想拆长篇 | `story-long-analyze` |
+| 拆完想写 | `story-short-write-mimo` |
+| 拆完想拆长篇 | `story-long-analyze-mimo` |
 
 ---
 
