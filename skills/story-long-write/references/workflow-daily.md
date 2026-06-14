@@ -148,7 +148,7 @@ MiMo Code 的 checkpoint 恢复机制会自动注入 memory 内容，但如果 m
      - `追踪/上下文.md`（只更新进度元信息：当前位置+已写字数+本次变更，不写详细角色状态/伏笔内容）
    - **质检提示**（可选）：本章写作完成。如需一致性检查，运行 `/story-review lean`。批量写作模式跳过此步骤，全部写完后再统一审查。
    - **版本提交**（仅当 version_control=true）：检查 `.story-config.json` 中的 `version_control` 字段。如果为 true，执行 `git add 正文/第{N}章_*.md 追踪/*.md && git commit -m "Ch{N}: {章名} ({字数}字)"`；如果为 false 或不存在，跳过 git 操作
-    - **质量门禁**：运行 `node skills/story-long-write/scripts/quality-gate.js <章节文件>`。退出码 2（阻断）时必须修复后重新运行，不得标记任务完成。
+    - **质量门禁**：AI自动调用 `quality-gate.js` 检查，用户无需手动执行。退出码 2（阻断）时AI自动修复后重新检查，不得标记任务完成。
     - **Task 完成**：标记本章 task 完成
       ```
       task done {TID}
