@@ -1,9 +1,9 @@
 ---
-name: story-export
+name: story-export-mimo
 version: 1.0.0
 description: |
   多格式导出。将写作项目导出为不同平台和用途的格式。
-  触发方式：/story-export、/导出、「帮我导出」「导出TXT」「导出校对稿」
+  触发方式：/story-export-mimo、/导出、「帮我导出」「导出TXT」「导出校对稿」
 metadata:
   openclaw:
     source: https://github.com/nihaoshi/mimoCode-story

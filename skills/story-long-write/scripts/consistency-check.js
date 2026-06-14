@@ -4,16 +4,19 @@
 const fs = require('fs');
 const path = require('path');
 
-const USAGE = `Usage: node consistency-check.js <chapter-file> [project-dir] [--json]
+const USAGE = `Usage: node consistency-check.js <chapter-file> [project-dir] [--json] [--full]
 
 Check chapter text against tracking files for consistency issues:
 - Items: check if items mentioned in chapter exist in tracking
 - Environment: check season/weather continuity
 - Character state: check if character attributes are consistent
 - Timeline: check for obvious time contradictions
+- Identity: check if character identity matches behavior
+- Tracking completeness: check if tracking files have required fields
 
 Options:
   --json    Output structured JSON instead of human-readable text
+  --full    Enable full consistency checks (slower but more thorough)
 
 Exit code 0 = pass, 1 = warnings found, 2 = errors found`;
 
@@ -202,10 +205,109 @@ function checkSeason(chapterSeasons, trackingFile) {
   return warnings;
 }
 
+function checkIdentityConsistency(chapterText, charFile) {
+  const warnings = [];
+  if (!charFile) return warnings;
+  
+  // 提取主角专业信息
+  const professionMatch = charFile.match(/身份[：:]\s*(.+?博士)/);
+  if (!professionMatch) return warnings;
+  
+  const profession = professionMatch[1];
+  
+  // 检测不合理的论文/文献引用
+  const invalidPaperPatterns = [
+    { pattern: /在论文里(?:分析|论证|研究)(?:军事|战争|战术|排兵布阵)/g, issue: '天文学博士不应在论文中分析军事战术' },
+    { pattern: /在论文里(?:引用|提到)(?:房玄龄|李靖|李世民|魏徵)/g, issue: '天文学博士不应在论文中引用历史人物' },
+    { pattern: /在论文里(?:研究|讨论)(?:长安城|宫殿|城市布局)/g, issue: '天文学博士不应在论文中研究城市布局' },
+    { pattern: /考古复原图/g, issue: '天文学博士不应熟悉考古复原图' },
+    { pattern: /在论文里读过.*传说/g, issue: '天文学博士不应在论文中研究传说' },
+  ];
+  
+  for (const { pattern, issue } of invalidPaperPatterns) {
+    const matches = chapterText.match(pattern);
+    if (matches && matches.length > 0) {
+      warnings.push(`身份矛盾：${issue}`);
+    }
+  }
+  
+  return warnings;
+}
+
+function checkTrackingCompleteness(trackingDir) {
+  const warnings = [];
+  
+  // 检查角色状态.md是否包含性格锚点
+  const charFile = readFile(path.join(trackingDir, '角色状态.md'));
+  if (charFile && !charFile.includes('性格锚点')) {
+    warnings.push('角色状态.md缺少"性格锚点"字段，建议为每个主要角色添加');
+  }
+  
+  // 检查物品.md和物资.md是否重复
+  const itemsFile = readFile(path.join(trackingDir, '物品.md'));
+  const suppliesFile = readFile(path.join(trackingDir, '物资.md'));
+  if (itemsFile && suppliesFile) {
+    const itemsContent = itemsFile.replace(/\s/g, '');
+    const suppliesContent = suppliesFile.replace(/\s/g, '');
+    const overlap = ['白瓷片', '过所', '文房四宝', '李靖'].filter(item => 
+      itemsContent.includes(item) && suppliesContent.includes(item)
+    );
+    if (overlap.length >= 3) {
+      warnings.push(`物品.md和物资.md内容重复（共同包含：${overlap.slice(0, 3).join('、')}），建议合并`);
+    }
+  }
+  
+  // 检查伏笔.md状态标记是否统一
+  const foreshadowFile = readFile(path.join(trackingDir, '伏笔.md'));
+  if (foreshadowFile) {
+    const hasEmoji = foreshadowFile.includes('🟢') || foreshadowFile.includes('🟡') || foreshadowFile.includes('🔴');
+    const hasText = foreshadowFile.includes('已埋设') || foreshadowFile.includes('未回收');
+    if (hasEmoji && hasText) {
+      warnings.push('伏笔.md状态标记不统一（同时使用emoji和文字），建议统一');
+    }
+  }
+  
+  return warnings;
+}
+
+function checkTimelineLogic(chapterText, chapterFile) {
+  const warnings = [];
+  
+  // 提取章节号
+  const chapterMatch = chapterFile.match(/第(\d+)章/);
+  if (!chapterMatch) return warnings;
+  
+  const chapterNum = parseInt(chapterMatch[1], 10);
+  
+  // 检测怀孕时间线矛盾
+  const pregnancyPatterns = [
+    { pattern: /怀孕(?:约|大概|差不多)(\d+)[-~](\d+)个月/g, desc: '怀孕时长' },
+    { pattern: /肚子.*?(?:五|六|七|八|九)个月/g, desc: '肚子大小描述' },
+  ];
+  
+  for (const { pattern, desc } of pregnancyPatterns) {
+    const matches = chapterText.match(pattern);
+    if (matches) {
+      // 简单检查：如果在同一章中提到不同的怀孕时长，可能有问题
+      const months = matches.map(m => {
+        const numMatch = m.match(/(\d+)/);
+        return numMatch ? parseInt(numMatch[1], 10) : 0;
+      }).filter(n => n > 0);
+      
+      if (months.length > 1 && Math.max(...months) - Math.min(...months) > 2) {
+        warnings.push(`时间线疑点：本章中${desc}描述不一致（${months.join('、')}个月）`);
+      }
+    }
+  }
+  
+  return warnings;
+}
+
 function main() {
   const args = process.argv.slice(2);
   const jsonMode = args.includes('--json');
-  const filteredArgs = args.filter(a => a !== '--json');
+  const fullMode = args.includes('--full');
+  const filteredArgs = args.filter(a => a !== '--json' && a !== '--full');
 
   if (filteredArgs.length === 0 || filteredArgs[0] === '--help') {
     console.log(USAGE);
@@ -245,6 +347,7 @@ function main() {
   const chapterSeasons = extractSeasonWeather(chapterText);
   const chapterNames = extractCharacterNamesFromText(chapterText);
 
+  // 基础检查（始终执行）
   const itemWarnings = checkItems(chapterItems, itemsFile);
   warnings.push(...itemWarnings.map(msg => ({ type: 'item', level: 1, message: msg })));
 
@@ -264,6 +367,23 @@ function main() {
     warnings.push(...stateWarnings.map(msg => ({ type: 'character_state', level: 1, message: msg })));
   }
 
+  // 增强检查（--full 模式或始终执行轻量版本）
+  if (fullMode || true) {
+    // 身份一致性检查
+    const identityWarnings = checkIdentityConsistency(chapterText, charFile);
+    warnings.push(...identityWarnings.map(msg => ({ type: 'identity', level: 1, message: msg })));
+
+    // 时间线逻辑检查
+    const timelineWarnings = checkTimelineLogic(chapterText, chapterFile);
+    warnings.push(...timelineWarnings.map(msg => ({ type: 'timeline', level: 1, message: msg })));
+  }
+
+  // 完整性检查（仅 --full 模式）
+  if (fullMode) {
+    const completenessWarnings = checkTrackingCompleteness(trackingDir);
+    warnings.push(...completenessWarnings.map(msg => ({ type: 'completeness', level: 1, message: msg })));
+  }
+
   if (jsonMode) {
     const result = {
       status: errors.length > 0 ? 'error' : (warnings.length > 0 ? 'warn' : 'pass'),
@@ -277,7 +397,7 @@ function main() {
 
   if (warnings.length > 0) {
     console.log(`\n⚠️  一致性检查发现 ${warnings.length} 个问题：`);
-    warnings.forEach((w, i) => console.log(`  ${i + 1}. ${w.message}`));
+    warnings.forEach((w, i) => console.log(`  ${i + 1}. [${w.type}] ${w.message}`));
     process.exit(1);
   }
 

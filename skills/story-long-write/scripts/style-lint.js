@@ -4,16 +4,19 @@
 const fs = require('fs');
 const path = require('path');
 
-const USAGE = `Usage: node style-lint.js <chapter-file> [--json]
+const USAGE = `Usage: node style-lint.js <chapter-file> [--json] [--full]
 
 Check chapter for AI-style writing issues:
 - Banned words (一级/二级)
 - Excessive parallel structures
 - Overused dialogue tags
 - AI-style sentence patterns
+- Heading format consistency
+- Professional terminology consistency
 
 Options:
   --json    Output structured JSON instead of human-readable text
+  --full    Enable full checks (heading format, professional terms)
 
 Exit code 0 = pass, 1 = warnings found`;
 
@@ -116,10 +119,66 @@ function checkAIPatterns(text) {
   return issues;
 }
 
+function checkHeadingFormat(text, filename) {
+  const issues = [];
+  
+  // 检查标题格式是否统一
+  const h1Matches = text.match(/^# [^\n]+/gm);
+  const h2Matches = text.match(/^## [^\n]+/gm);
+  
+  if (h1Matches && h1Matches.length > 0 && h2Matches && h2Matches.length > 0) {
+    issues.push(`标题格式不统一：同时使用 # 和 ##（# ${h1Matches.length}处，## ${h2Matches.length}处）`);
+  }
+  
+  // 检查文件名与内部标题是否一致
+  const filenameMatch = filename.match(/第(\d+)章[_-](.+)\.md/);
+  if (filenameMatch) {
+    const chapterNum = filenameMatch[1];
+    const titleInFile = h1Matches ? h1Matches[0] : (h2Matches ? h2Matches[0] : '');
+    if (titleInFile && !titleInFile.includes(chapterNum)) {
+      issues.push(`文件名中的章节号(${chapterNum})与内部标题不一致`);
+    }
+  }
+  
+  return issues;
+}
+
+function checkProfessionalTerms(text, charFile) {
+  const issues = [];
+  
+  if (!charFile) return issues;
+  
+  // 提取主角专业
+  const professionMatch = charFile.match(/身份[：:]\s*(.+?博士)/);
+  if (!professionMatch) return issues;
+  
+  const profession = professionMatch[1];
+  
+  // 根据专业检查不合理的术语使用
+  if (profession.includes('天文学')) {
+    const invalidTerms = [
+      { term: /军事动员能力/g, issue: '天文学博士不应使用"军事动员能力"术语' },
+      { term: /后勤保障体系/g, issue: '天文学博士不应使用"后勤保障体系"术语' },
+      { term: /排兵布阵/g, issue: '天文学博士不应使用"排兵布阵"术语' },
+      { term: /战术分析/g, issue: '天文学博士不应使用"战术分析"术语' },
+    ];
+    
+    for (const { term, issue } of invalidTerms) {
+      const matches = text.match(term);
+      if (matches && matches.length > 0) {
+        issues.push(issue);
+      }
+    }
+  }
+  
+  return issues;
+}
+
 function main() {
   const args = process.argv.slice(2);
   const jsonMode = args.includes('--json');
-  const filteredArgs = args.filter(a => a !== '--json');
+  const fullMode = args.includes('--full');
+  const filteredArgs = args.filter(a => a !== '--json' && a !== '--full');
 
   if (filteredArgs.length === 0 || filteredArgs[0] === '--help') {
     console.log(USAGE);
@@ -127,6 +186,8 @@ function main() {
   }
 
   const chapterFile = path.resolve(filteredArgs[0]);
+  const projectDir = filteredArgs[1] ? path.resolve(filteredArgs[1]) : path.resolve(path.dirname(chapterFile), '..');
+  
   if (!fs.existsSync(chapterFile)) {
     console.error(`Error: File not found: ${chapterFile}`);
     process.exit(2);
@@ -138,6 +199,7 @@ function main() {
     process.exit(2);
   }
 
+  // 基础检查
   const banned = checkBannedWords(text);
   const dialogueIssues = checkDialogueTags(text);
   const parallelIssues = checkParallelStructures(text);
@@ -155,6 +217,22 @@ function main() {
   }
   for (const a of aiIssues) {
     issues.push({ type: 'ai_pattern', level: 2, message: a });
+  }
+
+  // 增强检查（--full 模式）
+  if (fullMode) {
+    // 标题格式检查
+    const headingIssues = checkHeadingFormat(text, path.basename(chapterFile));
+    for (const h of headingIssues) {
+      issues.push({ type: 'heading_format', level: 1, message: h });
+    }
+
+    // 专业术语检查
+    const charFile = readFile(path.join(projectDir, '追踪', '角色状态.md'));
+    const termIssues = checkProfessionalTerms(text, charFile);
+    for (const t of termIssues) {
+      issues.push({ type: 'professional_term', level: 1, message: t });
+    }
   }
 
   const level1Count = issues.filter(i => i.level === 1).length;
@@ -194,13 +272,27 @@ function main() {
     aiIssues.forEach(a => console.log(`  ⚠️  ${a}`));
   }
 
+  if (fullMode) {
+    const headingIssues = issues.filter(i => i.type === 'heading_format');
+    if (headingIssues.length > 0) {
+      console.log('\n📐 标题格式：');
+      headingIssues.forEach(h => console.log(`  ⚠️  ${h.message}`));
+    }
+
+    const termIssues = issues.filter(i => i.type === 'professional_term');
+    if (termIssues.length > 0) {
+      console.log('\n🎓 专业术语：');
+      termIssues.forEach(t => console.log(`  ⚠️  ${t.message}`));
+    }
+  }
+
   if (issues.length === 0) {
     console.log('✅ 文风检查通过');
     process.exit(0);
   }
 
   if (level1Count > 0) {
-    console.log(`\n❌ 发现 ${level1Count} 个一级禁用词，需要修改`);
+    console.log(`\n❌ 发现 ${level1Count} 个一级问题，需要修改`);
     process.exit(1);
   }
 

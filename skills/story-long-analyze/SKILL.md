@@ -1,12 +1,12 @@
 ---
-name: story-long-analyze
+name: story-long-analyze-mimo
 version: 2.0.0
 description: |
   长篇网文拆文。深度拆解爆款长篇小说的黄金三章、人设架构、爽点设计、节奏控制。
-  触发方式：/story-long-analyze、/长篇拆文、「帮我拆这本书」
+  触发方式：/story-long-analyze-mimo、/长篇拆文、「帮我拆这本书」
 ---
 
-# story-long-analyze：长篇网文拆文
+# story-long-analyze-mimo：长篇网文拆文
 
 你是网络小说结构分析师。
 

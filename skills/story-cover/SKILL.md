@@ -1,12 +1,12 @@
 ---
-name: story-cover
+name: story-cover-mimo
 version: 2.0.0
 description: |
   封面生成。分析书名题材，生成封面提示词或封面图。
-  触发方式：/story-cover、/封面、「帮我做个封面」
+  触发方式：/story-cover-mimo、/封面、「帮我做个封面」
 ---
 
-# story-cover：封面生成
+# story-cover-mimo：封面生成
 
 你是封面设计顾问。
 

@@ -4,15 +4,18 @@
 const fs = require('fs');
 const path = require('path');
 
-const USAGE = `Usage: node foreshadow-check.js <chapter-file> [project-dir] [--json]
+const USAGE = `Usage: node foreshadow-check.js <chapter-file> [project-dir] [--json] [--full]
 
 Check chapter against foreshadowing tracking:
 - Verify new foreshadowings are recorded
 - Check if foreshadowings mentioned in chapter are tracked
 - Flag overdue foreshadowings (buried > 50 chapters without recovery)
+- Check foreshadowing marking format consistency
+- Detect overlapping foreshadowings
 
 Options:
   --json    Output structured JSON instead of human-readable text
+  --full    Enable full checks (format, overlap detection)
 
 Exit code 0 = pass, 1 = warnings, 2 = errors`;
 
@@ -65,10 +68,49 @@ function parseForeshadowTable(text) {
   return rows;
 }
 
+function checkForeshadowMarkingFormat(foreshadowFile) {
+  const warnings = [];
+  
+  // 检查是否统一使用 emoji 标记
+  const hasEmoji = foreshadowFile.includes('🟢') || foreshadowFile.includes('🟡') || foreshadowFile.includes('🔴');
+  const hasTextStatus = foreshadowFile.includes('已埋设，未回收') || foreshadowFile.includes('已部分回收');
+  
+  if (hasEmoji && hasTextStatus) {
+    warnings.push('伏笔状态标记不统一（同时使用emoji和文字），建议统一为 🟢/🟡/🔴');
+  }
+  
+  return warnings;
+}
+
+function detectOverlappingForeshadows(tracked) {
+  const warnings = [];
+  
+  // 检测功能重叠的伏笔
+  const overlapGroups = [
+    { keywords: ['甬道', '纸灰', '烧纸'], desc: '甬道烧纸相关' },
+    { keywords: ['紫袍', '官员', '焚烧'], desc: '紫袍官员相关' },
+    { keywords: ['太史局', '黄麻纸', '烧'], desc: '太史局烧纸相关' },
+  ];
+  
+  for (const group of overlapGroups) {
+    const matching = tracked.filter(f => 
+      group.keywords.some(kw => f.content.includes(kw))
+    );
+    
+    if (matching.length >= 2) {
+      const ids = matching.map(f => f.id).join('、');
+      warnings.push(`伏笔 ${ids} 功能重叠（${group.desc}），建议合并或明确区分`);
+    }
+  }
+  
+  return warnings;
+}
+
 function main() {
   const args = process.argv.slice(2);
   const jsonMode = args.includes('--json');
-  const filteredArgs = args.filter(a => a !== '--json');
+  const fullMode = args.includes('--full');
+  const filteredArgs = args.filter(a => a !== '--json' && a !== '--full');
 
   if (filteredArgs.length === 0 || filteredArgs[0] === '--help') {
     console.log(USAGE);
@@ -113,6 +155,7 @@ function main() {
   const tracked = parseForeshadowTable(foreshadowFile);
   const chapterClues = extractForeshadowsFromText(chapterText);
 
+  // 基础检查
   const overdue = tracked.filter(f => {
     if (f.status.includes('已回收') || f.status.includes('已过期')) return false;
     const buried = parseInt(f.chapter.replace(/\D/g, ''), 10);
@@ -121,6 +164,21 @@ function main() {
 
   for (const f of overdue) {
     warnings.push({ type: 'overdue', level: 1, id: f.id, content: f.content.substring(0, 20), buried_chapters: currentChapter - parseInt(f.chapter.replace(/\D/g, ''), 10), message: `伏笔 ${f.id}("${f.content.substring(0, 20)}...") 已埋设 ${currentChapter - parseInt(f.chapter.replace(/\D/g, ''), 10)} 章未回收` });
+  }
+
+  // 增强检查（--full 模式）
+  if (fullMode) {
+    // 格式检查
+    const formatWarnings = checkForeshadowMarkingFormat(foreshadowFile);
+    for (const fw of formatWarnings) {
+      warnings.push({ type: 'format', level: 1, message: fw });
+    }
+    
+    // 重叠检测
+    const overlapWarnings = detectOverlappingForeshadows(tracked);
+    for (const ow of overlapWarnings) {
+      warnings.push({ type: 'overlap', level: 1, message: ow });
+    }
   }
 
   const unrecovered = tracked.filter(f =>
@@ -140,7 +198,7 @@ function main() {
 
   if (warnings.length > 0) {
     console.log(`\n⚠️  伏笔检查发现 ${warnings.length} 个问题：`);
-    warnings.forEach((w, i) => console.log(`  ${i + 1}. ${w.message}`));
+    warnings.forEach((w, i) => console.log(`  ${i + 1}. [${w.type}] ${w.message}`));
     console.log(`\n📊 伏笔统计：共 ${tracked.length} 条，已回收 ${tracked.length - unrecovered.length} 条，待回收 ${unrecovered.length} 条`);
     process.exit(1);
   }

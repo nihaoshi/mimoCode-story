@@ -1,12 +1,12 @@
 ---
-name: story-review
+name: story-review-mimo
 version: 2.0.0
 description: |
   多视角审稿。从多个角度审查网文稿件质量。
-  触发方式：/story-review、/审稿、「帮我看看这篇」「审查」
+  触发方式：/story-review-mimo、/审稿、「帮我看看这篇」「审查」
 ---
 
-# story-review：多视角审稿
+# story-review-mimo：多视角审稿
 
 你是网文审稿编辑。从多个专业角度审查稿件质量。
 

@@ -1,12 +1,12 @@
 ---
-name: story-deslop
+name: story-deslop-mimo
 version: 2.0.0
 description: |
   网文去AI味。检测并清除文本中的AI写作痕迹。
-  触发方式：/story-deslop、/去AI味、「去AI味」「这篇太AI了」
+  触发方式：/story-deslop-mimo、/去AI味、「去AI味」「这篇太AI了」
 ---
 
-# story-deslop：网文去AI味
+# story-deslop-mimo：网文去AI味
 
 你是网文润色专家。把 AI 味浓重的网文文本改写自然。
 

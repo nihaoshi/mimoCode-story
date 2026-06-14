@@ -5,7 +5,7 @@ const { execFileSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-const USAGE = `Usage: node quality-gate.js <chapter-file> [project-dir] [--json]
+const USAGE = `Usage: node quality-gate.js <chapter-file> [project-dir] [--json] [--full]
 
 Unified quality gate that runs all checks and blocks output if standards aren't met.
 
@@ -20,6 +20,7 @@ Checks:
 
 Options:
   --json              Output structured JSON
+  --full              Enable enhanced checks (identity, timeline, format)
   --target-words N    Override target word count (default: from 细纲 or 3000)
   --skip-lint         Skip style-lint check
   --skip-consistency  Skip consistency check
@@ -86,6 +87,7 @@ function getTargetWords(projectDir, chapterFile) {
 function main() {
   const args = process.argv.slice(2);
   const jsonMode = args.includes('--json');
+  const fullMode = args.includes('--full');
   const skipLint = args.includes('--skip-lint');
   const skipConsistency = args.includes('--skip-consistency');
   const skipForeshadow = args.includes('--skip-foreshadow');
@@ -95,7 +97,7 @@ function main() {
   const fastMode = args.includes('--fast');
 
   const filteredArgs = args.filter(a =>
-    a !== '--json' && a !== '--skip-lint' && a !== '--skip-consistency' && a !== '--skip-foreshadow' &&
+    a !== '--json' && a !== '--full' && a !== '--skip-lint' && a !== '--skip-consistency' && a !== '--skip-foreshadow' &&
     a !== '--skip-voice' && a !== '--skip-emotion' && a !== '--skip-satisfaction' && a !== '--fast'
   );
 
@@ -128,7 +130,9 @@ function main() {
 
   if (!skipLint) {
     const script = path.join(scriptsDir, 'style-lint.js');
-    const r = runScript(script, ['--json', chapterFile]);
+    const lintArgs = ['--json', chapterFile];
+    if (fullMode) lintArgs.push('--full');
+    const r = runScript(script, lintArgs);
     const data = parseJsonOutput(r.output);
     results.style_lint = data || { status: 'error', raw: r.output };
 
@@ -139,7 +143,9 @@ function main() {
 
   if (!skipConsistency) {
     const script = path.join(scriptsDir, 'consistency-check.js');
-    const r = runScript(script, ['--json', chapterFile, projectDir]);
+    const consArgs = ['--json', chapterFile, projectDir];
+    if (fullMode) consArgs.push('--full');
+    const r = runScript(script, consArgs);
     const data = parseJsonOutput(r.output);
     results.consistency = data || { status: 'error', raw: r.output };
 
@@ -152,7 +158,9 @@ function main() {
 
   if (!skipForeshadow) {
     const script = path.join(scriptsDir, 'foreshadow-check.js');
-    const r = runScript(script, ['--json', chapterFile, projectDir]);
+    const foresArgs = ['--json', chapterFile, projectDir];
+    if (fullMode) foresArgs.push('--full');
+    const r = runScript(script, foresArgs);
     const data = parseJsonOutput(r.output);
     results.foreshadow = data || { status: 'error', raw: r.output };
 

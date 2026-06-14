@@ -1,11 +1,11 @@
 ---
-name: story-import
+name: story-import-mimo
 version: 1.0.0
 description: |
   逆向导入已有小说。将已写好的小说（半成品或完本）反向解析为标准项目目录结构，
-  兼容 story-long-write / story-short-write 后续写作流程。内部复用 story-long-analyze /
-  story-short-analyze 的拆解管道，按篇幅自动分流。
-  触发方式：/story-import、「导入小说」「反向解析」「导入」「把我的书导进来」
+  兼容 story-long-write-mimo / story-short-write-mimo 后续写作流程。内部复用 story-long-analyze-mimo /
+  story-short-analyze-mimo 的拆解管道，按篇幅自动分流。
+  触发方式：/story-import-mimo、「导入小说」「反向解析」「导入」「把我的书导进来」
 metadata:
   openclaw:
     source: https://github.com/nihaoshi/mimoCode-story

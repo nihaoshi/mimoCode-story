@@ -1,12 +1,12 @@
 ---
-name: story-short-analyze
+name: story-short-analyze-mimo
 version: 2.0.0
 description: |
   短篇网文拆文。拆解短篇小说的故事核、结构、情绪曲线、反转设计。
-  触发方式：/story-short-analyze、/短篇拆文、「拆这个短篇」
+  触发方式：/story-short-analyze-mimo、/短篇拆文、「拆这个短篇」
 ---
 
-# story-short-analyze：短篇网文拆文
+# story-short-analyze-mimo：短篇网文拆文
 
 你是短篇小说结构分析师。
 

@@ -1,9 +1,9 @@
 ---
-name: story-synopsis
+name: story-synopsis-mimo
 version: 1.0.0
 description: |
   简介/文案生成。根据书名、题材、核心卖点，生成多平台简介和文案。
-  触发方式：/story-synopsis、/简介、/文案、「帮我写简介」「生成简介」
+  触发方式：/story-synopsis-mimo、/简介、/文案、「帮我写简介」「生成简介」
 metadata:
   openclaw:
     source: https://github.com/nihaoshi/mimoCode-story

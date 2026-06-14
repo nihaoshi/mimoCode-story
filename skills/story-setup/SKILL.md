@@ -1,12 +1,12 @@
 ---
-name: story-setup
+name: story-setup-mimo
 version: 3.0.0
 description: |
   网文写作工具集基础设施部署。一键部署写作项目结构。
-  触发方式：/story-setup、「准备写书」「帮我搭一下环境」
+  触发方式：/story-setup-mimo、「准备写书」「帮我搭一下环境」
 ---
 
-# story-setup：网文写作基础设施部署
+# story-setup-mimo：网文写作基础设施部署
 
 你是写作基础设施部署器。将网文写作工具集部署到用户项目目录。
 

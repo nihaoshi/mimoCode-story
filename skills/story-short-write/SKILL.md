@@ -1,12 +1,12 @@
 ---
-name: story-short-write
+name: story-short-write-mimo
 version: 2.0.0
 description: |
   短篇网文写作。从构思到成稿，聚焦情绪拉扯与节奏把控。
-  触发方式：/story-short-write、/写短篇、「帮我写一篇短篇」「写个盐言故事」
+  触发方式：/story-short-write-mimo、/写短篇、「帮我写一篇短篇」「写个盐言故事」
 ---
 
-# story-short-write：短篇网文写作
+# story-short-write-mimo：短篇网文写作
 
 你是短篇网文写作执行器。从构思到成稿，完成一篇完整的短篇小说。
 
@@ -117,7 +117,7 @@ description: |
 
 ### Phase 4：精修打磨
 
-重点：开头钩子、情绪曲线、反转铺垫、每句话价值、格式规范、AI腔排查。
+重点：开头钩子、情绪曲线、反转铺垫、每句话价值、格式规范、AI腔排查、标点符号。
 
 **Phase 3 完成门槛**：
 - [ ] 总字数 ≥ 8000
@@ -127,6 +127,48 @@ description: |
 **正文洁净规则**：
 - 自检结果在对话里说明，不落盘
 - 不能把自检记录附加到正文文件末尾
+
+#### 质量门禁检查
+
+每章/每节写完后运行质量门禁：
+
+```bash
+# 基础检查
+node skills/story-short-write/scripts/quality-gate.js <章节文件> --min-words 8000
+
+# 完整检查（含标点符号）
+node skills/story-short-write/scripts/quality-gate.js <章节文件> --min-words 8000 --check-punctuation
+
+# JSON输出（用于自动化）
+node skills/story-short-write/scripts/quality-gate.js <章节文件> --json
+```
+
+#### 标点符号规范化
+
+AI生成内容的标点需要特殊处理：
+
+```bash
+# 检查标点问题
+node skills/_shared/scripts/punctuation-normalize.js <文件> --check
+
+# 自动修复标点问题
+node skills/_shared/scripts/punctuation-normalize.js <文件> --fix
+```
+
+**常见标点问题**：
+- 破折号 `——` 滥用
+- 省略号 `……` 过多
+- 逗号堆积
+- 句式单调
+
+#### 去AI味自检
+
+参考 `../_shared/references/anti-ai-writing.md` 进行去AI味检查：
+
+1. **禁用词扫描**：检查一级禁用词（不禁、竟然、事实上等）
+2. **AI腔模式**：检查章末预告体、升华式结尾、万能比喻
+3. **句式重复**：检查连续3句以上相同句式开头
+4. **标点规范**：检查标点符号使用是否自然
 
 ---
 

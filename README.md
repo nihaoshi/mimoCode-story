@@ -218,48 +218,61 @@ node skills/story-long-write/scripts/quality-gate.js --fast <章节文件>
 
 | 技能 | 触发方式 | 功能 |
 |------|---------|------|
-| `story` | `/story`、`/网文` | 路由入口，自动分发到对应技能 |
-| `story-setup` | `/story-setup`、`准备写书` | 初始化写作项目 |
-| `story-long-write` | `/story-long-write`、`写长篇` | 长篇写作（核心技能，5 阶段流程） |
-| `story-short-write` | `/story-short-write`、`写短篇` | 短篇写作（4 阶段流程） |
-| `story-long-analyze` | `/story-long-analyze`、`长篇拆文` | 长篇小说拆解分析 |
-| `story-short-analyze` | `/story-short-analyze`、`短篇拆文` | 短篇小说拆解分析 |
-| `story-long-scan` | `/story-long-scan`、`长篇扫榜` | 长篇市场数据采集与分析 |
-| `story-short-scan` | `/story-short-scan`、`短篇扫榜` | 短篇市场数据采集与分析 |
-| `story-scan` | `/story-scan`、`扫榜` | 通用扫榜路由 |
-| `story-import` | `/story-import`、`导入小说` | 逆向导入已有小说为项目结构 |
-| `story-deslop` | `/story-deslop`、`去AI味` | 检测并清除 AI 写作痕迹 |
-| `story-review` | `/story-review`、`审稿` | 多维度质量审查 |
-| `story-cover` | `/story-cover`、`封面` | 封面提示词生成 |
-| `story-synopsis` | `/story-synopsis`、`简介` | 简介/文案生成（4 平台） |
-| `story-export` | `/story-export`、`导出` | 多格式导出 |
-| `browser-cdp` | `浏览器操作`、`CDP` | Chrome 浏览器控制 |
+| `story-mimo` | `/story-mimo`、`/网文` | 路由入口，自动分发到对应技能 |
+| `story-setup-mimo` | `/story-setup-mimo`、`准备写书` | 初始化写作项目 |
+| `story-long-write-mimo` | `/story-long-write-mimo`、`写长篇` | 长篇写作（核心技能，5 阶段流程） |
+| `story-short-write-mimo` | `/story-short-write-mimo`、`写短篇` | 短篇写作（4 阶段流程） |
+| `story-long-analyze-mimo` | `/story-long-analyze-mimo`、`长篇拆文` | 长篇小说拆解分析 |
+| `story-short-analyze-mimo` | `/story-short-analyze-mimo`、`短篇拆文` | 短篇小说拆解分析 |
+| `story-long-scan-mimo` | `/story-long-scan-mimo`、`长篇扫榜` | 长篇市场数据采集与分析 |
+| `story-short-scan-mimo` | `/story-short-scan-mimo`、`短篇扫榜` | 短篇市场数据采集与分析 |
+| `story-scan-mimo` | `/story-scan-mimo`、`扫榜` | 通用扫榜路由 |
+| `story-import-mimo` | `/story-import-mimo`、`导入小说` | 逆向导入已有小说为项目结构 |
+| `story-deslop-mimo` | `/story-deslop-mimo`、`去AI味` | 检测并清除 AI 写作痕迹 |
+| `story-review-mimo` | `/story-review-mimo`、`审稿` | 多维度质量审查 |
+| `story-cover-mimo` | `/story-cover-mimo`、`封面` | 封面提示词生成 |
+| `story-synopsis-mimo` | `/story-synopsis-mimo`、`简介` | 简介/文案生成（4 平台） |
+| `story-export-mimo` | `/story-export-mimo`、`导出` | 多格式导出 |
+| `browser-cdp-mimo` | `浏览器操作`、`CDP` | Chrome 浏览器控制 |
+| `goal-mimo` | `/goal-mimo`、`写到第X章` | 自主写作目标控制 |
+| `dream-mimo` | `/dream-mimo`、`提取经验` | 写作经验沉淀 |
+| `distill-mimo` | `/distill-mimo`、`分析工作流` | 工作流优化 |
 
 ---
 
 ## 自动化脚本
 
-`skills/story-long-write/scripts/` 目录下包含 10 个自动化脚本：
-
-### 质量检查脚本
+### 长篇写作脚本（skills/story-long-write-mimo/scripts/）
 
 | 脚本 | 功能 | `--json` | 退出码 |
 |------|------|---------|--------|
 | `quality-gate.js` | 统一质量门禁（7 重检查） | ✅ | 0=通过, 1=警告, 2=阻断 |
-| `style-lint.js` | 禁用词 + AI 腔检测 | ✅ | 0=通过, 1=有问题 |
-| `consistency-check.js` | 一致性检查（物品/环境/角色/时间线） | ✅ | 0=通过, 1=警告, 2=错误 |
-| `foreshadow-check.js` | 伏笔逾期检查 | ✅ | 0=通过, 1=逾期 |
+| `style-lint.js` | 禁用词 + AI 腔检测 + 格式/专业术语检查 | ✅ | 0=通过, 1=有问题 |
+| `consistency-check.js` | 一致性检查（物品/环境/角色/时间线/身份） | ✅ | 0=通过, 1=警告, 2=错误 |
+| `foreshadow-check.js` | 伏笔逾期 + 格式 + 重叠检查 | ✅ | 0=通过, 1=逾期 |
 | `voice-check.js` | 角色声音一致性 | ✅ | 0=通过, 1=不一致 |
 | `emotion-analyzer.js` | 情绪曲线分析 | ✅ | 0=正常, 1=平坦警告 |
 | `satisfaction-meter.js` | 爽点密度度量 | ✅ | 0=达标, 1=不足 |
+| `full-consistency-audit.js` | 全量一致性审计 | ✅ | 0=通过, 1=警告, 2=错误 |
+| `repair-scripts.js` | 脚本修复器 | ✅ | 0=成功, 1=需修复, 2=错误 |
+| `wordcount-pacer.js` | 字数节奏指导 | - | - |
+| `normalize-punctuation.js` | 标点规范化 | - | - |
+| `detect-python.js` | Python 检测 | - | - |
 
-### 辅助脚本
+### 共享脚本（skills/_shared/scripts/）
 
 | 脚本 | 功能 | 说明 |
 |------|------|------|
-| `wordcount-pacer.js` | 字数节奏指导 | 根据细纲生成段落字数分配 |
-| `normalize-punctuation.js` | 标点规范化 | 支持 `--check` 模式和引号转换 |
-| `detect-python.js` | Python 检测 | 探测系统可用的 Python 解释器 |
+| `goal.js` | /goal 命令 | 设置写作目标，监控进度 |
+| `dream.js` | /dream 命令 | 扫描章节，提取写作经验 |
+| `distill.js` | /distill 命令 | 分析工作流，发现重复模式 |
+| `punctuation-normalize.js` | 标点规范化 | 检查/修复 AI 生成内容的标点问题 |
+
+### 短篇写作脚本（skills/story-short-write-mimo/scripts/）
+
+| 脚本 | 功能 | 说明 |
+|------|------|------|
+| `quality-gate.js` | 短篇质量门禁 | 字数/钩子/情绪/反转/AI腔检查 |
 
 ### 使用示例
 
@@ -458,10 +471,36 @@ node skills/story-long-write/scripts/wordcount-pacer.js 大纲/细纲_第001章.
 | **智能上下文** | 长篇写作不丢失上下文 | 自动检查点 + 预算化注入 |
 | **任务追踪** | 进度管理 | 树状任务系统追踪每章状态 |
 | **子智能体** | 并行处理 | 拆文/审稿/研究可并行执行 |
-| **Goal** | 自主写作 | `/goal` 设置写作目标，自动循环 |
-| **Dream** | 经验沉淀 | `/dream` 提取写作经验到记忆 |
-| **Distill** | 工作流优化 | `/distill` 发现重复模式并优化 |
-| **Voice** | 语音输入 | `/voice` 语音口述正文 |
+| **Goal** | 自主写作 | `/goal-mimo` 设置写作目标，通过 story-long-write-mimo 工作流自动循环 |
+| **Dream** | 经验沉淀 | `/dream-mimo` 提取写作经验到记忆，保存禁用词/有效技法/重复模式 |
+| **Distill** | 工作流优化 | `/distill-mimo` 分析写作模式，发现重复句式并建议优化 |
+
+### 能力详解
+
+#### 持久化记忆（Memory）
+- **写入时机**：每章写完后、用户做出重要决策时、发现问题并解决时
+- **读取时机**：新会话开始时自动加载
+- **存储位置**：`MEMORY.md` 的 `## 写作进度` 和 `## 重要决策` 部分
+
+#### 智能上下文
+- **工作原理**：只加载当前章节需要的信息，避免上下文溢出
+- **必加载**：上一章正文、本章细纲、角色状态、伏笔
+- **按需加载**：物品、环境、其他角色详情
+
+#### Goal 自主写作
+- **触发**：用户说"写到第X章"
+- **执行**：AI 读取 SKILL.md 中的 Goal 模式，按 8 步循环执行
+- **辅助脚本**：`goal.js` 设置目标配置，`quality-gate.js` 检查质量
+
+#### Dream 经验沉淀
+- **触发**：用户说"提取经验"
+- **执行**：扫描章节，分析禁用词/AI腔/有效技法/重复模式
+- **输出**：写入 MEMORY.md，供后续写作参考
+
+#### Distill 工作流优化
+- **触发**：用户说"分析工作流"
+- **执行**：检测重复句式、重复用词、字数波动、工作流缺失
+- **输出**：优化建议报告
 
 ---
 
@@ -538,6 +577,32 @@ node skills/story-long-write/scripts/quality-gate.js 正文/第001章_XXX.md
 ---
 
 ## 更新日志
+
+### v3.1.0（2026-06-14）
+
+**技能重命名**：所有技能名称添加 `-mimo` 后缀，统一命名规范
+
+**新增技能（3 个）**：
+- `goal-mimo` — 自主写作目标控制，通过 story-long-write-mimo 工作流自动循环
+- `dream-mimo` — 写作经验沉淀，扫描章节提取禁用词/AI腔/有效技法
+- `distill-mimo` — 工作流优化，检测重复句式并建议优化
+
+**新增脚本（5 个）**：
+- `_shared/scripts/goal.js` — 目标配置管理
+- `_shared/scripts/dream.js` — 经验提取分析
+- `_shared/scripts/distill.js` — 工作流分析
+- `_shared/scripts/punctuation-normalize.js` — 标点符号规范化
+- `story-short-write-mimo/scripts/quality-gate.js` — 短篇质量门禁
+
+**脚本增强**：
+- `consistency-check.js` — 新增身份一致性、追踪完整性、时间线逻辑检测
+- `style-lint.js` — 新增格式一致性、专业术语检测
+- `foreshadow-check.js` — 新增标记格式、重叠检测
+- `quality-gate.js` — 新增 `--full` 参数支持增强检查
+
+**Bug 修复**：
+- `repair-scripts.js` — 修复参数解析 bug
+- `quality-gate.js` — 修复 `--full` 参数未传递给子脚本
 
 ### v3.0.0（2026-06-13）
 

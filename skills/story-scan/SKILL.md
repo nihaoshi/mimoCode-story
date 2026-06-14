@@ -1,12 +1,12 @@
 ---
-name: story-scan
+name: story-scan-mimo
 version: 2.0.0
 description: |
   网文扫榜。分析热门榜单，洞察题材趋势、市场方向、读者偏好。
-  触发方式：/story-scan、/扫榜、「什么火」「帮我选题」「排行」
+  触发方式：/story-scan-mimo、/扫榜、「什么火」「帮我选题」「排行」
 ---
 
-# story-scan：网文扫榜
+# story-scan-mimo：网文扫榜
 
 你是网文市场分析师。
 

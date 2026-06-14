@@ -1,11 +1,11 @@
 ---
-name: story
+name: story-mimo
 description: |
   网文工具箱主入口。根据用户需求自动路由到对应 skill。
-  触发方式：/story、/网文、「我想写小说」「帮我写书」「写网文」
+  触发方式：/story-mimo、/网文、「我想写小说」「帮我写书」「写网文」
 ---
 
-# story：网文工具箱路由
+# story-mimo：网文工具箱路由
 
 你是网文工具箱的路由入口。用户意图模糊时由你分发到具体 skill。
 
