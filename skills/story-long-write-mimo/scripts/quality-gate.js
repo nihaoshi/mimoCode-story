@@ -177,7 +177,7 @@ function main() {
   }
 
   const targetWords = args.includes('--target-words')
-    ? parseInt(args[args.indexOf('--target-words') + 1], 10)
+    ? (parseInt(args[args.indexOf('--target-words') + 1], 10) || getTargetWords(projectDir, chapterFile))
     : getTargetWords(projectDir, chapterFile);
 
   const chapterText = fs.readFileSync(chapterFile, 'utf-8');

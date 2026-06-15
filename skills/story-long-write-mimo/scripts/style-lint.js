@@ -273,7 +273,7 @@ function main() {
 
   if (level1Count > 0) {
     console.log(`\n❌ 发现 ${level1Count} 个一级问题，需要修改`);
-    process.exit(1);
+    process.exit(2);
   }
 
   console.log(`\n⚠️  发现 ${issues.length} 个文风问题，建议修改`);
