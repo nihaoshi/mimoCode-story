@@ -32,7 +32,7 @@ function extractDialogues(text) {
   const seen = new Set();
 
   const nameChars = '[^\\s，。！？\\u201C\\u201D说问道答喊叫笑叹怒吼冷哼嘟囔嘀咕低语呢喃]{2,4}';
-  const verbs = '(?:说道|道|说道|问道|答道|喊道|叫道|笑道|叹道|冷哼|怒吼|说|问|答|喊|叫|笑|叹)';
+  const verbs = '(?:说道|道|问道|答道|喊道|叫道|笑道|叹道|冷哼|怒吼|说|问|答|喊|叫|笑|叹)';
   const dialogueContent = '[^\\u201C\\u201D]{4,}';
 
   const pattern = `(${nameChars})\\s*${verbs}[，,：:]*\\s*[\\r\\n\\s　]*[\\u201C\\u201D](${dialogueContent})[\\u201C\\u201D]`;

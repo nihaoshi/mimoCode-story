@@ -1,6 +1,6 @@
 {
   "name": "mimocode-story",
-  "version": "3.1.1",
+  "version": "3.3.1",
   "description": "MiMo Code 网文写作技能包。覆盖长篇与短篇网络小说的扫榜、拆文、写作、去AI味、审稿全流程。",
   "license": "MIT",
   "repository": {

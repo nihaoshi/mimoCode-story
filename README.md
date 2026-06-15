@@ -34,10 +34,10 @@
 
 | 特性 | 说明 |
 |------|------|
-| **全流程覆盖** | 从选题到发布，22 个技能覆盖网文创作全生命周期 |
+| **全流程覆盖** | 从选题到发布，23 个技能覆盖网文创作全生命周期 |
 | **长篇 + 短篇** | 同时支持长篇连载和短篇创作，按篇幅自动分流 |
 | **智能路由** | `/story-mimo` 主入口自动识别用户意图，分发到对应技能 |
-| **7 重质量门禁** | 禁用词、一致性、伏笔、字数、角色声音、情绪曲线、爽点密度 |
+| **9 重质量门禁** | 禁用词、一致性、伏笔、字数、角色声音、情绪曲线、爽点密度、跨章重复、项目缺口 |
 | **Writing Project Rules** | 自动部署写作强制规则到项目，AI 每次会话自动读取 |
 | **跨会话连续** | 基于 MiMo Code 持久化记忆，写作进度自动保存/恢复 |
 | **去AI味** | 专业检测并清除 AI 写作痕迹，让文字更自然 |
@@ -52,7 +52,7 @@
 | 依赖 | 版本 | 用途 | 必需性 |
 |------|------|------|--------|
 | [MiMo Code](https://github.com/XiaomiMiMo/MiMo-Code) | 最新 | 运行平台 | **必需** |
-| [Node.js](https://nodejs.org/) | 12+ | 质量检查脚本（10 个） | **必需**（长篇写作） |
+| [Node.js](https://nodejs.org/) | 14+ | 质量检查脚本（10 个） | **必需**（长篇写作） |
 | [Python 3](https://www.python.org/) | 3.6+ | 字数统计（跨平台） | 可选 |
 | [Git](https://git-scm.com/) | 任意 | 版本控制 | 可选 |
 | [agent-browser](https://www.npmjs.com/package/agent-browser) | 最新 | 浏览器操控（CDP 协议） | 可选（仅扫榜采集） |
@@ -235,6 +235,7 @@ node skills/story-long-write-mimo/scripts/quality-gate.js --fast <章节文件>
 | `story-export-mimo` | `/story-export-mimo`、`导出` | 多格式导出 |
 | `browser-cdp-mimo` | `浏览器操作`、`CDP` | Chrome 浏览器控制 |
 | `goal-mimo` | `/goal-mimo`、`写到第X章` | 自主写作目标控制 |
+| `story-session-mimo` | 自动触发 | Session 生命周期管理 |
 | `dream-mimo` | `/dream-mimo`、`提取经验` | 写作经验沉淀 |
 | `distill-mimo` | `/distill-mimo`、`分析工作流` | 工作流优化 |
 | `quality-mimo` | `/quality-mimo`、`检查质量` | 统一质量检查入口 |
@@ -249,13 +250,14 @@ node skills/story-long-write-mimo/scripts/quality-gate.js --fast <章节文件>
 
 | 脚本 | 功能 | `--json` | 退出码 |
 |------|------|---------|--------|
-| `quality-gate.js` | 统一质量门禁（7 重检查） | ✅ | 0=通过, 1=警告, 2=阻断 |
+| `quality-gate.js` | 统一质量门禁（9 重检查） | ✅ | 0=通过, 1=警告, 2=阻断 |
 | `style-lint.js` | 禁用词 + AI 腔检测 + 格式/专业术语检查 | ✅ | 0=通过, 1=有问题 |
 | `consistency-check.js` | 一致性检查（物品/环境/角色/时间线/身份） | ✅ | 0=通过, 1=警告, 2=错误 |
 | `foreshadow-check.js` | 伏笔逾期 + 格式 + 重叠检查 | ✅ | 0=通过, 1=逾期 |
 | `voice-check.js` | 角色声音一致性 | ✅ | 0=通过, 1=不一致 |
 | `emotion-analyzer.js` | 情绪曲线分析 | ✅ | 0=正常, 1=平坦警告 |
 | `satisfaction-meter.js` | 爽点密度度量 | ✅ | 0=达标, 1=不足 |
+| `detect-story-gaps.js` | 项目缺口检测 | ✅ | 0=通过, 1=警告, 2=阻断 |
 | `full-consistency-audit.js` | 全量一致性审计 | ✅ | 0=通过, 1=警告, 2=错误 |
 | `repair-scripts.js` | 脚本修复器 | ✅ | 0=成功, 1=需修复, 2=错误 |
 | `wordcount-pacer.js` | 字数节奏指导 | - | - |
@@ -304,17 +306,21 @@ node skills/story-long-write-mimo/scripts/wordcount-pacer.js 大纲/细纲_第00
 
 ## 质量门禁体系
 
-`quality-gate.js` 是统一质量门禁，串联 7 项检查：
+`quality-gate.js` 是统一质量门禁，串联 9 重检查：
 
 ```
 写正文 → quality-gate.js（自动阻断）
-  ├── style-lint       一级禁用词 > 0 → 阻断
-  ├── consistency      物品/环境/角色/时间线错误 → 阻断
-  ├── foreshadow       伏笔逾期 > 50 章 → 警告
-  ├── wordcount        字数 < 目标 90% → 阻断
-  ├── voice-check      角色声音不一致 → 警告
-  ├── emotion-analyzer 情绪曲线平坦 → 警告
-  └── satisfaction     爽点密度不足 → 警告
+  ├── style-lint        一级禁用词 > 0 → 阻断
+  ├── consistency       物品/环境/角色/时间线错误 → 阻断
+  ├── foreshadow        伏笔逾期 > 50 章 → 警告
+  ├── wordcount         字数 < 目标 90% → 阻断
+  ├── cross-chapter     跨章重复检测 → 警告
+  ├── voice-check       角色声音不一致 → 警告
+  ├── emotion-analyzer  情绪曲线平坦 → 警告
+  └── satisfaction      爽点密度不足 → 警告
+
+  (full mode only)
+  └── detect-gaps       设定缺口/大纲缺失 → 警告
 
 退出码：
   0 = 全部通过
@@ -564,9 +570,9 @@ node skills/story-long-write-mimo/scripts/quality-gate.js 正文/第001章_XXX.m
 | 维度 | 原版 (oh-story-claudecode) | MiMo Code 版 |
 |------|---------------------------|-------------|
 | 平台 | Claude Code | MiMo Code |
-| 技能数 | 12 | 16 |
-| 脚本数 | 3 | 11 |
-| 质量门禁 | 无统一入口 | `quality-gate.js`（8 重检查） |
+| 技能数 | 14 | 23 |
+| 脚本数 | 3 | 14 |
+| 质量门禁 | 无统一入口 | `quality-gate.js`（9 重检查） |
 | 情绪分析 | 无 | `emotion-analyzer.js` |
 | 爽点检测 | 无 | `satisfaction-meter.js` |
 | 角色声音 | 无 | `voice-check.js` |
@@ -576,10 +582,50 @@ node skills/story-long-write-mimo/scripts/quality-gate.js 正文/第001章_XXX.m
 | 情绪曲线 | 无 | `emotion-curve-design.md` |
 | 记忆集成 | 无 | 深度集成 MiMo Code 记忆系统 |
 | Goal/Dream | 无 | 支持自主写作和经验沉淀 |
+| Agent 体系 | 7 Agent + 模型分配 | 6 Agent 角色规范（平台决定模型） |
+| 项目缺口检测 | 无 | `detect-story-gaps.js` |
+| Session 管理 | 6 个 shell hooks | `story-session-mimo` skill |
 
 ---
 
 ## 更新日志
+
+### v3.3.1（2026-06-15）
+
+**代码审查修复**：
+- 修复 `cdp-utils.js` 重复问题：移至 `_shared/scripts/`，消除重复代码
+- 修复禁用词列表重复：提取到 `_shared/scripts/banned-words.js`，统一引用
+- 修复 `detect-story-gaps.js` 变量名遮蔽问题（`fs` → `foreshadow`）
+- 修复 `quality-gate.js` 参数解析边界条件（NaN 校验）
+- 统一脚本退出码语义（style-lint.js、cross-chapter-check.js）
+- 修复 demo 中触发词和路径不一致问题
+
+**文档更新**：
+- 更新 Node.js 版本要求：12+ → 14+
+- 修正质量门禁描述：7 重 → 9 重检查
+- 更新 README 技能数量描述
+
+### v3.3.0（2026-06-15）
+
+**Agent 体系**：
+- `story-long-write-mimo/SKILL.md` 新增 6 个 Agent 角色定义（architect/writer/checker/explorer/extractor/designer）
+- 规范化 Agent spawn 调用流程，轻量任务主会话完成，复杂任务 spawn 子智能体
+- 支持并行拆文/审稿/研究，串行追踪文件更新
+
+**Session 生命周期管理**：
+- 新增 `story-session-mimo` skill，管理会话开始/压缩/结束的上下文生命周期
+- 会话开始自动恢复上下文（读取追踪文件 + 运行 detect-story-gaps）
+- 上下文压缩前自动保存快照，压缩后自动恢复
+- 会话结束自动更新记忆
+
+**项目缺口检测**：
+- 新增 `detect-story-gaps.js` 脚本：检测设定缺口、大纲缺失、伏笔断线、追踪文件完整性
+- `quality-gate.js` 新增第 9 项检查（--full 模式启用）
+- 退出码：0=无缺口，1=警告，2=阻断
+
+**质量门禁升级**：
+- `quality-gate.js` 从 8 重检查升级到 9 重检查
+- 新增 `--full` 模式下的项目缺口检测
 
 ### v3.2.1（2026-06-15）
 
@@ -642,7 +688,7 @@ node skills/story-long-write-mimo/scripts/quality-gate.js 正文/第001章_XXX.m
 ### v3.0.0（2026-06-13）
 
 **新增脚本（5 个）**：
-- `quality-gate.js` — 统一质量门禁，串联 7 重检查
+- `quality-gate.js` — 统一质量门禁，串联 9 重检查
 - `voice-check.js` — 角色声音一致性检查
 - `emotion-analyzer.js` — 情绪曲线分析（关键词检测 + 平坦警告 + ASCII 可视化）
 - `satisfaction-meter.js` — 爽点密度度量（信号词检测 + 间距 + 压制释放比）

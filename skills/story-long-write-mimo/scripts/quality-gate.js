@@ -18,6 +18,7 @@ Checks:
   6. voice-check      — Character voice consistency → WARN
   7. emotion-analyzer — Emotion curve flatness → WARN
   8. satisfaction      — Satisfaction point density → WARN
+  9. detect-story-gaps — Setting/outline/tracking gaps → WARN (full mode only)
 
 Options:
   --json              Output structured JSON
@@ -128,6 +129,7 @@ function main() {
     voice: null,
     emotion: null,
     satisfaction: null,
+    detect_story_gaps: null,
   };
 
   const blockers = [];
@@ -239,6 +241,22 @@ function main() {
     }
   }
 
+  if (fullMode) {
+    const script = path.join(scriptsDir, 'detect-story-gaps.js');
+    const r = runScript(script, ['--json', projectDir]);
+    const data = parseJsonOutput(r.output);
+    results.detect_story_gaps = data || { status: 'error', raw: r.output };
+
+    if (data && data.summary) {
+      if (data.summary.totalBlocking > 0) {
+        warnings.push(`设定缺口：${data.summary.totalBlocking} 个阻断缺口`);
+      }
+      if (data.summary.totalWarnings > 0) {
+        warnings.push(`设定缺口：${data.summary.totalWarnings} 个警告`);
+      }
+    }
+  }
+
   const overallStatus = blockers.length > 0 ? 'blocked' : (warnings.length > 0 ? 'warn' : 'pass');
 
   if (jsonMode) {
@@ -308,6 +326,14 @@ function main() {
     const s = results.satisfaction;
     const icon = s.status === 'pass' ? '✅' : '⚠️';
     console.log(`${icon} 爽点密度：${s.status === 'pass' ? '通过' : `间距 ${s.summary?.max_gap || 0} 字`}`);
+  }
+
+  if (results.detect_story_gaps) {
+    const s = results.detect_story_gaps;
+    if (s.summary) {
+      const icon = (s.summary.totalBlocking || 0) > 0 ? '❌' : ((s.summary.totalWarnings || 0) > 0 ? '⚠️' : '✅');
+      console.log(`${icon} 项目缺口：${s.summary.totalWarnings || 0} 警告, ${s.summary.totalBlocking || 0} 阻断`);
+    }
   }
 
   console.log('='.repeat(50));

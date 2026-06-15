@@ -357,7 +357,7 @@ function main() {
   if (charFile) {
     const deadCharacters = extractDeadCharacters(charFile);
     const deadWarnings = checkDeadCharacters(chapterNames, deadCharacters);
-    warnings.push(...deadWarnings.map(msg => ({ type: 'character_dead', level: 2, message: msg })));
+    errors.push(...deadWarnings.map(msg => ({ type: 'character_dead', level: 2, message: msg })));
 
     const trackingNames = extractCharacterNamesFromTracking(charFile);
     const driftWarnings = checkCharacterNameDrift(chapterNames, trackingNames);
@@ -367,8 +367,8 @@ function main() {
     warnings.push(...stateWarnings.map(msg => ({ type: 'character_state', level: 1, message: msg })));
   }
 
-  // 增强检查（--full 模式或始终执行轻量版本）
-  if (fullMode || true) {
+  // 增强检查（--full 模式）
+  if (fullMode) {
     // 身份一致性检查
     const identityWarnings = checkIdentityConsistency(chapterText, charFile);
     warnings.push(...identityWarnings.map(msg => ({ type: 'identity', level: 1, message: msg })));

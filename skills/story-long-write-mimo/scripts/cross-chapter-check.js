@@ -13,6 +13,7 @@ Options:
   --window N          滑动窗口大小（默认：5，即检查前 5 章）
   --min-length N      最小重复片段长度（默认：6 字）
   --min-count N       最小重复次数（默认：2 次）
+  --write-fingerprint 生成跨章指纹文件（默认：不生成）
 
 示例：
   node cross-chapter-check.js 正文/第005章.md ./我的小说
@@ -286,13 +287,14 @@ function generateFingerprint(projectDir, currentFile, previousContents) {
 function main() {
   const args = process.argv.slice(2);
   const jsonMode = args.includes('--json');
+  const writeFingerprint = args.includes('--write-fingerprint');
   let window = DEFAULT_WINDOW;
   let minLength = DEFAULT_MIN_LENGTH;
   let minCount = DEFAULT_MIN_COUNT;
   
   const filteredArgs = [];
   for (let i = 0; i < args.length; i++) {
-    if (args[i] === '--json') {
+    if (args[i] === '--json' || args[i] === '--write-fingerprint') {
       continue;
     } else if (args[i] === '--window' && args[i + 1]) {
       window = parseInt(args[i + 1], 10);
@@ -369,7 +371,9 @@ function main() {
   const actionIssues = checkActionDuplicates(currentContent, previousContents);
   allIssues.push(...actionIssues);
   
-  generateFingerprint(projectDir, chapterFile, previousContents);
+  if (writeFingerprint) {
+    generateFingerprint(projectDir, chapterFile, previousContents);
+  }
   
   const summary = {
     sentence_dupes: sentenceIssues.length,

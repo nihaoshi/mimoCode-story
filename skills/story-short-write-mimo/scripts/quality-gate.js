@@ -30,7 +30,7 @@ function readFile(p) {
 }
 
 function countWords(text) {
-  return text.replace(/[^\\u4e00-\\u9fa5]/g, '').length;
+  return text.replace(/[^\u4e00-\u9fa5]/g, '').length;
 }
 
 function checkOpening(text) {
@@ -52,7 +52,7 @@ function checkOpening(text) {
 
 function checkEmotionCurve(text) {
   const issues = [];
-  const paragraphs = text.split('\\n\\n').filter(p => p.trim().length > 0);
+  const paragraphs = text.split(/\n\n+/).filter(p => p.trim().length > 0);
   
   if (paragraphs.length < 10) {
     issues.push('段落数过少，建议增加段落以控制节奏');

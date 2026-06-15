@@ -8,7 +8,7 @@
  *   node {SKILL_DIR}/browser-cdp/scripts/setup-cdp-chrome.js 9222
  */
 
-const { execSync } = require("child_process");
+const { execFileSync } = require("child_process");
 
 // ---------------------------------------------------------------------------
 // agent-browser 工具函数
@@ -21,9 +21,8 @@ const { execSync } = require("child_process");
  * @returns {string} stdout（trim 后）
  */
 function ab(port, ...args) {
-  const cmd = args.map((a) => `"${a.replace(/"/g, '\\"')}"`).join(" ");
   try {
-    return execSync(`agent-browser --cdp ${port} ${cmd}`, {
+    return execFileSync("agent-browser", ["--cdp", String(port), ...args], {
       encoding: "utf-8",
       timeout: 20000,
       stdio: ["pipe", "pipe", "pipe"],
