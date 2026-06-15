@@ -45,6 +45,30 @@ const AI_PUNCT_MAP = {
 function checkPunctuationIssues(text) {
   const issues = [];
   
+  // 检测 markdown 分隔线 ---
+  const lines = text.split('\n');
+  let dividerCount = 0;
+  let inFrontMatter = false;
+  for (let i = 0; i < lines.length; i++) {
+    const trimmed = lines[i].trim();
+    if (i === 0 && trimmed === '---') {
+      inFrontMatter = true;
+      continue;
+    }
+    if (inFrontMatter) {
+      if (trimmed === '---') inFrontMatter = false;
+      continue;
+    }
+    if (trimmed === '---') dividerCount++;
+  }
+  if (dividerCount > 0) {
+    issues.push({
+      type: 'markdown_divider',
+      count: dividerCount,
+      suggestion: `检测到${dividerCount}处 markdown 分隔线(---)，正文中禁止使用，建议移除`,
+    });
+  }
+  
   // 检测AI特殊标点
   const aiPunctMatches = text.match(AI_PUNCTUATION);
   if (aiPunctMatches && aiPunctMatches.length > 0) {
@@ -169,6 +193,29 @@ function getCharName(ch) {
 function fixPunctuationIssues(text) {
   let fixed = text;
   
+  // 删除独立的 markdown 分隔线 ---（但保留 YAML front matter 的 ---）
+  const lines = fixed.split('\n');
+  const filteredLines = [];
+  let inFrontMatter = false;
+  for (let i = 0; i < lines.length; i++) {
+    const trimmed = lines[i].trim();
+    if (i === 0 && trimmed === '---') {
+      inFrontMatter = true;
+      filteredLines.push(lines[i]);
+      continue;
+    }
+    if (inFrontMatter) {
+      filteredLines.push(lines[i]);
+      if (trimmed === '---') inFrontMatter = false;
+      continue;
+    }
+    if (trimmed === '---') {
+      continue;
+    }
+    filteredLines.push(lines[i]);
+  }
+  fixed = filteredLines.join('\n');
+  
   // 清理不可见字符
   fixed = fixed.replace(INVISIBLE_CHARS, '');
   
@@ -197,6 +244,7 @@ function fixPunctuationIssues(text) {
 }
 
 function main() {
+  const startTime = Date.now();
   const args = process.argv.slice(2);
   const jsonMode = args.includes('--json');
   const checkOnly = args.includes('--check');
@@ -231,6 +279,8 @@ function main() {
     fs.writeFileSync(filePath, fixed, 'utf-8');
   }
   
+  const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
+  
   if (jsonMode) {
     const result = {
       file: filePath,
@@ -249,9 +299,9 @@ function main() {
       }
       
       if (fixMode) {
-        console.log('\n✅ 已自动修复');
+        console.log(`\n✅ 已自动修复 (${elapsed}s)`);
       } else {
-        console.log('\n💡 运行 --fix 参数自动修复');
+        console.log(`\n💡 运行 --fix 参数自动修复 (${elapsed}s)`);
       }
     }
   }

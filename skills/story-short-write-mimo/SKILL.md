@@ -169,7 +169,7 @@ description: |
 
 #### 质量门禁检查
 
-每章/每节写完后运行质量门禁：
+每章/每节写完后运行质量门禁（需从全局skill目录执行）：
 
 ```bash
 # 基础检查
@@ -184,7 +184,7 @@ node skills/story-short-write-mimo/scripts/quality-gate.js <章节文件> --json
 
 #### 标点符号规范化
 
-AI生成内容的标点需要特殊处理：
+AI生成内容的标点需要特殊处理（需从全局skill目录执行）：
 
 ```bash
 # 检查标点问题

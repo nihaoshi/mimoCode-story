@@ -4,6 +4,23 @@
 const fs = require('fs');
 const path = require('path');
 
+// AI特殊标点检测正则
+const AI_PUNCTUATION = /[\u2014\u2013\u201C\u201D\u2018\u2019\u2026\u00A0\u202F]/g;
+const INVISIBLE_CHARS = /[\u200B\u200C\u200D\u2009\uFEFF\u00AD]/g;
+
+// AI偏爱的印刷级标点映射
+const AI_PUNCT_MAP = {
+  '\u2014': '——',  // em dash → 全角破折号
+  '\u2013': '--',   // en dash → 双连字符
+  '\u201C': '"',    // 左弯双引号 → 直引号
+  '\u201D': '"',    // 右弯双引号 → 直引号
+  '\u2018': "'",    // 左弯单引号 → 直引号
+  '\u2019': "'",    // 右弯单引号 → 直引号
+  '\u2026': '……',   // 水平省略号 → 全角省略号
+  '\u00A0': ' ',    // 不换行空格 → 普通空格
+  '\u202F': ' ',    // 窄不换行空格 → 普通空格
+};
+
 const USAGE = `Usage: node normalize-punctuation.js [--check] [--quote-mode keep|ascii|yan] <file...>
 
 Normalize正文 punctuation deterministically:
@@ -18,6 +35,8 @@ const options = {
   quoteMode: 'keep',
   files: [],
 };
+
+const startTime = Date.now();
 
 for (let i = 2; i < process.argv.length; i += 1) {
   const arg = process.argv[i];
@@ -62,7 +81,7 @@ for (const file of options.files) {
     continue;
   }
 
-  const result = normalizeDocument(input, options.quoteMode);
+  const result = normalizeDocument(input, options.quoteMode, options.check);
   totalFindings += result.findings.length;
 
   if (options.check) {
@@ -86,7 +105,8 @@ if (options.check && totalFindings > 0) {
   process.exit(1);
 }
 if (!options.check) {
-  console.log(`Done. Changed files: ${changedFiles}`);
+  const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
+  console.log(`Done. Changed files: ${changedFiles} (${elapsed}s)`);
 }
 
 function die(message) {
@@ -95,24 +115,7 @@ function die(message) {
   process.exit(2);
 }
 
-// AI特殊标点检测正则
-const AI_PUNCTUATION = /[\u2014\u2013\u201C\u201D\u2018\u2019\u2026\u00A0\u202F]/g;
-const INVISIBLE_CHARS = /[\u200B\u200C\u200D\u2009\uFEFF\u00AD]/g;
-
-// AI偏爱的印刷级标点映射
-const AI_PUNCT_MAP = {
-  '\u2014': '——',  // em dash → 全角破折号
-  '\u2013': '--',   // en dash → 双连字符
-  '\u201C': '"',    // 左弯双引号 → 直引号
-  '\u201D': '"',    // 右弯双引号 → 直引号
-  '\u2018': "'",    // 左弯单引号 → 直引号
-  '\u2019': "'",    // 右弯单引号 → 直引号
-  '\u2026': '……',   // 水平省略号 → 全角省略号
-  '\u00A0': ' ',    // 不换行空格 → 普通空格
-  '\u202F': ' ',    // 窄不换行空格 → 普通空格
-};
-
-function normalizeDocument(input, quoteMode) {
+function normalizeDocument(input, quoteMode, checkMode) {
   const newline = input.includes('\r\n') ? '\r\n' : '\n';
   const trailingNewline = input.endsWith('\n');
   const lines = input.split(/\r?\n/);
@@ -151,8 +154,12 @@ function normalizeDocument(input, quoteMode) {
         line: lineNo,
         column: line.indexOf('-') + 1,
         type: 'markdown-divider',
-        message: '正文中不要使用 markdown 分隔线；建议移除该行。',
+        message: '正文中不要使用 markdown 分隔线；已移除。',
       });
+      if (!checkMode) {
+        continue;
+      }
+      outputLines.push(line);
       continue;
     }
 

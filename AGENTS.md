@@ -23,6 +23,18 @@ skill-name/
 - Skill 间依赖：`story-import` 调用 `story-long-analyze` / `story-short-analyze` 的拆解管道
 - `demo/` 是示例数据（拆文库+写作项目），非 skill 代码
 
+## 全局脚本调用规则
+
+**所有脚本调用必须使用全局 skill 目录路径，禁止使用项目内的 `skills/` 目录。**
+
+全局 skill 目录通过以下方式定位（优先级从高到低）：
+1. 环境变量 `MIMOCODE_SKILLS_DIR`
+2. 当前会话的工作目录（如果是 skill 仓库）
+3. 配置文件 `$HOME\.config\mimocode\config.json` 中的 `skills_dir` 字段
+4. 默认路径：`$HOME\.config\mimocode\skills\`
+
+执行脚本时，必须先切换到全局 skill 目录再执行。
+
 ## When Editing a Skill
 
 1. 先读该 skill 的 `SKILL.md` 理解完整流程

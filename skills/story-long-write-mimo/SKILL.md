@@ -590,7 +590,7 @@ story-architect 属于高层级结构设计。轻量题材定位优先由主会�
 12. **中途快照 + 质量门禁**（长篇写作安全网）：每连续写完 3 章，在继续前执行以下操作：
     - (a) 将当前进度写入 `追踪/上下文.md`（只更新进度元信息——当前位置、最近决策、待处理线索——不重复角色状态/伏笔的具体内容）
     - (b) 用 `ls -la 正文/` 确认最近 3 个章节文件已成功写入磁盘且大小正常（>100 bytes）
-    - (c) **自动运行质量门禁**：`node skills/story-long-write-mimo/scripts/quality-gate.js <章节文件> --json`
+    - (c) **自动运行质量门禁**：`node skills/story-long-write-mimo/scripts/quality-gate.js <章节文件> --json`（需从全局skill目录执行）
     - (d) 如果 status 为 blocked，暂停写作，修复问题后继续
     - (e) 更新 `追踪/cross-chapter-fingerprint.md` 指纹文件（由 cross-chapter-check.js 自动生成）
 
@@ -688,7 +688,7 @@ story-architect 属于高层级结构设计。轻量题材定位优先由主会�
 - 清理不可见Unicode字符（零宽空格、NBSP等）
 - 归一化空格和标点
 
-**标点确定性收尾**：本批正文写完后，对所有新写正文文件运行 `node skills/story-long-write-mimo/scripts/normalize-punctuation.js 正文/第XXX章_*.md`（写模式，默认 `--quote-mode keep`），确定性清除叙述里的破折号 `——`/`—`、双连字符 `--` 和独立行 `---`，防止长篇累积横线。对话被打断的 `——`、数字区间与盐言「」不受影响。子智能体不运行本脚本，由主会话在子智能体返回后针对实际落盘文件运行。
+**标点确定性收尾**：本批正文写完后，对所有新写正文文件运行 `node skills/story-long-write-mimo/scripts/normalize-punctuation.js 正文/第XXX章_*.md`（需从全局skill目录执行，默认 `--quote-mode keep`），确定性清除叙述里的破折号 `——`/`—`、双连字符 `--` 和独立行 `---`，防止长篇累积横线。对话被打断的 `——`、数字区间与盐言「」不受影响。子智能体不运行本脚本，由主会话在子智能体返回后针对实际落盘文件运行。
 
 #### 子智能体调用：consistency-checker
 
@@ -702,50 +702,7 @@ story-architect 属于高层级结构设计。轻量题材定位优先由主会�
 - 更新 `追踪/伏笔.md` 中的过期伏笔和回收状态
 - 更新 `追踪/时间线.md` 中的时间线疑点
 
----
 
-### Phase 5.1：脚本修复与升级
-
-#### 自动检测缺失脚本
-
-每次执行写作流程时，自动检测项目中 `skills/story-long-write-mimo/scripts/` 目录的脚本完整性：
-
-```
-检测到以下脚本缺失：
-- consistency-check.js
-- style-lint.js
-- foreshadow-check.js
-
-是否自动修复？(Y/n)
-```
-
-用户确认后自动执行修复。
-
-#### 手动触发修复
-
-用户可通过以下命令手动触发脚本修复：
-
-```
-/repair-scripts 或 /修复脚本
-```
-
-执行流程：
-1. 扫描项目 `skills/story-long-write-mimo/scripts/` 目录
-2. 对比工具源码目录的脚本
-3. 复制缺失的脚本到项目
-4. 输出修复报告
-
-#### 版本检测（可选）
-
-在 `.story-config.json` 中添加版本字段，用于检测是否需要升级：
-
-```json
-{
-  "scripts_version": "1.1.0"
-}
-```
-
-每次 skill 执行时检查版本，不匹配则提示升级。
 
 ---
 

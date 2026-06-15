@@ -590,6 +590,21 @@ node skills/story-long-write-mimo/scripts/quality-gate.js 正文/第001章_XXX.m
 
 ## 更新日志
 
+### v3.3.2（2026-06-15）
+
+**全局脚本调用规则**：
+- 新增 AGENTS.md 全局脚本调用规则：所有脚本必须从全局 skill 目录执行，禁止使用项目内的 `skills/` 目录
+- 全局 skill 目录定位优先级：环境变量 `MIMOCODE_SKILLS_DIR` > 工作目录 > 配置文件 > 默认路径 `$HOME\.config\mimocode\skills\`
+- 更新所有 SKILL.md 中的脚本调用说明，标注"需从全局skill目录执行"
+
+**移除自动复制脚本功能**：
+- 移除 `story-long-write-mimo/SKILL.md` Phase 5.1（自动检测缺失脚本、手动触发修复、版本检测）
+
+**`---` 清理功能**：
+- `normalize-punctuation.js`：修复模式下删除 `---` 分隔线，保留 YAML front matter 的 `---`
+- `punctuation-normalize.js`：新增 `---` 检测和清理逻辑
+- 两个脚本均添加运行时间显示
+
 ### v3.3.1（2026-06-15）
 
 **代码审查修复**：
