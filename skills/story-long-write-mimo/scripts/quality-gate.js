@@ -14,17 +14,20 @@ Checks:
   2. consistency      — Item/environment/character/timeline errors → BLOCK
   3. foreshadow       — Overdue foreshadowing (>50 chapters) → WARN
   4. wordcount        — Chapter word count < target 90% → BLOCK
-  5. voice-check      — Character voice consistency → WARN
-  6. emotion-analyzer — Emotion curve flatness → WARN
-  7. satisfaction      — Satisfaction point density → WARN
+  5. cross-chapter    — Cross-chapter duplicate detection → WARN
+  6. voice-check      — Character voice consistency → WARN
+  7. emotion-analyzer — Emotion curve flatness → WARN
+  8. satisfaction      — Satisfaction point density → WARN
 
 Options:
   --json              Output structured JSON
   --full              Enable enhanced checks (identity, timeline, format)
   --target-words N    Override target word count (default: from 细纲 or 3000)
+  --window N          Cross-chapter window size (default: 5)
   --skip-lint         Skip style-lint check
   --skip-consistency  Skip consistency check
   --skip-foreshadow   Skip foreshadow check
+  --skip-cross-chapter Skip cross-chapter duplicate check
   --skip-voice        Skip voice-check
   --skip-emotion      Skip emotion-analyzer
   --skip-satisfaction Skip satisfaction-meter
@@ -91,6 +94,7 @@ function main() {
   const skipLint = args.includes('--skip-lint');
   const skipConsistency = args.includes('--skip-consistency');
   const skipForeshadow = args.includes('--skip-foreshadow');
+  const skipCrossChapter = args.includes('--skip-cross-chapter');
   const skipVoice = args.includes('--skip-voice');
   const skipEmotion = args.includes('--skip-emotion');
   const skipSatisfaction = args.includes('--skip-satisfaction');
@@ -98,7 +102,7 @@ function main() {
 
   const filteredArgs = args.filter(a =>
     a !== '--json' && a !== '--full' && a !== '--skip-lint' && a !== '--skip-consistency' && a !== '--skip-foreshadow' &&
-    a !== '--skip-voice' && a !== '--skip-emotion' && a !== '--skip-satisfaction' && a !== '--fast'
+    a !== '--skip-cross-chapter' && a !== '--skip-voice' && a !== '--skip-emotion' && a !== '--skip-satisfaction' && a !== '--fast'
   );
 
   if (filteredArgs.length === 0 || filteredArgs[0] === '--help') {
@@ -120,6 +124,7 @@ function main() {
     consistency: null,
     foreshadow: null,
     wordcount: null,
+    cross_chapter: null,
     voice: null,
     emotion: null,
     satisfaction: null,
@@ -186,6 +191,19 @@ function main() {
 
   if (wordRatio < 0.9) {
     blockers.push(`字数不足：${actualWords}/${targetWords}（${Math.round(wordRatio * 100)}%），需达到 90%`);
+  }
+
+  if (!fastMode && !skipCrossChapter) {
+    const script = path.join(scriptsDir, 'cross-chapter-check.js');
+    const windowSize = args.includes('--window') ? parseInt(args[args.indexOf('--window') + 1], 10) : 5;
+    const r = runScript(script, ['--json', chapterFile, projectDir, '--window', String(windowSize)]);
+    const data = parseJsonOutput(r.output);
+    results.cross_chapter = data || { status: 'error', raw: r.output };
+
+    if (data && data.status === 'warn') {
+      const total = (data.summary.sentence_dupes || 0) + (data.summary.paragraph_dupes || 0) + (data.summary.action_dupes || 0);
+      warnings.push(`跨章重复：${total} 处重复（句子${data.summary.sentence_dupes || 0}、段落${data.summary.paragraph_dupes || 0}、动作${data.summary.action_dupes || 0}）`);
+    }
   }
 
   if (!fastMode && !skipVoice) {
@@ -265,6 +283,13 @@ function main() {
     const s = results.wordcount;
     const icon = s.status === 'pass' ? '✅' : '❌';
     console.log(`${icon} 字数检查：${s.actual}/${s.target}（${s.ratio}%）`);
+  }
+
+  if (results.cross_chapter) {
+    const s = results.cross_chapter;
+    const icon = s.status === 'pass' ? '✅' : '⚠️';
+    const total = (s.summary?.sentence_dupes || 0) + (s.summary?.paragraph_dupes || 0) + (s.summary?.action_dupes || 0);
+    console.log(`${icon} 跨章重复：${s.status === 'pass' ? '通过' : `${total} 处重复`}`);
   }
 
   if (results.voice) {

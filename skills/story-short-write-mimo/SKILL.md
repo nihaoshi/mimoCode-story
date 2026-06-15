@@ -219,6 +219,17 @@ node skills/_shared/scripts/punctuation-normalize.js <文件> --fix
 - 清理不可见Unicode字符（零宽空格、NBSP等）
 - 归一化空格和标点
 
+#### 自动质量门禁
+
+每节写完后自动运行质量门禁：
+
+```bash
+# 自动检查（含跨章重复检测）
+node skills/story-short-write-mimo/scripts/quality-gate.js <文件> --json
+```
+
+如果 status 为 blocked，暂停写作，修复问题后继续。
+
 ---
 
 ## 参考资料

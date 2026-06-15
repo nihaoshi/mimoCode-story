@@ -565,8 +565,8 @@ node skills/story-long-write-mimo/scripts/quality-gate.js 正文/第001章_XXX.m
 |------|---------------------------|-------------|
 | 平台 | Claude Code | MiMo Code |
 | 技能数 | 12 | 16 |
-| 脚本数 | 3 | 10 |
-| 质量门禁 | 无统一入口 | `quality-gate.js`（7 重检查） |
+| 脚本数 | 3 | 11 |
+| 质量门禁 | 无统一入口 | `quality-gate.js`（8 重检查） |
 | 情绪分析 | 无 | `emotion-analyzer.js` |
 | 爽点检测 | 无 | `satisfaction-meter.js` |
 | 角色声音 | 无 | `voice-check.js` |
@@ -581,7 +581,13 @@ node skills/story-long-write-mimo/scripts/quality-gate.js 正文/第001章_XXX.m
 
 ## 更新日志
 
-### v3.2.0（2026-06-15）
+### v3.2.1（2026-06-15）
+
+**跨章节重复检测**：
+- 新增 `cross-chapter-check.js` 脚本：使用 n-gram 指纹算法检测跨章句子/段落/动作重复
+- `quality-gate.js` 集成第 8 项检查：跨章重复检测（滑动窗口，默认前 5 章）
+- 自动指纹生成：检查完成后自动生成 `追踪/cross-chapter-fingerprint.md`
+- 长篇/短篇写作 skill 新增自动质量门禁：每章/每节写完后自动运行 quality-gate.js
 
 **去AI味升级（前置约束+事后检查）**：
 - `anti-ai-writing.md` 全面重写（v2.0.0 → v3.0.0）：新增AI味六大特征、去AI味七步法、AI高频套话完整词表、不同文体去AI味侧重点、终极检验法
