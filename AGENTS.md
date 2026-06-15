@@ -18,8 +18,8 @@ skill-name/
 
 ## Key Architecture Facts
 
-- `skills/story/SKILL.md` 是路由入口，根据关键词分发到具体 skill
-- `skills/story-long-write/SKILL.md` 是最核心的 skill（553行），定义5阶段写作流程
+- `skills/story-mimo/SKILL.md` 是路由入口，根据关键词分发到具体 skill
+- `skills/story-long-write-mimo/SKILL.md` 是最核心的 skill（553行），定义5阶段写作流程
 - Skill 间依赖：`story-import` 调用 `story-long-analyze` / `story-short-analyze` 的拆解管道
 - `demo/` 是示例数据（拆文库+写作项目），非 skill 代码
 
@@ -55,7 +55,7 @@ skill-name/
 4. 更新 `追踪/物品.md` — 物品位置/状态变化
 5. 更新 `追踪/环境.md` — 季节/天气/场景
 6. 更新 `追踪/上下文.md` — 进度摘要
-7. 运行质量门禁：`node skills/story-long-write/scripts/quality-gate.js <章节文件>`
+7. 运行质量门禁：`node skills/story-long-write-mimo/scripts/quality-gate.js <章节文件>`
 
 **质量门禁规则**：退出码 2（阻断）时**不得标记任务完成**，必须修复后重新运行。退出码 0 = 全部通过，1 = 有警告（可继续），2 = 有阻断项（必须修复）。
 

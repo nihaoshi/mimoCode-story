@@ -10,6 +10,7 @@ Normalize正文 punctuation deterministically:
   - replace em dashes / double hyphens with Chinese punctuation
   - remove markdown divider lines (---) from正文
   - keep quote style by default; convert quotes only when explicitly requested
+  - 清理AI特殊标点和不可见Unicode字符
 `;
 
 const options = {
@@ -94,6 +95,23 @@ function die(message) {
   process.exit(2);
 }
 
+// AI特殊标点检测正则
+const AI_PUNCTUATION = /[\u2014\u2013\u201C\u201D\u2018\u2019\u2026\u00A0\u202F]/g;
+const INVISIBLE_CHARS = /[\u200B\u200C\u200D\u2009\uFEFF\u00AD]/g;
+
+// AI偏爱的印刷级标点映射
+const AI_PUNCT_MAP = {
+  '\u2014': '——',  // em dash → 全角破折号
+  '\u2013': '--',   // en dash → 双连字符
+  '\u201C': '"',    // 左弯双引号 → 直引号
+  '\u201D': '"',    // 右弯双引号 → 直引号
+  '\u2018': "'",    // 左弯单引号 → 直引号
+  '\u2019': "'",    // 右弯单引号 → 直引号
+  '\u2026': '……',   // 水平省略号 → 全角省略号
+  '\u00A0': ' ',    // 不换行空格 → 普通空格
+  '\u202F': ' ',    // 窄不换行空格 → 普通空格
+};
+
 function normalizeDocument(input, quoteMode) {
   const newline = input.includes('\r\n') ? '\r\n' : '\n';
   const trailingNewline = input.endsWith('\n');
@@ -138,6 +156,16 @@ function normalizeDocument(input, quoteMode) {
       continue;
     }
 
+    // 清理不可见字符
+    const invisibleResult = cleanInvisibleChars(line, lineNo);
+    findings.push(...invisibleResult.findings);
+    line = invisibleResult.line;
+
+    // 清理AI特殊标点
+    const aiPunctResult = cleanAIPunctuation(line, lineNo);
+    findings.push(...aiPunctResult.findings);
+    line = aiPunctResult.line;
+
     const dashResult = normalizeDashes(line, lineNo);
     findings.push(...dashResult.findings);
     line = dashResult.line;
@@ -154,6 +182,75 @@ function normalizeDocument(input, quoteMode) {
     output: outputLines.join(newline) + (trailingNewline ? newline : ''),
     findings,
   };
+}
+
+function cleanInvisibleChars(line, lineNo) {
+  const findings = [];
+  let output = line;
+  
+  const matches = line.match(INVISIBLE_CHARS);
+  if (matches && matches.length > 0) {
+    findings.push({
+      line: lineNo,
+      column: 1,
+      type: 'invisible-char',
+      message: `清理不可见字符${matches.length}处`,
+    });
+    output = output.replace(INVISIBLE_CHARS, '');
+  }
+  
+  return { line: output, findings };
+}
+
+function cleanAIPunctuation(line, lineNo) {
+  const findings = [];
+  let output = line;
+  
+  const matches = line.match(AI_PUNCTUATION);
+  if (matches && matches.length > 0) {
+    const counts = {};
+    for (const ch of matches) {
+      const name = getCharName(ch);
+      counts[name] = (counts[name] || 0) + 1;
+    }
+    findings.push({
+      line: lineNo,
+      column: 1,
+      type: 'ai-punctuation',
+      message: `替换AI特殊标点：${Object.entries(counts).map(([k, v]) => `${k}(${v})`).join('、')}`,
+    });
+    for (const [aiChar, replacement] of Object.entries(AI_PUNCT_MAP)) {
+      output = output.split(aiChar).join(replacement);
+    }
+  }
+  
+  return { line: output, findings };
+}
+
+function getCharName(ch) {
+  const names = {
+    '\u2014': 'em dash',
+    '\u2013': 'en dash',
+    '\u201C': '左弯双引号',
+    '\u201D': '右弯双引号',
+    '\u2018': '左弯单引号',
+    '\u2019': '右弯单引号',
+    '\u2026': '水平省略号',
+    '\u00A0': '不换行空格',
+    '\u202F': '窄不换行空格',
+  };
+  return names[ch] || '未知字符';
+}
+
+function hasYamlFrontMatter(lines) {
+  if (!lines[0] || lines[0].trim() !== '---') return false;
+  let sawYamlField = false;
+  for (let i = 1; i < Math.min(lines.length, 40); i += 1) {
+    const trimmed = lines[i].trim();
+    if (trimmed === '---') return sawYamlField;
+    if (/^[A-Za-z0-9_-]+:\s*/.test(trimmed)) sawYamlField = true;
+  }
+  return false;
 }
 
 function normalizeDashes(line, lineNo) {
@@ -179,17 +276,6 @@ function normalizeDashes(line, lineNo) {
 
   output += original.slice(lastIndex);
   return { line: output, findings };
-}
-
-function hasYamlFrontMatter(lines) {
-  if (!lines[0] || lines[0].trim() !== '---') return false;
-  let sawYamlField = false;
-  for (let i = 1; i < Math.min(lines.length, 40); i += 1) {
-    const trimmed = lines[i].trim();
-    if (trimmed === '---') return sawYamlField;
-    if (/^[A-Za-z0-9_-]+:\s*/.test(trimmed)) sawYamlField = true;
-  }
-  return false;
 }
 
 function chooseDashReplacement(text, start, length) {
@@ -230,11 +316,11 @@ function isSentencePunctuation(ch) {
 }
 
 function isPunctuation(ch) {
-  return /[，,。.!！?？;；:：、…"“”'‘’」』）)]/.test(ch || '');
+  return /[，,。.!！?？;；:：、…"“”'‘'」』）)]/.test(ch || '');
 }
 
 function isClosingQuote(ch) {
-  return /["”」』]/.test(ch || '');
+  return /[""」』]/.test(ch || '');
 }
 
 function normalizeQuotes(line, quoteMode, quoteOpen, lineNo) {
@@ -247,13 +333,13 @@ function normalizeQuotes(line, quoteMode, quoteOpen, lineNo) {
 
   for (let i = 0; i < line.length; i += 1) {
     const ch = line[i];
-    if (quoteMode === 'ascii' && /[「」『』“”]/.test(ch)) {
+    if (quoteMode === 'ascii' && /[「」『』"""]/.test(ch)) {
       output += '"';
       findings.push({ line: lineNo, column: i + 1, type: 'quote-style', message: '按显式 quote-mode 转为半角双引号。' });
       continue;
     }
-    if (quoteMode === 'yan' && (ch === '"' || ch === '“' || ch === '”')) {
-      const replacement = quoteOpen || ch === '”' ? '」' : '「';
+    if (quoteMode === 'yan' && (ch === '"' || ch === '"' || ch === '"')) {
+      const replacement = quoteOpen || ch === '"' ? '」' : '「';
       output += replacement;
       quoteOpen = replacement === '「';
       findings.push({ line: lineNo, column: i + 1, type: 'quote-style', message: '按显式 quote-mode 转为盐言引号。' });

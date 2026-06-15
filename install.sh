@@ -60,7 +60,7 @@ else
 fi
 
 echo "[5/5] Verifying..."
-SKILLS=(story story-setup story-long-write story-short-write story-long-analyze story-short-analyze story-scan story-long-scan story-short-scan story-deslop story-review story-cover story-import browser-cdp)
+SKILLS=(story-mimo story-setup-mimo story-long-write-mimo story-short-write-mimo story-long-analyze-mimo story-short-analyze-mimo story-scan-mimo story-long-scan-mimo story-short-scan-mimo story-deslop-mimo story-review-mimo story-cover-mimo story-import-mimo browser-cdp-mimo story-synopsis-mimo story-export-mimo audit-mimo quality-mimo project-health-mimo distill-mimo dream-mimo goal-mimo)
 MISSING=()
 for s in "${SKILLS[@]}"; do
   if [ ! -f "$SKILL_DIR/$s/SKILL.md" ]; then
@@ -78,7 +78,7 @@ echo "=== Done ==="
 echo "Installed ${#SKILLS[@]} skills to: $SKILL_DIR"
 echo ""
 echo "Restart MiMo Code, then use:"
-echo "  /story           - Main entry"
-echo "  /story-setup     - Init project"
-echo "  /story-long-write  - Long fiction"
-echo "  /story-short-write - Short fiction"
+echo "  /story-mimo           - Main entry"
+echo "  /story-setup-mimo     - Init project"
+echo "  /story-long-write-mimo  - Long fiction"
+echo "  /story-short-write-mimo - Short fiction"

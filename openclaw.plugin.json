@@ -1,6 +1,6 @@
 {
   "name": "mimocode-story",
-  "version": "2.0.0",
+  "version": "3.1.1",
   "description": "MiMo Code 网文写作技能包。覆盖长篇与短篇网络小说的扫榜、拆文、写作、去AI味、审稿全流程。",
   "family": "bundle-plugin",
   "configSchema": {
@@ -43,9 +43,9 @@
     "skills/audit-mimo",
     "skills/quality-mimo",
     "skills/project-health-mimo",
-    "skills/distill",
-    "skills/dream",
-    "skills/goal"
+    "skills/distill-mimo",
+    "skills/dream-mimo",
+    "skills/goal-mimo"
   ],
   "shared_deps": [
     "skills/_shared/references",

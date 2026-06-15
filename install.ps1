@@ -71,10 +71,12 @@ if (-not (Get-Command agent-browser -ErrorAction SilentlyContinue)) {
 
 Write-Host "[5/5] Verifying..." -ForegroundColor Yellow
 $skills = @(
-    "story", "story-setup", "story-long-write", "story-short-write",
-    "story-long-analyze", "story-short-analyze", "story-scan",
-    "story-long-scan", "story-short-scan", "story-deslop",
-    "story-review", "story-cover", "story-import", "browser-cdp"
+    "story-mimo", "story-setup-mimo", "story-long-write-mimo", "story-short-write-mimo",
+    "story-long-analyze-mimo", "story-short-analyze-mimo", "story-scan-mimo",
+    "story-long-scan-mimo", "story-short-scan-mimo", "story-deslop-mimo",
+    "story-review-mimo", "story-cover-mimo", "story-import-mimo", "browser-cdp-mimo",
+    "story-synopsis-mimo", "story-export-mimo", "audit-mimo", "quality-mimo",
+    "project-health-mimo", "distill-mimo", "dream-mimo", "goal-mimo"
 )
 $missing = @()
 foreach ($s in $skills) {
@@ -94,7 +96,7 @@ Write-Host "=== Done ===" -ForegroundColor Green
 Write-Host "Installed $($skills.Count) skills to: $SkillDir"
 Write-Host ""
 Write-Host "Restart MiMo Code, then use:"
-Write-Host "  /story           - Main entry"
-Write-Host "  /story-setup     - Init project"
-Write-Host "  /story-long-write  - Long fiction"
-Write-Host "  /story-short-write - Short fiction"
+Write-Host "  /story-mimo           - Main entry"
+Write-Host "  /story-setup-mimo     - Init project"
+Write-Host "  /story-long-write-mimo  - Long fiction"
+Write-Host "  /story-short-write-mimo - Short fiction"

@@ -1,6 +1,6 @@
 {
   "name": "mimocode-story",
-  "version": "2.0.0",
+  "version": "3.1.1",
   "description": "MiMo Code 网文写作技能包",
   "skills": [
     {
@@ -100,17 +100,17 @@
     },
     {
       "name": "distill-mimo",
-      "path": "skills/distill/SKILL.md",
+      "path": "skills/distill-mimo/SKILL.md",
       "description": "工作流优化"
     },
     {
       "name": "dream-mimo",
-      "path": "skills/dream/SKILL.md",
+      "path": "skills/dream-mimo/SKILL.md",
       "description": "写作经验沉淀"
     },
     {
       "name": "goal-mimo",
-      "path": "skills/goal/SKILL.md",
+      "path": "skills/goal-mimo/SKILL.md",
       "description": "自主写作目标控制"
     }
   ],

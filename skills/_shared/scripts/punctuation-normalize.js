@@ -6,7 +6,7 @@ const path = require('path');
 
 const USAGE = `Usage: node punctuation-normalize.js <file> [options]
 
-规范化AI生成内容的标点符号。
+规范化AI生成内容的标点符号，清理AI特殊标点和不可见字符。
 
 Options:
   --check             仅检查，不修改
@@ -25,8 +25,51 @@ function readFile(p) {
   }
 }
 
+// AI特殊标点检测正则
+const AI_PUNCTUATION = /[\u2014\u2013\u201C\u201D\u2018\u2019\u2026\u00A0\u202F]/g;
+const INVISIBLE_CHARS = /[\u200B\u200C\u200D\u2009\uFEFF\u00AD]/g;
+
+// AI偏爱的印刷级标点映射
+const AI_PUNCT_MAP = {
+  '\u2014': '——',  // em dash → 全角破折号
+  '\u2013': '--',   // en dash → 双连字符
+  '\u201C': '"',    // 左弯双引号 → 直引号
+  '\u201D': '"',    // 右弯双引号 → 直引号
+  '\u2018': "'",    // 左弯单引号 → 直引号
+  '\u2019': "'",    // 右弯单引号 → 直引号
+  '\u2026': '……',   // 水平省略号 → 全角省略号
+  '\u00A0': ' ',    // 不换行空格 → 普通空格
+  '\u202F': ' ',    // 窄不换行空格 → 普通空格
+};
+
 function checkPunctuationIssues(text) {
   const issues = [];
+  
+  // 检测AI特殊标点
+  const aiPunctMatches = text.match(AI_PUNCTUATION);
+  if (aiPunctMatches && aiPunctMatches.length > 0) {
+    const counts = {};
+    for (const ch of aiPunctMatches) {
+      const name = getCharName(ch);
+      counts[name] = (counts[name] || 0) + 1;
+    }
+    issues.push({
+      type: 'ai_punctuation',
+      count: aiPunctMatches.length,
+      details: counts,
+      suggestion: `检测到AI特殊标点${aiPunctMatches.length}处：${Object.entries(counts).map(([k, v]) => `${k}(${v}次)`).join('、')}`,
+    });
+  }
+  
+  // 检测不可见字符
+  const invisibleMatches = text.match(INVISIBLE_CHARS);
+  if (invisibleMatches && invisibleMatches.length > 0) {
+    issues.push({
+      type: 'invisible_chars',
+      count: invisibleMatches.length,
+      suggestion: `检测到不可见Unicode字符${invisibleMatches.length}处，建议清除`,
+    });
+  }
   
   // 检查连续破折号
   const dashMatches = text.match(/——/g);
@@ -108,8 +151,31 @@ function checkPunctuationIssues(text) {
   return issues;
 }
 
+function getCharName(ch) {
+  const names = {
+    '\u2014': 'em dash',
+    '\u2013': 'en dash',
+    '\u201C': '左弯双引号',
+    '\u201D': '右弯双引号',
+    '\u2018': '左弯单引号',
+    '\u2019': '右弯单引号',
+    '\u2026': '水平省略号',
+    '\u00A0': '不换行空格',
+    '\u202F': '窄不换行空格',
+  };
+  return names[ch] || '未知字符';
+}
+
 function fixPunctuationIssues(text) {
   let fixed = text;
+  
+  // 清理不可见字符
+  fixed = fixed.replace(INVISIBLE_CHARS, '');
+  
+  // 替换AI特殊标点
+  for (const [aiChar, replacement] of Object.entries(AI_PUNCT_MAP)) {
+    fixed = fixed.split(aiChar).join(replacement);
+  }
   
   // 修复连续破折号（保留对话中的）
   fixed = fixed.replace(/([^」""]){3,}——/g, '$1——');
@@ -123,6 +189,9 @@ function fixPunctuationIssues(text) {
   // 修复连续标点
   fixed = fixed.replace(/，。/g, '。');
   fixed = fixed.replace(/。，/g, '。');
+  
+  // 清理多余空格
+  fixed = fixed.replace(/  +/g, ' ');
   
   return fixed;
 }

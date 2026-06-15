@@ -29,7 +29,17 @@ function extractLessonsFromChapter(chapterText, filename) {
   const lessons = [];
   
   // 检测禁用词
-  const bannedWords = ['不禁', '竟然', '居然', '事实上', '实际上', '显而易见', '毫无疑问'];
+  const bannedWords = [
+    '不禁', '竟然', '居然', '事实上', '实际上', '显而易见',
+    '毫无疑问', '可想而知', '不言而喻', '与此同时',
+    '值得注意的是', '需要指出的是', '不可否认',
+    '嘴角勾起', '嘴角上扬', '嘴角微扬',
+    '眼中闪过', '眼底闪过', '目光中闪过',
+    '深吸一口气', '长舒一口气', '吐出一口浊气',
+    '缓缓开口', '淡淡说道', '轻声说道',
+    '仿佛', '宛如', '恰似', '犹如',
+    '值得一提', '不得不说', '总而言之',
+  ];
   for (const word of bannedWords) {
     if (chapterText.includes(word)) {
       lessons.push({ type: 'banned_word', word, file: filename });
