@@ -17,7 +17,7 @@
 
 const fs = require("fs");
 const path = require("path");
-const { ab, sleep, evalJSON, safeStr, scrollLoad, getArg } = require("./cdp-utils");
+const { ab, sleep, evalJSON, safeStr, scrollLoad, getArg } = require("../../_shared/scripts/cdp-utils");
 
 const BROWSE_URL = "https://www.ishugui.com/browse";
 

@@ -3,6 +3,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { BANNED_LEVEL1 } = require("../../_shared/scripts/banned-words");
 
 const USAGE = `Usage: node quality-gate.js <file> [options]
 
@@ -122,13 +123,20 @@ function checkReversal(text) {
 function checkAIPatterns(text) {
   const issues = [];
   
+  // 检查禁用词
+  for (const word of BANNED_LEVEL1) {
+    const regex = new RegExp(word, 'g');
+    const matches = text.match(regex);
+    if (matches) {
+      issues.push(`禁用词"${word}"(出现${matches.length}次)`);
+    }
+  }
+  
+  // 检查其他AI腔模式
   const patterns = [
     { re: /他不知道的是/g, desc: '章末预告体' },
     { re: /这一夜.*无人入睡/g, desc: '升华式结尾' },
     { re: /仿佛.*般/g, desc: '万能比喻' },
-    { re: /不禁/g, desc: '禁用词"不禁"' },
-    { re: /竟然/g, desc: '禁用词"竟然"' },
-    { re: /事实上/g, desc: '禁用词"事实上"' },
   ];
   
   for (const { re, desc } of patterns) {

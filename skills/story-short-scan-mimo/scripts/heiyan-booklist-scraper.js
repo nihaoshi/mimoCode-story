@@ -19,7 +19,7 @@
 
 const fs = require("fs");
 const path = require("path");
-const { ab, sleep, evalJSON, safeStr, getArg } = require("./cdp-utils");
+const { ab, sleep, evalJSON, safeStr, getArg } = require("../../_shared/scripts/cdp-utils");
 
 const BOOKLIST_URL = "https://manage.zhangwenpindu.cn/books/booklist";
 const API_BASE = "https://ms.zhangwenpindu.cn";

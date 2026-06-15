@@ -1,11 +1,11 @@
 # 短篇写作示例
 
-本示例展示如何使用 `story-short-write` 从零开始写一篇短篇小说。
+本示例展示如何使用 `story-short-write-mimo` 从零开始写一篇短篇小说。
 
 ## 使用方式
 
 ```
-/story-short-write
+/story-short-write-mimo
 我想写一篇关于「深夜接到已故母亲电话」的短篇
 ```
 

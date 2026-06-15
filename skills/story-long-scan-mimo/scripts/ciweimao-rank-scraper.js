@@ -17,7 +17,7 @@
 
 const fs = require("fs");
 const path = require("path");
-const { ab, sleep, evalJSON, scrollLoad, getArg } = require("./cdp-utils");
+const { ab, sleep, evalJSON, scrollLoad, getArg } = require("../../_shared/scripts/cdp-utils");
 
 const RANK_URL = "https://www.ciweimao.com/rank-index";
 

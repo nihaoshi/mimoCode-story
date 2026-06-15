@@ -22,7 +22,7 @@
 
 const fs = require("fs");
 const path = require("path");
-const { ab, sleep, evalJSON, getArg } = require("./cdp-utils");
+const { ab, sleep, evalJSON, getArg } = require("../../_shared/scripts/cdp-utils");
 
 const BASE_URL = "https://www.jjwxc.net/topten.php";
 

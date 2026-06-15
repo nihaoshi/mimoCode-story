@@ -1,11 +1,11 @@
 # 短篇拆文示例
 
-本示例展示如何使用 `story-short-analyze` 拆解一篇短篇小说。
+本示例展示如何使用 `story-short-analyze-mimo` 拆解一篇短篇小说。
 
 ## 使用方式
 
 ```
-/story-short-analyze
+/story-short-analyze-mimo
 请拆解这篇短篇：[贴入原文或提供文件路径]
 ```
 
@@ -68,6 +68,6 @@
 ## 下一步
 
 拆文完成后，可以：
-1. 用 `story-short-write` 写同题材新短篇
-2. 用 `story-deslop` 检查并去除AI味
-3. 用 `story-review` 做多角度审稿
+1. 用 `story-short-write-mimo` 写同题材新短篇
+2. 用 `story-deslop-mimo` 检查并去除AI味
+3. 用 `story-review-mimo` 做多角度审稿

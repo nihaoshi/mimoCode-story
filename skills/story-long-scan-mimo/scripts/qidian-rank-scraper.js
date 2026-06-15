@@ -29,7 +29,7 @@
 const fs = require("fs");
 const https = require("https");
 const path = require("path");
-const { ab, sleep, evalJSON, scrollLoad, getArg } = require("./cdp-utils");
+const { ab, sleep, evalJSON, scrollLoad, getArg } = require("../../_shared/scripts/cdp-utils");
 
 const PC_BASE_URL = "https://www.qidian.com/rank";
 const MOBILE_BASE_URL = "https://m.qidian.com";

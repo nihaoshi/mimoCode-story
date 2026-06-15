@@ -18,7 +18,7 @@
 
 const fs = require("fs");
 const path = require("path");
-const { ab, sleep, evalJSON, scrollLoad, getArg } = require("./cdp-utils");
+const { ab, sleep, evalJSON, scrollLoad, getArg } = require("../../_shared/scripts/cdp-utils");
 
 // ---------------------------------------------------------------------------
 // 页面提取
