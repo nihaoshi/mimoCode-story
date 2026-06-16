@@ -110,8 +110,26 @@ Phase 5修正正文后 → 重新创建受影响的 T-TRACK-{N}-* 任务
 
 新会话开始时：
 1. 读取 `追踪/上下文.md` 获取进度
-2. 检查是否有 `in_progress` 的任务（从 memory 中恢复）
+2. 检查 memory 中是否有 `in_progress` 的任务（从 memory 中恢复）
 3. 从断点继续，不重复已完成的步骤
+
+## Memory 状态追踪
+
+每次任务状态变更时，写入 memory：
+
+```javascript
+// 创建任务时
+memory({ operation: "search", query: "task-create" })
+// 写入：T-WRITE-5 created, status=open
+
+// 开始执行时
+// 写入：T-WRITE-5 status=in_progress
+
+// 完成时
+// 写入：T-WRITE-5 status=done, summary="第5章完成，4668字"
+```
+
+新会话恢复时，通过 memory 搜索 `in_progress` 的任务，从断点继续。
 
 ---
 
