@@ -38,16 +38,30 @@
 
 ### 运行时强制检查
 
-**写正文前必须运行预检脚本**（从全局skill目录执行）：
+**正确执行顺序**：
+
+```
+1. skill 触发
+2. 创建完整任务树（不可跳过）
+3. 标记任务已创建：node task-gate.js <项目目录> <章节号> mark
+4. 写正文前检查：node task-gate.js <项目目录> <章节号> check
+5. 退出码2 = 阻断，必须回到步骤2
+```
+
+**预检脚本**（从全局skill目录执行）：
 
 ```bash
-node skills/_shared/scripts/task-gate.js <项目目录> <章节号>
+# 步骤3：标记任务已创建
+node skills/_shared/scripts/task-gate.js <项目目录> <章节号> mark
+
+# 步骤4：写正文前检查
+node skills/_shared/scripts/task-gate.js <项目目录> <章节号> check
 ```
 
 退出码含义：
 - 0 = 任务树就绪，可以开始写作
 - 1 = 警告（可继续）
-- 2 = **阻断：无任务树，必须先创建**
+- 2 = **阻断：未标记任务创建，必须先创建任务树**
 
 **退出码 2 时，禁止写正文，必须先创建完整任务树。**
 
