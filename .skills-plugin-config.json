@@ -1,6 +1,6 @@
 {
   "name": "mimocode-story",
-  "version": "3.1.1",
+  "version": "3.3.0",
   "description": "MiMo Code 网文写作技能包",
   "skills": [
     {
@@ -112,6 +112,11 @@
       "name": "goal-mimo",
       "path": "skills/goal-mimo/SKILL.md",
       "description": "自主写作目标控制"
+    },
+    {
+      "name": "story-session-mimo",
+      "path": "skills/story-session-mimo/SKILL.md",
+      "description": "Session 生命周期管理"
     }
   ],
   "behaviorRules": [

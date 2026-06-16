@@ -60,7 +60,7 @@ else
 fi
 
 echo "[5/5] Verifying..."
-SKILLS=(story-mimo story-setup-mimo story-long-write-mimo story-short-write-mimo story-long-analyze-mimo story-short-analyze-mimo story-scan-mimo story-long-scan-mimo story-short-scan-mimo story-deslop-mimo story-review-mimo story-cover-mimo story-import-mimo browser-cdp-mimo story-synopsis-mimo story-export-mimo audit-mimo quality-mimo project-health-mimo distill-mimo dream-mimo goal-mimo)
+SKILLS=(story-mimo story-setup-mimo story-long-write-mimo story-short-write-mimo story-long-analyze-mimo story-short-analyze-mimo story-scan-mimo story-long-scan-mimo story-short-scan-mimo story-deslop-mimo story-review-mimo story-cover-mimo story-import-mimo browser-cdp-mimo story-synopsis-mimo story-export-mimo audit-mimo quality-mimo project-health-mimo distill-mimo dream-mimo goal-mimo story-session-mimo)
 MISSING=()
 for s in "${SKILLS[@]}"; do
   if [ ! -f "$SKILL_DIR/$s/SKILL.md" ]; then

@@ -57,6 +57,28 @@ metadata:
 
 ---
 
+## Agent 角色定义
+
+本 skill 通过 MiMo Code 的 actor 工具 spawn 专业子智能体，各司其职：
+
+| Agent | 职责 | 触发时机 | 输入 | 输出 |
+|-------|------|----------|------|------|
+| story-architect | 题材定位·大纲结构·钩子/反转设计 | Phase 1 选题 + Phase 2 大纲 | 用户方向+对标信息 | 结构化选题报告/大纲文件 |
+| character-designer | 角色设计·角色档案·语言风格·动机链 | Phase 2 角色设定 | 题材+核心梗 | 角色卡 markdown |
+| narrative-writer | 正文写作·去AI味·格式合规 | Phase 4 每章写作 | 细纲+上一章+追踪文件 | 章节 markdown |
+| consistency-checker | 一致性检查·事实冲突扫描·伏笔追踪 | Phase 5 质量门禁 | 章节+追踪文件 | S1-S4 分级报告 |
+| story-explorer | 角色/伏笔/设定/进度只读查询 | 用户问"XXX什么状态" | 查询参数 | 结构化查询结果 |
+| chapter-extractor | 摘要+情节点+角色提及 | 拆文流程 | 原文章节 | 结构化拆解文件 |
+
+### Agent 调用规范
+
+1. **轻量任务由主会话完成**：题材定位、日常续写等简单任务不需要 spawn Agent
+2. **复杂任务 spawn Agent**：多线结构、强反转工程、批量拆文等复杂任务使用 actor 工具
+3. **并行执行**：拆文/审稿/研究可同时 spawn 多个 Agent
+4. **串行执行**：追踪文件更新必须串行，不能并行
+
+---
+
 ## MiMo Code 深度适配
 
 本 skill 针对 MiMo Code 平台进行了深度适配，充分利用其独特能力：
