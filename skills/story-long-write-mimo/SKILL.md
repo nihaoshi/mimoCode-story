@@ -214,6 +214,20 @@ T-WRITE-{N}: 写第{N}章「{章名}」 [in_progress]
 │       ├── T-GATE-{N}-RECHECK-BAN: 重新detect-banned-words
 │       └── T-GATE-{N}-RECHECK-AI: 重新detect-ai-sentence
 │
+├── T-CONSIST-{N}: 一致性检查（质量门禁通过后执行）
+│   ├── T-CONSIST-{N}-ITEM: detect-consistency — 物品位置是否前后一致
+│   ├── T-CONSIST-{N}-CHAR: detect-consistency — 角色状态是否前后一致
+│   ├── T-CONSIST-{N}-ENV: detect-consistency — 环境描述是否前后一致
+│   ├── T-CONSIST-{N}-TIME: detect-consistency — 时间线是否合理
+│   ├── T-CONSIST-{N}-CROSS: detect-cross-chapter — 跨章节重复/矛盾检测
+│   ├── T-CONSIST-{N}-VOICE: detect-voice — 角色声音一致性
+│   ├── [条件] T-CONSIST-{N}-FIX: 修正（任一检测不通过时创建）
+│   │   ├── 修正物品位置不一致
+│   │   ├── 修正角色状态矛盾
+│   │   ├── 修正环境描述冲突
+│   │   └── 修正时间线问题
+│   └── [条件] T-CONSIST-{N}-RECHECK: 复查（FIX后创建）
+│
 ├── T-TRACK-{N}: 追踪文件更新（串行）
 │   ├── T-TRACK-{N}-FORESH: 伏笔.md
 │   ├── T-TRACK-{N}-TIME: 时间线.md
@@ -238,6 +252,8 @@ T-WRITE-{N}: 写第{N}章「{章名}」 [in_progress]
 | T-RESEARCH-{N} | 需查外部事实 | 不需要 |
 | T-GATE-{N}-FIX | 任一检测BLOCK | 全部通过 |
 | T-GATE-{N}-RECHECK | FIX完成后 | 无FIX |
+| T-CONSIST-{N}-FIX | 任一一致性检测不通过 | 全部通过 |
+| T-CONSIST-{N}-RECHECK | FIX完成后 | 无FIX |
 | T-TRACK-{N}-NEWCHAR | 首次引入具名角色/势力 | 无新角色 |
 | T-PUNCT-{N} | 每批3章结束 | 非批量结尾 |
 | T-SNAPSHOT-{N} | 每3章 | 非3的倍数 |
@@ -249,6 +265,7 @@ T-WRITE-{N}: 写第{N}章「{章名}」 [in_progress]
 | 字数不达标 | T-COUNT-{N}-02 <90% | 创建FIX → 补写 → 回到T-COUNT-{N}-01重新验证 |
 | 质量BLOCK | 任一detect返回BLOCK | 创建对应FIX子任务 → 修正 → RECHECK |
 | 修正后复查 | FIX完成 | 创建RECHECK：① 回到字数验证（改了内容必须重验）→ ② 重新detect → 不通过再FIX（上限3轮） |
+| 一致性修正 | 一致性检测不通过 | 创建FIX → 修正 → RECHECK → 重新检测（上限3轮） |
 | 追踪同步 | Phase5修正正文 | 重新创建受影响的TRACK任务 |
 
 #### 修正后完整回环流程
@@ -263,6 +280,17 @@ T-GATE-{N}-RECHECK-BAN: 重新detect-banned-words
 T-GATE-{N}-RECHECK-AI: 重新detect-ai-sentence
     ↓
 如果仍有BLOCK → 再创建FIX（上限3轮）
+如果全部通过 → 进入T-CONSIST（一致性检查）
+    ↓
+T-CONSIST-{N}: 一致性检查
+    ├── 物品位置一致性
+    ├── 角色状态一致性
+    ├── 环境描述一致性
+    ├── 时间线合理性
+    ├── 跨章节重复/矛盾
+    └── 角色声音一致性
+    ↓
+如果有不一致 → 创建T-CONSIST-{N}-FIX → 修正 → RECHECK
 如果全部通过 → 进入T-TRACK（追踪文件更新）
 ```
 
