@@ -16,6 +16,44 @@ skill-name/
 
 共享资源在 `skills/_shared/`（references/templates/examples/checklists），所有 skill 引用但不修改。
 
+## Task 跟踪集成规范
+
+**所有编排 skill（有明确执行流程的 skill）必须在 SKILL.md 中包含 `## Task 跟踪集成` 章节。**
+
+规范详见 `skills/_shared/references/task-tracking-conventions.md`。
+
+### 核心要求
+
+1. **先建任务骨架，再逐个执行** — skill 触发时第一步是创建完整任务树
+2. **不跳步** — 每个任务必须 `done` 后才能进入下一个
+3. **条件创建** — 循环/分支步骤只在条件满足时创建，不预建空壳
+4. **完成标准明确** — 每个任务的 `done` 条件写在 summary 中
+
+### 已集成 task 跟踪的 skill
+
+| Skill | 说明 |
+|-------|------|
+| `story-long-write-mimo` | 长篇写作5阶段，含单章完整任务树 |
+| `story-short-write-mimo` | 短篇写作4阶段，含逐场景任务树 |
+| `story-deslop-mimo` | 去AI味4阶段，含Gate A~F条件创建 |
+| `story-review-mimo` | 审稿5维度，含综合报告 |
+| `quality-mimo` | 质量门禁，含标准/增强模式 |
+| `audit-mimo` | 全量审计3维度 |
+| `story-session-mimo` | 会话生命周期3阶段 |
+| `story-mimo` | 路由入口，含任务状态感知 |
+| `story-long-analyze-mimo` | 长篇拆文6阶段，含Stage 1停靠点 |
+| `story-import-mimo` | 导入4阶段，含篇幅分流 |
+
+### 新建 skill 时
+
+创建新的编排 skill 时，必须：
+1. 在 SKILL.md 中添加 `## Task 跟踪集成` 章节
+2. 引用 `references/task-tracking-conventions.md` 规范
+3. 定义该 skill 的任务树模板
+4. 定义条件创建规则和循环处理规则
+
+---
+
 ## Key Architecture Facts
 
 - `skills/story-mimo/SKILL.md` 是路由入口，根据关键词分发到具体 skill

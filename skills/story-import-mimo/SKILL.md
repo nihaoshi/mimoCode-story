@@ -611,6 +611,85 @@ name: {角色名}
 
 ---
 
+## Task 跟踪集成
+
+> 规范详见 `references/task-tracking-conventions.md`。
+
+**触发时第一步：创建完整任务树，然后逐个执行。不跳步。**
+
+### 任务树模板
+
+```
+T-IMPORT: 导入小说「{书名}」 [in_progress]
+│
+├── T-IMPORT-P1: Phase 1 确认导入源
+│   ├── T-IMPORT-P1-01: 确认书名+文件路径
+│   ├── T-IMPORT-P1-02: 确认意图（写作工程 vs 仅拆文库）
+│   ├── T-IMPORT-P1-03: 基本信息确认（题材/平台/完本/篇幅/残稿）
+│   ├── T-IMPORT-P1-04: 篇幅类型判定（长篇/短篇）
+│   ├── T-IMPORT-P1-05: 环境检测（.story-deployed）
+│   │   └── [条件] T-IMPORT-P1-SETUP: 提示用户去setup（未部署时）
+│   └── T-IMPORT-P1-06: 输出确认（章节数/字数/篇幅/残稿状态）
+│
+├── T-IMPORT-P2: Phase 2 深度分析
+│   ├── [长篇] T-IMPORT-P2-LONG: 调用 story-long-analyze-mimo 完整管道
+│   │   ├── Stage 0: 概要提取
+│   │   ├── Stage 1: 黄金三章（自动续跑，不停靠）
+│   │   ├── Stage 2: 逐章摘要
+│   │   ├── Stage 3: 聚合分析
+│   │   ├── Stage 4: 设定+关系
+│   │   ├── Stage 5: 汇总报告
+│   │   └── Stage 6: 文风
+│   └── [短篇] T-IMPORT-P2-SHORT: 调用 story-short-analyze-mimo 管道
+│       ├── Stage 2: 结构+情节节点
+│       ├── Stage 3: 情感线+爆点
+│       ├── Stage 4: 反转+写作手法
+│       ├── Stage 5: 人物+开头结尾
+│       └── Stage 6: 综合评估
+│
+├── T-IMPORT-P3: Phase 3 结构迁移
+│   ├── [长篇] T-IMPORT-P3-LONG: 长篇结构迁移
+│   │   ├── T-IMPORT-P3-L-01: 创建项目骨架
+│   │   ├── T-IMPORT-P3-L-02: 正文标准化（章节切分+命名）
+│   │   ├── T-IMPORT-P3-L-03: 角色文件迁移（含模板字段）
+│   │   ├── T-IMPORT-P3-L-04: 关系文件迁移
+│   │   ├── T-IMPORT-P3-L-05: 世界观设定拆分
+│   │   ├── T-IMPORT-P3-L-06: 大纲生成（卷纲+细纲）
+│   │   ├── T-IMPORT-P3-L-07: 追踪文件生成（伏笔→时间线→角色状态→上下文）
+│   │   ├── T-IMPORT-P3-L-08: 题材定位生成
+│   │   └── T-IMPORT-P3-L-09: 文风同步
+│   └── [短篇] T-IMPORT-P3-SHORT: 短篇结构迁移
+│       ├── T-IMPORT-P3-S-01: 正文迁移（格式规范化）
+│       ├── T-IMPORT-P3-S-02: 设定生成
+│       ├── T-IMPORT-P3-S-03: 小节大纲生成
+│       └── T-IMPORT-P3-S-04: 对标引用视图
+│
+├── T-IMPORT-P4: Phase 4 项目激活
+│   ├── T-IMPORT-P4-01: 质量检查（按篇幅对照清单）
+│   ├── T-IMPORT-P4-02: 缺失项提示+待补充清单
+│   └── T-IMPORT-P4-03: 项目激活（.active-book+选题决策搬迁）
+│
+└── T-IMPORT-OUTPUT: 输出导入完成报告
+```
+
+### 条件创建规则
+
+| 任务 | 创建条件 | 跳过条件 |
+|------|---------|---------|
+| T-IMPORT-P1-SETUP | 未部署 | 已部署 |
+| T-IMPORT-P2-LONG | 篇幅=长篇 | 篇幅=短篇 |
+| T-IMPORT-P2-SHORT | 篇幅=短篇 | 篇幅=长篇 |
+| T-IMPORT-P3-LONG | 篇幅=长篇 | 篇幅=短篇 |
+| T-IMPORT-P3-SHORT | 篇幅=短篇 | 篇幅=长篇 |
+
+### 大型作品处理（>200章）
+
+超200章时采用增量导入：
+1. 首期只导入前50章+全书概要
+2. 后续按用户需求分批导入
+
+---
+
 ## 流程衔接
 
 **流水线：** 长篇 / 短篇

@@ -124,6 +124,55 @@ MiMo Code 的 memory 系统在 checkpoint rebuild 时自动注入上下文。此
 
 ---
 
+## Task 跟踪集成
+
+> 规范详见 `references/task-tracking-conventions.md`。
+
+**会话生命周期的每个阶段都创建对应任务，确保不遗漏。**
+
+### 会话开始任务树
+
+```
+T-SESSION-START: 会话恢复 [in_progress]
+│
+├── T-SESSION-CTX: 读取追踪/上下文.md — 获取当前章节+上次决策
+├── T-SESSION-CHAR: 读取追踪/角色状态.md — 获取角色状态+性格锚点
+├── T-SESSION-FORESH: 读取追踪/伏笔.md — 获取待回收伏笔
+├── T-SESSION-GAP: 运行 detect-story-gaps.js — 检测设定缺口
+└── T-SESSION-SNAPSHOT: 输出进度快照 — 项目/进度/伏笔数/缺口数
+```
+
+### 上下文压缩前任务树
+
+```
+T-SESSION-PRE-COMPRESS: 上下文压缩保存 [in_progress]
+│
+├── T-SESSION-SAVE-CTX: 更新追踪/上下文.md — 写入进度+决策+问题
+└── T-SESSION-SAVE-MEM: 写入MEMORY.md — 保存关键决策
+```
+
+### 会话结束任务树
+
+```
+T-SESSION-END: 会话结束 [in_progress]
+│
+├── T-SESSION-END-CTX: 更新追踪/上下文.md — 最终进度摘要
+├── T-SESSION-END-MEM: 更新MEMORY.md — 当前进度+重要决策
+└── [条件] T-SESSION-END-DREAM: 经验提取（用户说"提取经验"时创建）
+    ├── 扫描禁用词频率
+    ├── 扫描AI腔模式
+    ├── 提取有效技法
+    └── 发现重复模式
+```
+
+### 条件创建规则
+
+| 任务 | 创建条件 | 跳过条件 |
+|------|---------|---------|
+| T-SESSION-END-DREAM | 用户说"提取经验" | 用户未要求 |
+
+---
+
 ## 与 story-long-write-mimo 的集成
 
 本 skill 作为 story-long-write-mimo 的辅助模块，在以下时机被调用：

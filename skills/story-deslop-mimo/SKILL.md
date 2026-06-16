@@ -192,6 +192,72 @@ AI味是风格问题——过于书面化、过于对仗工整、过于面面俱
 
 ---
 
+## Task 跟踪集成
+
+> 规范详见 `references/task-tracking-conventions.md`。
+
+**触发时第一步：创建完整任务树，然后逐个执行。不跳步。**
+
+### 任务树模板
+
+```
+T-DESLOP: 去AI味「{文件名}」 [in_progress]
+│
+├── T-DESLOP-SCAN: Phase 1 AI味扫描
+│   ├── 统计禁用词数量
+│   ├── 标记AI腔句式位置
+│   ├── 标记心理直述位置
+│   ├── 标记排比/节奏问题
+│   ├── 标记对话腔调问题
+│   └── 输出扫描报告
+│
+├── T-DESLOP-GRADE: Phase 2 诊断分级
+│   ├── 计算禁用词密度（处/千字）
+│   ├── 判定等级：轻度≤5 / 中度6-15 / 重度>15
+│   └── 确定需要过哪些Gate
+│
+├── T-DESLOP-FIX: Phase 3 逐项清除
+│   ├── T-DESLOP-GATE-A: Gate A — fix-banned-words
+│   ├── T-DESLOP-GATE-B: Gate B — fix-ai-sentence
+│   ├── [条件] T-DESLOP-GATE-C: Gate C — fix-psychology-externalize（中度+）
+│   ├── [条件] T-DESLOP-GATE-D: Gate D — fix-rhythm-break（中度+）
+│   ├── [条件] T-DESLOP-GATE-E: Gate E — fix-dialogue-naturalize（中度+）
+│   ├── [条件] T-DESLOP-GATE-F: Gate F — fix-ending-desublimate（中度+）
+│   └── T-DESLOP-PUNCT: 附加 — fix-punctuation
+│
+├── [条件] T-DESLOP-RECHECK: 复查（FIX完成后创建）
+│   ├── 重新扫描禁用词
+│   └── 重新扫描AI腔
+│
+└── T-DESLOP-OUTPUT: Phase 4 输出润色结果
+    ├── 统计原文字数
+    ├── 统计修订字数
+    ├── 计算净变化
+    └── 输出修改前后对比
+```
+
+### 条件创建规则
+
+| 任务 | 创建条件 | 跳过条件 |
+|------|---------|---------|
+| T-DESLOP-GATE-C~F | 诊断为中度或重度 | 轻度（只过A+B） |
+| T-DESLOP-RECHECK | FIX完成后 | 无FIX |
+
+### 循环处理
+
+| 循环 | 触发 | 处理 |
+|------|------|------|
+| 修正后仍有残留 | RECHECK发现新问题 | 再创建FIX（上限3轮） |
+| 同段连续2轮无改动 | 收敛终止 | 停止循环 |
+
+### 过度保护
+
+- 不得整段删除正文内容
+- 删除前确认是否包含伏笔、钩子等关键信息
+- 删除比例上限：轻度≤15%，中度≤25%，重度≤35%
+
+---
+
 ## 使用场景
 
 | 场景 | 操作 |

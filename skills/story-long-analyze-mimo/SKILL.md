@@ -97,6 +97,81 @@ Stage 0+1 完成后，管道自动停靠，产出快速预览报告。
 
 ---
 
+## Task 跟踪集成
+
+> 规范详见 `references/task-tracking-conventions.md`。
+
+**触发时第一步：创建完整任务树，然后逐个执行。不跳步。**
+
+### 任务树模板
+
+```
+T-ANALYZE-LONG: 拆文「{书名}」 [in_progress]
+│
+├── T-ANALYZE-P1: Phase 1 确认拆解对象
+│   ├── T-ANALYZE-P1-01: 确认书名+平台
+│   ├── T-ANALYZE-P1-02: 确认原文文件路径
+│   └── T-ANALYZE-P1-03: 创建输出目录 拆文库/{书名}/
+│
+├── T-ANALYZE-P2: Phase 2 深度拆解管道
+│   ├── T-ANALYZE-S0: Stage 0 概要提取
+│   │   ├── 解析原始文本
+│   │   ├── 提取概要.md
+│   │   └── 生成章节索引
+│   │
+│   ├── T-ANALYZE-S1: Stage 1 黄金三章
+│   │   ├── T-ANALYZE-S1-01: 深度拆解第1章
+│   │   ├── T-ANALYZE-S1-02: 深度拆解第2章
+│   │   ├── T-ANALYZE-S1-03: 深度拆解第3章
+│   │   └── T-ANALYZE-S1-PREVIEW: 生成快速预览.md
+│   │
+│   ├── [停靠点] T-ANALYZE-PAUSE: 询问用户是否继续全量拆解
+│   │
+│   ├── T-ANALYZE-S2: Stage 2 逐章摘要（用户确认后创建）
+│   │   ├── [循环] T-ANALYZE-S2-CH-{i}: 摘要第{i}章
+│   │   └── 输出章节/*.md
+│   │
+│   ├── T-ANALYZE-S3: Stage 3 聚合分析
+│   │   ├── 分析剧情线
+│   │   ├── 生成故事线.md
+│   │   ├── 提取散落情节
+│   │   └── 输出剧情/*.md
+│   │
+│   ├── T-ANALYZE-S4: Stage 4 设定+关系
+│   │   ├── T-ANALYZE-S4-CHAR: 提取角色+关系
+│   │   ├── T-ANALYZE-S4-WORLD: 提取世界观设定
+│   │   ├── T-ANALYZE-S4-FACTION: 提取势力
+│   │   └── 输出设定/*.md + 角色/*.md
+│   │
+│   ├── T-ANALYZE-S5: Stage 5 汇总报告
+│   │   └── 生成拆文报告.md
+│   │
+│   └── T-ANALYZE-S6: Stage 6 文风
+│       └── 生成文风.md
+│
+├── [条件] T-ANALYZE-FIX: 修正（质量门控不通过时）
+│   └── 修正事实错误/补充缺失
+│
+└── T-ANALYZE-OUTPUT: 输出完成报告
+    ├── 拆文目录结构
+    ├── 章节数
+    └── 核心发现摘要
+```
+
+### 条件创建规则
+
+| 任务 | 创建条件 | 跳过条件 |
+|------|---------|---------|
+| T-ANALYZE-PAUSE | Stage 0+1 完成 | - |
+| T-ANALYZE-S2~S6 | 用户确认继续 | 用户不继续 |
+| T-ANALYZE-FIX | 质量门控不通过 | 全部通过 |
+
+### Stage 1 停靠点
+
+Stage 0+1 完成后自动停靠，输出快速预览。用户确认后才继续 Stage 2+。
+
+---
+
 ## 流程衔接
 
 | 时机 | 跳转到 |

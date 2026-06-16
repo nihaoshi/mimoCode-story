@@ -146,6 +146,65 @@ AI执行：
 
 ---
 
+## Task 跟踪集成
+
+> 规范详见 `references/task-tracking-conventions.md`。
+
+**触发时第一步：创建完整任务树，然后逐个执行。不跳步。**
+
+### 标准模式任务树
+
+```
+T-QUALITY: 质量检查「{文件名}」 [in_progress]
+│
+├── T-QUALITY-BAN: detect-banned-words — 禁用词扫描
+├── T-QUALITY-AI: detect-ai-sentence — AI腔扫描
+├── T-QUALITY-CON: detect-consistency — 一致性检查
+├── T-QUALITY-FORESH: detect-foreshadow — 伏笔检查
+├── T-QUALITY-WC: detect-wordcount — 字数检查
+├── T-QUALITY-VOICE: detect-voice — 角色声音检查
+├── T-QUALITY-EMO: detect-emotion-curve — 情绪曲线检查
+│
+├── [条件] T-QUALITY-FIX: 修正（任一检测BLOCK时创建）
+│   ├── fix-banned-words
+│   ├── fix-ai-sentence
+│   ├── fix-punctuation
+│   ├── fix-psychology-externalize
+│   ├── fix-rhythm-break
+│   ├── fix-dialogue-naturalize
+│   └── fix-ending-desublimate
+│
+├── [条件] T-QUALITY-RECHECK: 复查（FIX后创建）
+│   ├── 重新 detect-banned-words
+│   └── 重新 detect-ai-sentence
+│
+└── T-QUALITY-REPORT: 输出检查报告
+```
+
+### 增强模式（--full）额外任务
+
+```
+├── T-QUALITY-XCHAPTER: detect-cross-chapter — 跨章节一致性
+├── T-QUALITY-SAT: detect-satisfaction — 读者满意度预检
+└── T-QUALITY-GAPS: detect-story-gaps — 故事漏洞检测
+```
+
+### 条件创建规则
+
+| 任务 | 创建条件 | 跳过条件 |
+|------|---------|---------|
+| T-QUALITY-FIX | 任一检测返回BLOCK | 全部通过 |
+| T-QUALITY-RECHECK | FIX完成后 | 无FIX |
+| T-QUALITY-XCHAPTER/SAT/GAPS | --full模式 | 标准模式 |
+
+### 循环处理
+
+| 循环 | 触发 | 处理 |
+|------|------|------|
+| 修正后仍有残留 | RECHECK发现新问题 | 再创建FIX（上限3轮） |
+
+---
+
 ## 与其他skill的关系
 
 | 关系 | 说明 |

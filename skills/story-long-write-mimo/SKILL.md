@@ -122,14 +122,149 @@ metadata:
 
 ### 任务追踪集成
 
-每章写作自动创建任务：
+> 规范详见 `references/task-tracking-conventions.md`。
+
+**触发时第一步：创建完整任务树，然后逐个执行。不跳步。**
+
+#### 单章任务树模板（写第{N}章时创建）
+
 ```
-T1: 写第15章：XXX → in_progress → done
-T1.1: 更新追踪文件 → in_progress → done
-T1.2: 运行检查脚本 → in_progress → done
+T-WRITE-{N}: 写第{N}章「{章名}」 [in_progress]
+│
+├── T-CTX-{N}: 读取上下文（15项，逐项创建）
+│   ├── T-CTX-{N}-01: 读上一章正文 [BLOCK: 首章除外]
+│   ├── T-CTX-{N}-02: 读本章细纲 [BLOCK: 不存在则先补建]
+│   ├── T-CTX-{N}-03: 读追踪/伏笔.md [WARN]
+│   ├── T-CTX-{N}-04: 读设定/角色/{本章角色}.md [WARN]
+│   ├── T-CTX-{N}-05: 读对标拆文报告.md [WARN: 无对标则跳过]
+│   ├── T-CTX-{N}-06: 读对标原文第N章 [可选: 无对标则跳过]
+│   ├── T-CTX-{N}-07: 读参考资料/{topic}.md [可选: 无则跳过]
+│   ├── T-CTX-{N}-08: 读追踪/角色状态.md [WARN]
+│   ├── T-CTX-{N}-09: 读追踪/物品.md [WARN]
+│   ├── T-CTX-{N}-10: 读追踪/环境.md [WARN]
+│   ├── T-CTX-{N}-11: 读追踪/物资.md [WARN]
+│   ├── T-CTX-{N}-12: 读对标剧情/故事线.md [WARN: 无对标则跳过]
+│   ├── T-CTX-{N}-13: 读对标剧情/{相关线}.md [WARN: 无对标则跳过]
+│   ├── T-CTX-{N}-14: 读对标设定/世界观/*.md [WARN: 无对标则跳过]
+│   └── T-CTX-{N}-15: 读cross-chapter-fingerprint.md [可选: 不存在则跳过]
+│
+├── T-PREP-{N}: 准备层
+│   ├── T-PREP-{N}-01: 状态筛选 — 输出最简记忆包
+│   ├── T-PREP-{N}-02a: 文风召回 — 读文风.md [缺失则fail-fast]
+│   ├── T-PREP-{N}-02b: 匹配章节挑选 — grep基调选章K
+│   ├── T-PREP-{N}-02c: 模块召回 — 对标角色/剧情/设定
+│   ├── T-PREP-{N}-02d: 跨章重复预检 — 读指纹文件
+│   ├── T-PREP-{N}-02e: 输出召回摘要 — ≤10条
+│   ├── T-PREP-{N}-03: 指令确认 — 一句话写作意图
+│   ├── T-PREP-{N}-04: 性格锚点检查 — 确认不违背人设
+│   └── T-PREP-{N}-05: 质量约束注入
+│       ├── T-PREP-{N}-05a: 加载禁用词清单
+│       ├── T-PREP-{N}-05b: 加载AI腔句式禁令
+│       ├── T-PREP-{N}-05c: 加载段落密度规则
+│       ├── T-PREP-{N}-05d: 加载对话自然度规则
+│       ├── T-PREP-{N}-05e: 加载心理描写限制
+│       ├── T-PREP-{N}-05f: 加载比喻限制
+│       ├── T-PREP-{N}-05g: 加载节奏规则
+│       ├── T-PREP-{N}-05h: 加载留白规则
+│       ├── T-PREP-{N}-05i: 加载标点规则
+│       └── T-PREP-{N}-05j: 加载上次质量问题
+│
+├── T-RESEARCH-{N}: 资料研究 [按需]
+├── T-TITLE-{N}: 标题预检 — 细纲章名去重
+│
+├── T-WRITE-{N}-DRAFT: 正文写作
+│   ├── 确认细纲情节点已读取
+│   ├── 确认准备层输出已加载
+│   ├── 三维度织入（发生+感知+反应）
+│   ├── 镜头断段（一段一动作/信息变化）
+│   ├── 密度重排（>60字拆段，>45字拆句）
+│   └── 写入正文/第{N}章_{章名}.md
+│
+├── T-COUNT-{N}: 字数验证
+│   ├── T-COUNT-{N}-01: Python字符统计
+│   ├── T-COUNT-{N}-02: 判断是否≥90%
+│   └── [循环] T-COUNT-{N}-FIX: 补写（不达标时创建）→ 回到T-COUNT-{N}-01重新验证
+│
+├── T-CHECK-{N}-INITIAL: 章节自检
+│   ├── T-CHECK-{N}-HOOK: 章尾钩子检查
+│   └── T-CHECK-{N}-SAT: 爽点检查
+│
+├── T-GATE-{N}: 质量门禁
+│   ├── T-GATE-{N}-BAN: detect-banned-words
+│   ├── T-GATE-{N}-AI: detect-ai-sentence
+│   ├── T-GATE-{N}-CON: detect-consistency
+│   ├── T-GATE-{N}-FORESH: detect-foreshadow
+│   ├── [条件] T-GATE-{N}-FIX: 修正（任一BLOCK时创建）
+│   │   ├── T-GATE-{N}-FIX-BAN: fix-banned-words
+│   │   ├── T-GATE-{N}-FIX-AI: fix-ai-sentence
+│   │   ├── T-GATE-{N}-FIX-PUNCT: fix-punctuation
+│   │   ├── T-GATE-{N}-FIX-PSY: fix-psychology-externalize
+│   │   ├── T-GATE-{N}-FIX-RHYTHM: fix-rhythm-break
+│   │   ├── T-GATE-{N}-FIX-DIAL: fix-dialogue-naturalize
+│   │   └── T-GATE-{N}-FIX-END: fix-ending-desublimate
+│   └── [条件] T-GATE-{N}-RECHECK: 复查（FIX后创建）
+│       ├── T-GATE-{N}-RECHECK-COUNT: 回到字数验证（改了内容必须重验字数）
+│       ├── T-GATE-{N}-RECHECK-BAN: 重新detect-banned-words
+│       └── T-GATE-{N}-RECHECK-AI: 重新detect-ai-sentence
+│
+├── T-TRACK-{N}: 追踪文件更新（串行）
+│   ├── T-TRACK-{N}-FORESH: 伏笔.md
+│   ├── T-TRACK-{N}-TIME: 时间线.md
+│   ├── T-TRACK-{N}-CHAR: 角色状态.md
+│   ├── T-TRACK-{N}-ITEM: 物品.md
+│   ├── T-TRACK-{N}-ENV: 环境.md
+│   ├── T-TRACK-{N}-SUPPLY: 物资.md
+│   ├── T-TRACK-{N}-CTX: 上下文.md
+│   └── [条件] T-TRACK-{N}-NEWCHAR: 新角色建档
+│
+├── [条件] T-PUNCT-{N}: 标点收尾（每批3章后）
+└── [条件] T-SNAPSHOT-{N}: 中途快照（每3章）
 ```
 
-任务进度与检查点系统联动，会话恢复时自动恢复任务状态。
+#### 条件创建规则
+
+| 任务 | 创建条件 | 跳过条件 |
+|------|---------|---------|
+| T-CTX-{N}-06 对标原文 | 对标书存在 | 无对标书 |
+| T-CTX-{N}-07 参考资料 | 有历史研究 | 无 |
+| T-CTX-{N}-15 指纹 | 文件存在 | 不存在 |
+| T-RESEARCH-{N} | 需查外部事实 | 不需要 |
+| T-GATE-{N}-FIX | 任一检测BLOCK | 全部通过 |
+| T-GATE-{N}-RECHECK | FIX完成后 | 无FIX |
+| T-TRACK-{N}-NEWCHAR | 首次引入具名角色/势力 | 无新角色 |
+| T-PUNCT-{N} | 每批3章结束 | 非批量结尾 |
+| T-SNAPSHOT-{N} | 每3章 | 非3的倍数 |
+
+#### 循环处理
+
+| 循环 | 触发 | 处理 |
+|------|------|------|
+| 字数不达标 | T-COUNT-{N}-02 <90% | 创建FIX → 补写 → 回到T-COUNT-{N}-01重新验证 |
+| 质量BLOCK | 任一detect返回BLOCK | 创建对应FIX子任务 → 修正 → RECHECK |
+| 修正后复查 | FIX完成 | 创建RECHECK：① 回到字数验证（改了内容必须重验）→ ② 重新detect → 不通过再FIX（上限3轮） |
+| 追踪同步 | Phase5修正正文 | 重新创建受影响的TRACK任务 |
+
+#### 修正后完整回环流程
+
+```
+T-GATE-{N}-FIX 完成
+    ↓
+T-GATE-{N}-RECHECK-COUNT: 回到字数验证（改了内容可能影响字数）
+    ↓
+T-GATE-{N}-RECHECK-BAN: 重新detect-banned-words
+    ↓
+T-GATE-{N}-RECHECK-AI: 重新detect-ai-sentence
+    ↓
+如果仍有BLOCK → 再创建FIX（上限3轮）
+如果全部通过 → 进入T-TRACK（追踪文件更新）
+```
+
+#### 跨会话恢复
+
+新会话开始时：
+1. 读 `追踪/上下文.md` 获取当前章节
+2. 检查是否有 `in_progress` 的任务（从 memory 恢复）
+3. 从断点继续，不重复已完成步骤
 
 ### Goal 自主写作模式（严格工作流）
 

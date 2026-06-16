@@ -232,6 +232,77 @@ node skills/story-short-write-mimo/scripts/quality-gate.js <文件> --json
 
 ---
 
+## Task 跟踪集成
+
+> 规范详见 `references/task-tracking-conventions.md`。
+
+**触发时第一步：创建完整任务树，然后逐个执行。不跳步。**
+
+### 任务树模板
+
+```
+T-SHORT-WRITE: 写短篇「{标题}」 [in_progress]
+│
+├── T-SHORT-P1: Phase 1 确定情绪目标
+│   ├── T-SHORT-P1-01: 问用户情绪方向
+│   ├── T-SHORT-P1-02: 匹配情绪类型（意难平/反转震撼/爽感/治愈/细思极恐/共鸣）
+│   └── T-SHORT-P1-03: 确认目标情绪+强度
+│
+├── T-SHORT-P2: Phase 2 构思核心框架
+│   ├── T-SHORT-P2-01: 确定基本信息（标题/字数/平台）
+│   ├── T-SHORT-P2-02: 一句话梗概（主角+困境+反转+情绪落点）
+│   ├── T-SHORT-P2-03: 核心反转设计（类型+内容+3个铺垫线索）
+│   ├── T-SHORT-P2-04: 情绪设计（开头/中段/反转/结尾 情绪强度）
+│   ├── T-SHORT-P2-05: 人设速写（主角+关键角色+关系）
+│   └── T-SHORT-P2-06: 输出设定.md
+│
+├── T-SHORT-P3: Phase 3 逐场景写作
+│   ├── T-SHORT-P3-01: 创建项目目录+小节大纲.md
+│   ├── [循环] T-SHORT-P3-SEC-{i}: 写第{i}节
+│   │   ├── 读小节大纲中本节要点
+│   │   ├── 加载质量约束（禁用词/AI腔/段落/对话/心理/比喻/节奏/留白）
+│   │   ├── 三维度织入+镜头断段
+│   │   ├── 写入正文.md
+│   │   ├── 字数验证（≥800/节）
+│   │   └── [条件] T-SHORT-P3-SEC-{i}-FIX: 补写（不达标时）
+│   └── 总字数验证（≥8000）
+│
+├── T-SHORT-P4: Phase 4 精修打磨
+│   ├── T-SHORT-P4-01: 开头钩子检查（前3句吸引力）
+│   ├── T-SHORT-P4-02: 情绪曲线检查（是否有起伏）
+│   ├── T-SHORT-P4-03: 反转铺垫检查（3+线索是否到位）
+│   ├── T-SHORT-P4-04: 每句话价值检查（不推动剧情→删）
+│   ├── T-SHORT-P4-05: 格式规范检查
+│   ├── T-SHORT-P4-06: AI腔排查（七步检查）
+│   ├── T-SHORT-P4-07: 标点规范化（punctuation-normalize.js）
+│   ├── T-SHORT-P4-08: 质量门禁（quality-gate.js）
+│   ├── [条件] T-SHORT-P4-FIX: 修正（检测不通过时）
+│   └── [条件] T-SHORT-P4-RECHECK: 复查（FIX后）
+│
+└── T-SHORT-OUTPUT: 输出完成报告
+    ├── 总字数
+    ├── 情绪目标达成度
+    └── 质量检查结果
+```
+
+### 条件创建规则
+
+| 任务 | 创建条件 | 跳过条件 |
+|------|---------|---------|
+| T-SHORT-P3-SEC-{i}-FIX | 字数<800 | 字数达标 |
+| T-SHORT-P4-FIX | 质量门禁BLOCK | 全部通过 |
+| T-SHORT-P4-RECHECK | FIX后 | 无FIX |
+
+### 循环处理
+
+| 循环 | 触发 | 处理 |
+|------|------|------|
+| 节数循环 | 小节大纲有N节 | 逐节创建T-SHORT-P3-SEC-{i} |
+| 字数不达标 | <800/节 或 <8000总 | 创建FIX → 补写 → 重新验证 |
+| 质量修正 | 门禁BLOCK | 创建FIX → 修正 → RECHECK |
+
+---
+
 ## 参考资料
 
 共享参考文件位于 `../_shared/references/`，专用文件位于 `references/`。

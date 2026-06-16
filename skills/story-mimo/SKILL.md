@@ -62,6 +62,37 @@ description: |
 
 原子技能既可被上层 skill 内部调用，也可由用户直接使用 `/atom:{atom-id}` 按需组合。
 
+## Task 跟踪集成
+
+> 规范详见 `references/task-tracking-conventions.md`。
+
+**路由入口负责创建顶层任务，然后将子任务委托给具体 skill。**
+
+### 路由任务树
+
+```
+T-ROUTE: 用户请求「{用户输入}」 [in_progress]
+│
+├── T-ROUTE-ANALYZE: 分析用户意图 — 提取关键词
+├── T-ROUTE-MATCH: 匹配路由表 — 找到对应skill
+├── T-ROUTE-STATUS: 检查项目状态 — 无项目/未部署/已有项目
+│   └── [条件] T-ROUTE-SETUP: 初始化项目（无项目时创建）
+└── T-ROUTE-DELEGATE: 委托执行 — 调用对应skill，传递task_id
+```
+
+### 任务状态感知
+
+路由时检查是否有进行中的任务：
+- 读取 memory 中的 `in_progress` 任务
+- 如果有 → 询问用户："上次在做{任务描述}，继续还是新的？"
+- 如果无 → 正常路由
+
+### 委托规则
+
+路由到具体 skill 时，将当前 task_id 传递给子 skill，子 skill 的任务挂在当前任务下。
+
+---
+
 ## 多书切换
 
 用户想切换或查看在写的书时：
