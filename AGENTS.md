@@ -11,11 +11,31 @@
 触发 skill 后，在做任何其他事情之前，必须完成：
 
 1. **检查是否有 `in_progress` 的任务** — 有则从断点继续，不重复创建
-2. **创建1个父任务** — 概括本次要做什么（如"写第5章"）
-3. **读取该 SKILL.md 的 `## Task 跟踪集成` 章节** — 获取任务树模板
-4. **根据任务树模板批量创建子任务** — 挂在父任务下
-5. **运行 `task-gate.js mark`** — 标记任务树已创建
-6. **逐个 `start` → 执行 → `done`** — 不跳步，不合并，不省略
+2. **运行任务生成脚本** — 根据 skill 类型选择对应脚本，生成固定任务列表
+3. **严格按照脚本输出逐条创建任务** — 不得增减、合并、改名、跳过
+4. **运行 `task-gate.js mark`** — 标记任务树已创建
+5. **逐个 `start` → 执行 → `done`** — 不跳步，不合并，不省略
+
+### 任务生成脚本
+
+| Skill | 脚本 | 用法 |
+|-------|------|------|
+| story-long-write-mimo | `task-gen-write.js` | `node task-gen-write.js <章节号> <章名>` |
+| story-deslop-mimo | `task-gen-deslop.js` | `node task-gen-deslop.js <文件名>` |
+| story-review-mimo | `task-gen-review.js` | `node task-gen-review.js <文件名>` |
+| quality-mimo | `task-gen-quality.js` | `node task-gen-quality.js <文件名> [--full]` |
+| audit-mimo | `task-gen-audit.js` | `node task-gen-audit.js <项目名>` |
+
+脚本位于 `skills/_shared/scripts/`，从全局skill目录执行。
+
+### 禁止行为
+
+- ❌ 直接开始写正文，不创建任务
+- ❌ 自己决定创建哪些任务（必须按固定列表）
+- ❌ 合并多个步骤为一个任务
+- ❌ 检测到问题后直接修改，不创建修正任务
+- ❌ 修正后不重新验证字数
+- ❌ 跳过追踪文件更新
 
 ### 禁止行为
 
