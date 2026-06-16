@@ -124,32 +124,87 @@ metadata:
 
 > 规范详见 `references/task-tracking-conventions.md`。
 
-**触发时第一步：创建完整任务树，然后逐个执行。不跳步。**
+**触发时第一步：运行脚本获取固定任务列表，然后逐条创建。不跳步。**
 
-**执行顺序**：
-1. 创建父任务 `T-WRITE-{N}: 写第{N}章`
-2. 读取下方任务树模板，批量创建子任务（挂在父任务下）
-3. 运行 `task-gate.js mark` 标记已创建
-4. 逐个执行子任务
-5. 写正文前运行 `task-gate.js check` 确认就绪
+**强制执行顺序（不可跳过）**：
+1. 运行 `node skills/_shared/scripts/task-gen-write.js <章节号> <章名>`
+2. 脚本输出51条固定任务命令
+3. 严格按照输出逐条创建 task（summary必须与脚本输出一致）
+4. 运行 `task-gate.js mark` 标记已创建
+5. 逐个执行任务
 
-#### 单章任务树模板（写第{N}章时创建）
+#### 固定任务列表（写第{N}章时，逐条创建）
 
 ```
-T-WRITE-{N}: 写第{N}章「{章名}」 [in_progress]
-│
-├── T-CTX-{N}: 读取上下文（15项，逐项创建）
-│   ├── T-CTX-{N}-01: 读上一章正文 [BLOCK: 首章除外]
-│   ├── T-CTX-{N}-02: 读本章细纲 [BLOCK: 不存在则先补建]
-│   ├── T-CTX-{N}-03: 读追踪/伏笔.md [WARN]
-│   ├── T-CTX-{N}-04: 读设定/角色/{本章角色}.md [WARN]
-│   ├── T-CTX-{N}-05: 读对标拆文报告.md [WARN: 无对标则跳过]
-│   ├── T-CTX-{N}-06: 读对标原文第N章 [可选: 无对标则跳过]
-│   ├── T-CTX-{N}-07: 读参考资料/{topic}.md [可选: 无则跳过]
-│   ├── T-CTX-{N}-08: 读追踪/角色状态.md [WARN]
-│   ├── T-CTX-{N}-09: 读追踪/物品.md [WARN]
-│   ├── T-CTX-{N}-10: 读追踪/环境.md [WARN]
-│   ├── T-CTX-{N}-11: 读追踪/物资.md [WARN]
+# ===== 第1层：父任务 =====
+1. task create "T-WRITE-{N}: 写第{N}章「{章名}」"                    → 获得 T-WRITE-{N}
+
+# ===== 第2层：6个阶段任务 =====
+2. task create "T-CTX-{N}: 读取上下文"      parent=T-WRITE-{N}       → 获得 T-CTX-{N}
+3. task create "T-PREP-{N}: 准备层"         parent=T-WRITE-{N}       → 获得 T-PREP-{N}
+4. task create "T-WRITE-{N}-DRAFT: 正文写作" parent=T-WRITE-{N}       → 获得 T-WRITE-{N}-DRAFT
+5. task create "T-COUNT-{N}: 字数验证"      parent=T-WRITE-{N}       → 获得 T-COUNT-{N}
+6. task create "T-GATE-{N}: 质量门禁"       parent=T-WRITE-{N}       → 获得 T-GATE-{N}
+7. task create "T-CONSIST-{N}: 一致性检查"  parent=T-WRITE-{N}       → 获得 T-CONSIST-{N}
+8. task create "T-TRACK-{N}: 追踪文件更新"  parent=T-WRITE-{N}       → 获得 T-TRACK-{N}
+
+# ===== 第3层：上下文读取（15项，每项一个任务） =====
+9.  task create "T-CTX-{N}-01: 读上一章正文"           parent=T-CTX-{N}
+10. task create "T-CTX-{N}-02: 读本章细纲"             parent=T-CTX-{N}
+11. task create "T-CTX-{N}-03: 读追踪/伏笔.md"         parent=T-CTX-{N}
+12. task create "T-CTX-{N}-04: 读设定/角色/{本章角色}.md" parent=T-CTX-{N}
+13. task create "T-CTX-{N}-05: 读对标拆文报告.md"      parent=T-CTX-{N}
+14. task create "T-CTX-{N}-06: 读对标原文第N章"        parent=T-CTX-{N}
+15. task create "T-CTX-{N}-07: 读参考资料/{topic}.md"  parent=T-CTX-{N}
+16. task create "T-CTX-{N}-08: 读追踪/角色状态.md"     parent=T-CTX-{N}
+17. task create "T-CTX-{N}-09: 读追踪/物品.md"         parent=T-CTX-{N}
+18. task create "T-CTX-{N}-10: 读追踪/环境.md"         parent=T-CTX-{N}
+19. task create "T-CTX-{N}-11: 读追踪/物资.md"         parent=T-CTX-{N}
+20. task create "T-CTX-{N}-12: 读对标剧情/故事线.md"   parent=T-CTX-{N}
+21. task create "T-CTX-{N}-13: 读对标剧情/{相关线}.md" parent=T-CTX-{N}
+22. task create "T-CTX-{N}-14: 读对标设定/世界观/*.md"  parent=T-CTX-{N}
+23. task create "T-CTX-{N}-15: 读cross-chapter-fingerprint.md" parent=T-CTX-{N}
+
+# ===== 第3层：准备层（5个子任务） =====
+24. task create "T-PREP-{N}-01: 状态筛选"              parent=T-PREP-{N}
+25. task create "T-PREP-{N}-02: 文风召回"              parent=T-PREP-{N}
+26. task create "T-PREP-{N}-03: 指令确认"              parent=T-PREP-{N}
+27. task create "T-PREP-{N}-04: 性格锚点检查"          parent=T-PREP-{N}
+28. task create "T-PREP-{N}-05: 质量约束注入"          parent=T-PREP-{N}
+
+# ===== 第3层：字数验证（2个子任务） =====
+29. task create "T-COUNT-{N}-01: Python字符统计"       parent=T-COUNT-{N}
+30. task create "T-COUNT-{N}-02: 判断是否≥90%"        parent=T-COUNT-{N}
+
+# ===== 第3层：质量门禁（4个检测+修正+复查） =====
+31. task create "T-GATE-{N}-BAN: detect-banned-words"  parent=T-GATE-{N}
+32. task create "T-GATE-{N}-AI: detect-ai-sentence"    parent=T-GATE-{N}
+33. task create "T-GATE-{N}-CON: detect-consistency"   parent=T-GATE-{N}
+34. task create "T-GATE-{N}-FORESH: detect-foreshadow" parent=T-GATE-{N}
+35. task create "T-GATE-{N}-FIX: 修正（条件创建）"     parent=T-GATE-{N}
+36. task create "T-GATE-{N}-RECHECK: 复查（条件创建）" parent=T-GATE-{N}
+
+# ===== 第3层：一致性检查（6个检测+修正+复查） =====
+37. task create "T-CONSIST-{N}-ITEM: 物品位置一致性"    parent=T-CONSIST-{N}
+38. task create "T-CONSIST-{N}-CHAR: 角色状态一致性"    parent=T-CONSIST-{N}
+39. task create "T-CONSIST-{N}-ENV: 环境描述一致性"     parent=T-CONSIST-{N}
+40. task create "T-CONSIST-{N}-TIME: 时间线合理性"      parent=T-CONSIST-{N}
+41. task create "T-CONSIST-{N}-CROSS: 跨章节重复/矛盾"  parent=T-CONSIST-{N}
+42. task create "T-CONSIST-{N}-VOICE: 角色声音一致性"   parent=T-CONSIST-{N}
+43. task create "T-CONSIST-{N}-FIX: 一致性修正（条件创建）" parent=T-CONSIST-{N}
+44. task create "T-CONSIST-{N}-RECHECK: 一致性复查（条件创建）" parent=T-CONSIST-{N}
+
+# ===== 第3层：追踪文件更新（7个子任务） =====
+45. task create "T-TRACK-{N}-FORESH: 更新伏笔.md"      parent=T-TRACK-{N}
+46. task create "T-TRACK-{N}-TIME: 更新时间线.md"       parent=T-TRACK-{N}
+47. task create "T-TRACK-{N}-CHAR: 更新角色状态.md"     parent=T-TRACK-{N}
+48. task create "T-TRACK-{N}-ITEM: 更新物品.md"         parent=T-TRACK-{N}
+49. task create "T-TRACK-{N}-ENV: 更新环境.md"          parent=T-TRACK-{N}
+50. task create "T-TRACK-{N}-SUPPLY: 更新物资.md"       parent=T-TRACK-{N}
+51. task create "T-TRACK-{N}-CTX: 更新上下文.md"        parent=T-TRACK-{N}
+```
+
+**共51条任务，必须逐条创建。条件创建的任务（第35、36、43、44条）先创建为 open 状态，执行时再判断是否跳过。**
 │   ├── T-CTX-{N}-12: 读对标剧情/故事线.md [WARN: 无对标则跳过]
 │   ├── T-CTX-{N}-13: 读对标剧情/{相关线}.md [WARN: 无对标则跳过]
 │   ├── T-CTX-{N}-14: 读对标设定/世界观/*.md [WARN: 无对标则跳过]
@@ -242,21 +297,20 @@ T-WRITE-{N}: 写第{N}章「{章名}」 [in_progress]
 └── [条件] T-SNAPSHOT-{N}: 中途快照（每3章）
 ```
 
-#### 条件创建规则
+#### 条件创建规则（执行时判断）
 
-| 任务 | 创建条件 | 跳过条件 |
-|------|---------|---------|
-| T-CTX-{N}-06 对标原文 | 对标书存在 | 无对标书 |
-| T-CTX-{N}-07 参考资料 | 有历史研究 | 无 |
-| T-CTX-{N}-15 指纹 | 文件存在 | 不存在 |
-| T-RESEARCH-{N} | 需查外部事实 | 不需要 |
-| T-GATE-{N}-FIX | 任一检测BLOCK | 全部通过 |
-| T-GATE-{N}-RECHECK | FIX完成后 | 无FIX |
-| T-CONSIST-{N}-FIX | 任一一致性检测不通过 | 全部通过 |
-| T-CONSIST-{N}-RECHECK | FIX完成后 | 无FIX |
-| T-TRACK-{N}-NEWCHAR | 首次引入具名角色/势力 | 无新角色 |
-| T-PUNCT-{N} | 每批3章结束 | 非批量结尾 |
-| T-SNAPSHOT-{N} | 每3章 | 非3的倍数 |
+| 任务 | 执行时判断 | 跳过则 abandoned |
+|------|-----------|-----------------|
+| T-CTX-{N}-01 上一章 | 首章时 abandoned | "首章跳过" |
+| T-CTX-{N}-05 对标拆文 | 无对标书时 abandoned | "无对标跳过" |
+| T-CTX-{N}-06 对标原文 | 无对标书时 abandoned | "无对标跳过" |
+| T-CTX-{N}-07 参考资料 | 无则 abandoned | "无资料跳过" |
+| T-CTX-{N}-12~14 对标文件 | 无对标时 abandoned | "无对标跳过" |
+| T-CTX-{N}-15 指纹 | 文件不存在时 abandoned | "无指纹跳过" |
+| T-GATE-{N}-FIX | 任一检测BLOCK时 start | 全部通过则 abandoned |
+| T-GATE-{N}-RECHECK | FIX完成后 start | 无FIX则 abandoned |
+| T-CONSIST-{N}-FIX | 任一检测不通过时 start | 全部通过则 abandoned |
+| T-CONSIST-{N}-RECHECK | FIX完成后 start | 无FIX则 abandoned |
 
 #### 循环处理
 
