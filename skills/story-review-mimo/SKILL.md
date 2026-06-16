@@ -4,6 +4,12 @@ version: 2.0.0
 description: |
   多视角审稿。从多个角度审查网文稿件质量。
   触发方式：/story-review-mimo、/审稿、「帮我看看这篇」「审查」
+atoms:
+  - review-structure
+  - review-character
+  - review-writing
+  - review-commercial
+  - review-consistency
 ---
 
 # story-review-mimo：多视角审稿
@@ -16,6 +22,8 @@ description: |
 
 ### 1. 结构审查
 
+调用原子 `review-structure`。
+
 | 检查项 | 标准 |
 |--------|------|
 | 开篇钩子 | 前3句是否有吸引力 |
@@ -26,6 +34,8 @@ description: |
 
 ### 2. 人物审查
 
+调用原子 `review-character`。
+
 | 检查项 | 标准 |
 |--------|------|
 | 角色一致性 | 人设是否前后一致 |
@@ -34,6 +44,8 @@ description: |
 | 配角功能 | 配角是否有存在价值 |
 
 ### 3. 文笔审查
+
+调用原子 `review-writing`。
 
 | 检查项 | 标准 |
 |--------|------|
@@ -44,6 +56,8 @@ description: |
 
 ### 4. 商业审查
 
+调用原子 `review-commercial`。
+
 | 检查项 | 标准 |
 |--------|------|
 | 爽点密度 | 每3000-5000字是否有爽点 |
@@ -52,6 +66,8 @@ description: |
 | 平台适配 | 是否适合目标平台 |
 
 ### 5. 一致性审查
+
+调用原子 `review-consistency`。
 
 | 检查项 | 标准 |
 |--------|------|
@@ -70,7 +86,7 @@ description: |
 
 ### Phase 2：多维度审查
 
-按上述 5 个维度逐一审查，输出审查报告。
+按上述 5 个维度逐一审查，每个维度调用对应原子 skill，输出审查报告。
 
 ### Phase 3：输出报告
 

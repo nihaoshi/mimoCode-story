@@ -60,6 +60,8 @@ else
 fi
 
 echo "[5/5] Verifying..."
+
+# 1. 验证 23 个技能
 SKILLS=(story-mimo story-setup-mimo story-long-write-mimo story-short-write-mimo story-long-analyze-mimo story-short-analyze-mimo story-scan-mimo story-long-scan-mimo story-short-scan-mimo story-deslop-mimo story-review-mimo story-cover-mimo story-import-mimo browser-cdp-mimo story-synopsis-mimo story-export-mimo audit-mimo quality-mimo project-health-mimo distill-mimo dream-mimo goal-mimo story-session-mimo)
 MISSING=()
 for s in "${SKILLS[@]}"; do
@@ -73,12 +75,40 @@ if [ ${#MISSING[@]} -gt 0 ]; then
   exit 1
 fi
 
+# 2. 验证 45 个原子技能
+ATOMS=(detect-banned-words detect-ai-sentence detect-consistency detect-foreshadow detect-wordcount detect-voice detect-emotion-curve detect-cross-chapter detect-satisfaction detect-story-gaps full-consistency-audit fix-banned-words fix-ai-sentence fix-psychology-externalize fix-rhythm-break fix-dialogue-naturalize fix-ending-desublimate fix-punctuation review-structure review-character review-writing review-commercial review-consistency rules-engine pre-write-checklist prompt-template-inject banned-words-preload style-constraint-gen character-anchor-load scrape-platform analyze-trend generate-topic-decision analyze-reader-profile extract-summary analyze-golden-chapters extract-chapter-summary analyze-aggregate extract-settings extract-characters extract-style design-volume-outline design-chapter-outline design-character design-worldbuilding generate-chapter)
+ATOM_MISSING=()
+for a in "${ATOMS[@]}"; do
+  if [ ! -f "$SKILL_DIR/atoms/$a/SKILL.md" ]; then
+    ATOM_MISSING+=("$a")
+  fi
+done
+
+if [ ${#ATOM_MISSING[@]} -gt 0 ]; then
+  echo "Warning: Missing atoms (${#ATOM_MISSING[@]}): ${ATOM_MISSING[*]}"
+  echo "  Atom skills may not work. Try: git pull && re-run installer"
+fi
+
+# 3. 验证关键脚本
+SCRIPTS=(quality-gate.js style-lint.js consistency-check.js punctuation-normalize.js)
+SCRIPT_MISSING=()
+for sc in "${SCRIPTS[@]}"; do
+  if [ ! -f "$SKILL_DIR/_shared/scripts/$sc" ]; then
+    SCRIPT_MISSING+=("$sc")
+  fi
+done
+
+if [ ${#SCRIPT_MISSING[@]} -gt 0 ]; then
+  echo "Warning: Missing scripts (${#SCRIPT_MISSING[@]}): ${SCRIPT_MISSING[*]}"
+  echo "  Quality checks will not work. Try: git pull && re-run installer"
+fi
+
 echo ""
 echo "=== Done ==="
-echo "Installed ${#SKILLS[@]} skills to: $SKILL_DIR"
+echo "Installed ${#SKILLS[@]} skills + ${#ATOMS[@]} atoms to: $SKILL_DIR"
 echo ""
 echo "Restart MiMo Code, then use:"
 echo "  /story-mimo           - Main entry"
 echo "  /story-setup-mimo     - Init project"
-echo "  /story-long-write-mimo  - Long fiction"
-echo "  /story-short-write-mimo - Short fiction"
+echo "  /atom:detect-banned-words - Run single atom"
+echo "  /atom:fix-punctuation     - Fix punctuation"

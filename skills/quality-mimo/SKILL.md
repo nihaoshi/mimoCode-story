@@ -4,6 +4,17 @@ version: 1.0.0
 description: |
   统一质量检查入口。检查章节质量、一致性、禁用词、AI腔等。
   触发方式：/quality-mimo、/检查质量、「检查一下」「质量检查」
+atoms:
+  - detect-banned-words
+  - detect-ai-sentence
+  - detect-consistency
+  - detect-foreshadow
+  - detect-wordcount
+  - detect-voice
+  - detect-emotion-curve
+  - detect-cross-chapter
+  - detect-satisfaction
+  - detect-story-gaps
 ---
 
 # quality-mimo：统一质量检查
@@ -32,24 +43,27 @@ description: |
 
 **调用方式**：
 ```bash
-node skills/story-long-write-mimo/scripts/quality-gate.js <章节文件> <项目目录>
+node skills/_shared/scripts/quality-gate.js <章节文件> <项目目录>
 ```
 
-**检查项目**：
-- 禁用词检测
-- AI腔检测
-- 一致性检查
-- 伏笔检查
-- 字数检查
-- 角色声音检查
-- 情绪曲线检查
+**检查项目**（由以下原子 skill 执行）：
+- 调用原子 `detect-banned-words` — 禁用词检测
+- 调用原子 `detect-ai-sentence` — AI腔检测
+- 调用原子 `detect-consistency` — 一致性检查
+- 调用原子 `detect-foreshadow` — 伏笔检查
+- 调用原子 `detect-wordcount` — 字数检查
+- 调用原子 `detect-voice` — 角色声音检查
+- 调用原子 `detect-emotion-curve` — 情绪曲线检查
 
 **增强模式**：
 ```bash
-node skills/story-long-write-mimo/scripts/quality-gate.js --full <章节文件> <项目目录>
+node skills/_shared/scripts/quality-gate.js --full <章节文件> <项目目录>
 ```
 
-增加：身份一致性、追踪文件完整性、时间线逻辑
+增加（增强模式额外原子）：
+- 调用原子 `detect-cross-chapter` — 跨章节一致性
+- 调用原子 `detect-satisfaction` — 读者满意度预检
+- 调用原子 `detect-story-gaps` — 故事漏洞检测
 
 ---
 
@@ -59,7 +73,7 @@ node skills/story-long-write-mimo/scripts/quality-gate.js --full <章节文件> 
 
 **调用方式**：
 ```bash
-node skills/story-long-write-mimo/scripts/full-consistency-audit.js <项目目录>
+node skills/_shared/scripts/full-consistency-audit.js <项目目录>
 ```
 
 **检查内容**：
@@ -71,12 +85,18 @@ node skills/story-long-write-mimo/scripts/full-consistency-audit.js <项目目�
 
 ### 3. 单项检查
 
-| 检查类型 | 命令 |
-|---------|------|
-| 文风检查 | `node skills/story-long-write-mimo/scripts/style-lint.js <文件>` |
-| 一致性检查 | `node skills/story-long-write-mimo/scripts/consistency-check.js <文件> <项目目录>` |
-| 伏笔检查 | `node skills/story-long-write-mimo/scripts/foreshadow-check.js <文件> <项目目录>` |
-| 标点检查 | `node skills/_shared/scripts/punctuation-normalize.js <文件> --check` |
+| 检查类型 | 调用原子 |
+|---------|----------|
+| 禁用词检测 | 调用原子 `detect-banned-words` |
+| AI腔检测 | 调用原子 `detect-ai-sentence` |
+| 一致性检查 | 调用原子 `detect-consistency` |
+| 伏笔检查 | 调用原子 `detect-foreshadow` |
+| 字数检查 | 调用原子 `detect-wordcount` |
+| 角色声音检查 | 调用原子 `detect-voice` |
+| 情绪曲线检查 | 调用原子 `detect-emotion-curve` |
+| 跨章节检查 | 调用原子 `detect-cross-chapter` |
+| 读者满意度 | 调用原子 `detect-satisfaction` |
+| 故事漏洞 | 调用原子 `detect-story-gaps` |
 
 ---
 

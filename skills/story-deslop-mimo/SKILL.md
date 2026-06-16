@@ -4,6 +4,14 @@ version: 2.0.0
 description: |
   网文去AI味。检测并清除文本中的AI写作痕迹。
   触发方式：/story-deslop-mimo、/去AI味、「去AI味」「这篇太AI了」
+atoms:
+  - fix-banned-words
+  - fix-ai-sentence
+  - fix-psychology-externalize
+  - fix-rhythm-break
+  - fix-dialogue-naturalize
+  - fix-ending-desublimate
+  - fix-punctuation
 ---
 
 # story-deslop-mimo：网文去AI味
@@ -89,6 +97,8 @@ AI味是风格问题——过于书面化、过于对仗工整、过于面面俱
 
 #### Gate A：禁用词替换
 
+调用原子 `fix-banned-words`。
+
 对照禁用词表逐项检查。替换规则：
 - 禁用词 → 具体动作/细节描写
 - 不能简单换成另一个形容词
@@ -101,6 +111,8 @@ AI味是风格问题——过于书面化、过于对仗工整、过于面面俱
 
 #### Gate B：句式去套路
 
+调用原子 `fix-ai-sentence`。
+
 | 句式 | 替代方案 |
 |------|----------|
 | "不是A，而是B" | 直接写 B |
@@ -112,11 +124,15 @@ AI味是风格问题——过于书面化、过于对仗工整、过于面面俱
 
 #### Gate C：心理描写外化
 
+调用原子 `fix-psychology-externalize`。
+
 - "他很紧张" → "他的手在抖"
 - "她很愤怒" → "她一把掀翻了桌子"
 - "他很害怕" → "他的腿在发抖"
 
 #### Gate D：节奏打碎
+
+调用原子 `fix-rhythm-break`。
 
 - 打断连续排比句
 - 长句拆短句
@@ -125,6 +141,8 @@ AI味是风格问题——过于书面化、过于对仗工整、过于面面俱
 
 #### Gate E：对话去腔调
 
+调用原子 `fix-dialogue-naturalize`。
+
 - 加入口语化表达（"嗯""哦""行吧"）
 - 适当打断对话（答非所问）
 - 用动作穿插对话
@@ -132,9 +150,19 @@ AI味是风格问题——过于书面化、过于对仗工整、过于面面俱
 
 #### Gate F：结尾去升华
 
+调用原子 `fix-ending-desublimate`。
+
 - 删掉总结性语句
 - 用动作/场景收尾
 - "他知道...""这一刻..." → 基本可删
+
+#### 附加：标点清理
+
+调用原子 `fix-punctuation`。
+
+- 检查并替换智能引号（" " ' '）为直引号
+- 清理不可见Unicode字符
+- 归一化空格和标点
 
 ---
 

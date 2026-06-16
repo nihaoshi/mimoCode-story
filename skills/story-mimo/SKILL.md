@@ -44,6 +44,24 @@ description: |
 - **无项目目录**（没有包含 `追踪/` 或 `设定/` 的书名目录）→ 写作前先运行 `story-setup-mimo` 初始化
 - **已有项目** → 检查 `.story-deployed` 标记，未部署则先运行 `story-setup-mimo`
 
+## Atom Skills（原子技能）
+
+用户可以通过 `/atom:{atom-id}` 前缀直接调用原子技能。原子技能是最小粒度的功能单元，可自由组合完成复杂任务。
+
+### 七大原子类别
+
+| 类别 | 说明 | 示例 |
+|------|------|------|
+| analyze | 拆文提取 | `extract-characters`、`extract-style`、`analyze-golden-chapters` |
+| scan | 扫榜选题 | `scrape-platform`、`analyze-trend`、`generate-topic-decision` |
+| pre-write | 写前准备 | `character-anchor-load`、`banned-words-preload`、`rules-engine` |
+| write | 设计生成 | `generate-chapter`、`design-character`、`design-chapter-outline` |
+| review | 多维评审 | `review-consistency`、`review-commercial`、`review-writing` |
+| fix | 精准修复 | `fix-ai-sentence`、`fix-banned-words`、`fix-dialogue-naturalize` |
+| detect | 检测诊断 | `detect-banned-words`、`detect-consistency`、`detect-emotion-curve` |
+
+原子技能既可被上层 skill 内部调用，也可由用户直接使用 `/atom:{atom-id}` 按需组合。
+
 ## 多书切换
 
 用户想切换或查看在写的书时：

@@ -1,7 +1,7 @@
 {
   "name": "mimocode-story",
-  "version": "3.3.0",
-  "description": "MiMo Code 网文写作技能包",
+  "version": "4.0.0",
+  "description": "MiMo Code 网文写作技能包（含45个原子技能）",
   "skills": [
     {
       "name": "story-mimo",
@@ -117,6 +117,276 @@
       "name": "story-session-mimo",
       "path": "skills/story-session-mimo/SKILL.md",
       "description": "Session 生命周期管理"
+    },
+    {
+      "name": "analyze-aggregate",
+      "path": "skills/atoms/analyze-aggregate/SKILL.md",
+      "description": "从摘要聚合剧情线、角色和故事框架",
+      "category": "atom"
+    },
+    {
+      "name": "analyze-golden-chapters",
+      "path": "skills/atoms/analyze-golden-chapters/SKILL.md",
+      "description": "深度拆解前3章的结构、技法和卖点",
+      "category": "atom"
+    },
+    {
+      "name": "analyze-reader-profile",
+      "path": "skills/atoms/analyze-reader-profile/SKILL.md",
+      "description": "分析目标平台读者特征",
+      "category": "atom"
+    },
+    {
+      "name": "analyze-trend",
+      "path": "skills/atoms/analyze-trend/SKILL.md",
+      "description": "从排行数据提取题材热度和趋势",
+      "category": "atom"
+    },
+    {
+      "name": "banned-words-preload",
+      "path": "skills/atoms/banned-words-preload/SKILL.md",
+      "description": "加载Level1+Level2禁用词完整列表",
+      "category": "atom"
+    },
+    {
+      "name": "character-anchor-load",
+      "path": "skills/atoms/character-anchor-load/SKILL.md",
+      "description": "从角色状态文件提取各角色性格锚点",
+      "category": "atom"
+    },
+    {
+      "name": "design-character",
+      "path": "skills/atoms/design-character/SKILL.md",
+      "description": "设计角色卡片",
+      "category": "atom"
+    },
+    {
+      "name": "design-chapter-outline",
+      "path": "skills/atoms/design-chapter-outline/SKILL.md",
+      "description": "设计单章细纲",
+      "category": "atom"
+    },
+    {
+      "name": "design-volume-outline",
+      "path": "skills/atoms/design-volume-outline/SKILL.md",
+      "description": "设计卷级大纲",
+      "category": "atom"
+    },
+    {
+      "name": "design-worldbuilding",
+      "path": "skills/atoms/design-worldbuilding/SKILL.md",
+      "description": "设计世界观、力量体系和势力",
+      "category": "atom"
+    },
+    {
+      "name": "detect-ai-sentence",
+      "path": "skills/atoms/detect-ai-sentence/SKILL.md",
+      "description": "检测章节中的AI腔句式",
+      "category": "atom"
+    },
+    {
+      "name": "detect-banned-words",
+      "path": "skills/atoms/detect-banned-words/SKILL.md",
+      "description": "扫描章节中的Level1/Level2禁用词",
+      "category": "atom"
+    },
+    {
+      "name": "detect-consistency",
+      "path": "skills/atoms/detect-consistency/SKILL.md",
+      "description": "检测章节与追踪文件的一致性",
+      "category": "atom"
+    },
+    {
+      "name": "detect-cross-chapter",
+      "path": "skills/atoms/detect-cross-chapter/SKILL.md",
+      "description": "检测跨章节的重复内容和矛盾",
+      "category": "atom"
+    },
+    {
+      "name": "detect-emotion-curve",
+      "path": "skills/atoms/detect-emotion-curve/SKILL.md",
+      "description": "分析章节情绪曲线的起伏节奏",
+      "category": "atom"
+    },
+    {
+      "name": "detect-foreshadow",
+      "path": "skills/atoms/detect-foreshadow/SKILL.md",
+      "description": "检测伏笔的埋设与回收状态",
+      "category": "atom"
+    },
+    {
+      "name": "detect-satisfaction",
+      "path": "skills/atoms/detect-satisfaction/SKILL.md",
+      "description": "检测章节爽点密度与分布",
+      "category": "atom"
+    },
+    {
+      "name": "detect-story-gaps",
+      "path": "skills/atoms/detect-story-gaps/SKILL.md",
+      "description": "检测世界观和设定中的缺口",
+      "category": "atom"
+    },
+    {
+      "name": "detect-voice",
+      "path": "skills/atoms/detect-voice/SKILL.md",
+      "description": "检测角色对话是否符合声音设定",
+      "category": "atom"
+    },
+    {
+      "name": "detect-wordcount",
+      "path": "skills/atoms/detect-wordcount/SKILL.md",
+      "description": "检测章节字数是否达标",
+      "category": "atom"
+    },
+    {
+      "name": "extract-characters",
+      "path": "skills/atoms/extract-characters/SKILL.md",
+      "description": "提取角色信息、关系和分级",
+      "category": "atom"
+    },
+    {
+      "name": "extract-chapter-summary",
+      "path": "skills/atoms/extract-chapter-summary/SKILL.md",
+      "description": "每章提取情节点和角色",
+      "category": "atom"
+    },
+    {
+      "name": "extract-settings",
+      "path": "skills/atoms/extract-settings/SKILL.md",
+      "description": "提取世界观、势力和金手指设定",
+      "category": "atom"
+    },
+    {
+      "name": "extract-style",
+      "path": "skills/atoms/extract-style/SKILL.md",
+      "description": "从原文和拆文报告提取写作风格",
+      "category": "atom"
+    },
+    {
+      "name": "extract-summary",
+      "path": "skills/atoms/extract-summary/SKILL.md",
+      "description": "从原文提取章节结构和概要",
+      "category": "atom"
+    },
+    {
+      "name": "fix-ai-sentence",
+      "path": "skills/atoms/fix-ai-sentence/SKILL.md",
+      "description": "句式去套路化，消除AI腔模板句",
+      "category": "atom"
+    },
+    {
+      "name": "fix-banned-words",
+      "path": "skills/atoms/fix-banned-words/SKILL.md",
+      "description": "替换禁用词为推荐表达",
+      "category": "atom"
+    },
+    {
+      "name": "fix-dialogue-naturalize",
+      "path": "skills/atoms/fix-dialogue-naturalize/SKILL.md",
+      "description": "对话去腔调，增加口语化和自然感",
+      "category": "atom"
+    },
+    {
+      "name": "fix-ending-desublimate",
+      "path": "skills/atoms/fix-ending-desublimate/SKILL.md",
+      "description": "结尾去升华，删除总结性语句",
+      "category": "atom"
+    },
+    {
+      "name": "fix-psychology-externalize",
+      "path": "skills/atoms/fix-psychology-externalize/SKILL.md",
+      "description": "将心理直述改为动作/感官展示",
+      "category": "atom"
+    },
+    {
+      "name": "fix-punctuation",
+      "path": "skills/atoms/fix-punctuation/SKILL.md",
+      "description": "标点规范化，清理AI标点习惯",
+      "category": "atom"
+    },
+    {
+      "name": "fix-rhythm-break",
+      "path": "skills/atoms/fix-rhythm-break/SKILL.md",
+      "description": "打散排比节奏，调整句长交错",
+      "category": "atom"
+    },
+    {
+      "name": "full-consistency-audit",
+      "path": "skills/atoms/full-consistency-audit/SKILL.md",
+      "description": "全量一致性审计，覆盖所有追踪维度",
+      "category": "atom"
+    },
+    {
+      "name": "generate-chapter",
+      "path": "skills/atoms/generate-chapter/SKILL.md",
+      "description": "基于细纲和上下文生成正文草稿",
+      "category": "atom"
+    },
+    {
+      "name": "generate-topic-decision",
+      "path": "skills/atoms/generate-topic-decision/SKILL.md",
+      "description": "从趋势数据生成可执行选题建议",
+      "category": "atom"
+    },
+    {
+      "name": "pre-write-checklist",
+      "path": "skills/atoms/pre-write-checklist/SKILL.md",
+      "description": "写前检查清单，验证写作前置条件是否就绪",
+      "category": "atom"
+    },
+    {
+      "name": "prompt-template-inject",
+      "path": "skills/atoms/prompt-template-inject/SKILL.md",
+      "description": "将规则和角色锚点组合为写作约束文本",
+      "category": "atom"
+    },
+    {
+      "name": "review-character",
+      "path": "skills/atoms/review-character/SKILL.md",
+      "description": "角色评审，评估一致性、动机、弧线",
+      "category": "atom"
+    },
+    {
+      "name": "review-commercial",
+      "path": "skills/atoms/review-commercial/SKILL.md",
+      "description": "商业评审，评估爽点、钩子、题材适配",
+      "category": "atom"
+    },
+    {
+      "name": "review-consistency",
+      "path": "skills/atoms/review-consistency/SKILL.md",
+      "description": "一致性评审，检查事实、时间线、伏笔",
+      "category": "atom"
+    },
+    {
+      "name": "review-structure",
+      "path": "skills/atoms/review-structure/SKILL.md",
+      "description": "章节结构评审，评估钩子、节奏、反转",
+      "category": "atom"
+    },
+    {
+      "name": "review-writing",
+      "path": "skills/atoms/review-writing/SKILL.md",
+      "description": "文笔评审，评估AI腔、对话、描写质量",
+      "category": "atom"
+    },
+    {
+      "name": "rules-engine",
+      "path": "skills/atoms/rules-engine/SKILL.md",
+      "description": "读取题材定位和项目配置，生成适用规则集",
+      "category": "atom"
+    },
+    {
+      "name": "scrape-platform",
+      "path": "skills/atoms/scrape-platform/SKILL.md",
+      "description": "通过脚本或CDP抓取平台排行榜数据",
+      "category": "atom"
+    },
+    {
+      "name": "style-constraint-gen",
+      "path": "skills/atoms/style-constraint-gen/SKILL.md",
+      "description": "根据题材和平台生成风格要求文本",
+      "category": "atom"
     }
   ],
   "behaviorRules": [

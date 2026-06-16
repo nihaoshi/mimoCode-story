@@ -22,6 +22,23 @@ skill-name/
 - `skills/story-long-write-mimo/SKILL.md` 是最核心的 skill（553行），定义5阶段写作流程
 - Skill 间依赖：`story-import` 调用 `story-long-analyze` / `story-short-analyze` 的拆解管道
 - `demo/` 是示例数据（拆文库+写作项目），非 skill 代码
+- `skills/atoms/` 包含 45 个原子技能，是最小粒度的功能单元，可被上层 skill 调用或由用户直接使用
+
+## Atom Skills（原子技能）
+
+原子技能通过 `/atom:{atom-id}` 直接调用，是 skill 的底层构建块。45 个原子技能分为 7 类：
+
+| 类别 | 说明 | 包含的原子 |
+|------|------|-----------|
+| analyze | 拆文提取 | `extract-summary`、`extract-characters`、`extract-settings`、`extract-style`、`extract-chapter-summary`、`analyze-golden-chapters`、`analyze-aggregate` |
+| scan | 扫榜选题 | `scrape-platform`、`analyze-trend`、`analyze-reader-profile`、`generate-topic-decision` |
+| pre-write | 写前准备 | `character-anchor-load`、`style-constraint-gen`、`banned-words-preload`、`prompt-template-inject`、`pre-write-checklist`、`rules-engine` |
+| write | 设计生成 | `generate-chapter`、`design-worldbuilding`、`design-character`、`design-chapter-outline`、`design-volume-outline` |
+| review | 多维评审 | `review-consistency`、`review-commercial`、`review-writing`、`review-character`、`review-structure` |
+| fix | 精准修复 | `fix-ai-sentence`、`fix-banned-words`、`fix-dialogue-naturalize`、`fix-ending-desublimate`、`fix-psychology-externalize`、`fix-punctuation`、`fix-rhythm-break` |
+| detect | 检测诊断 | `detect-ai-sentence`、`detect-banned-words`、`detect-consistency`、`detect-cross-chapter`、`detect-emotion-curve`、`detect-foreshadow`、`detect-satisfaction`、`detect-story-gaps`、`detect-voice`、`detect-wordcount`、`full-consistency-audit` |
+
+原子技能既可被上层 skill 内部调用，也可由用户直接使用 `/atom:{atom-id}` 按需组合。
 
 ## 全局脚本调用规则
 
@@ -67,7 +84,7 @@ skill-name/
 4. 更新 `追踪/物品.md` — 物品位置/状态变化
 5. 更新 `追踪/环境.md` — 季节/天气/场景
 6. 更新 `追踪/上下文.md` — 进度摘要
-7. 运行质量门禁：`node skills/story-long-write-mimo/scripts/quality-gate.js <章节文件>`
+7. 运行质量门禁：`node skills/_shared/scripts/quality-gate.js <章节文件>`
 
 **质量门禁规则**：退出码 2（阻断）时**不得标记任务完成**，必须修复后重新运行。退出码 0 = 全部通过，1 = 有警告（可继续），2 = 有阻断项（必须修复）。
 
@@ -110,6 +127,18 @@ skill-name/
 | 情感线 | `emotional-arc-design.md` |
 | 题材公式 | `genre-writing-formulas.md` |
 | 爽点设计 | `plot-emotion-system.md` |
+
+### 原子技能速查（按类别→atom-id）
+
+| 类别 | 调用方式 | 用途 |
+|------|---------|------|
+| 拆文提取 | `/atom:extract-summary` 等 7 个 | 从原文提取结构、角色、设定、风格 |
+| 扫榜选题 | `/atom:scrape-platform` 等 4 个 | 抓取排行、分析趋势、生成选题建议 |
+| 写前准备 | `/atom:character-anchor-load` 等 6 个 | 加载锚点、禁用词、生成约束和规则集 |
+| 设计生成 | `/atom:generate-chapter` 等 5 个 | 设计世界观、角色、大纲、生成正文 |
+| 多维评审 | `/atom:review-consistency` 等 5 个 | 一致性、商业性、文笔、角色、结构评审 |
+| 精准修复 | `/atom:fix-ai-sentence` 等 7 个 | 去AI腔、替换禁用词、修复对话和节奏 |
+| 检测诊断 | `/atom:detect-banned-words` 等 11 个 | 禁用词扫描、一致性检查、情绪曲线分析 |
 
 ### Git Hooks 安装
 

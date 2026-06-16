@@ -132,9 +132,9 @@ version_control: true/false
 4. 更新 `追踪/物品.md` — 物品位置/状态变化
 5. 更新 `追踪/环境.md` — 季节/天气/场景
 6. 更新 `追踪/上下文.md` — 进度摘要
-7. 运行 `node skills/story-long-write-mimo/scripts/consistency-check.js`
-8. 运行 `node skills/story-long-write-mimo/scripts/style-lint.js`
-9. 运行 `node skills/story-long-write-mimo/scripts/foreshadow-check.js`
+7. 运行 `node skills/_shared/scripts/consistency-check.js`
+8. 运行 `node skills/_shared/scripts/style-lint.js`
+9. 运行 `node skills/_shared/scripts/foreshadow-check.js`
 
 ### 跨会话恢复规则
 

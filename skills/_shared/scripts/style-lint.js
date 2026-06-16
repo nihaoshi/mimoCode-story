@@ -3,7 +3,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { BANNED_LEVEL1, BANNED_LEVEL2 } = require("../../_shared/scripts/banned-words");
+const { BANNED_LEVEL1, BANNED_LEVEL2 } = require("./banned-words");
 
 const USAGE = `Usage: node style-lint.js <chapter-file> [--json] [--full]
 

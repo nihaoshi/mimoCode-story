@@ -34,10 +34,12 @@
 
 | 特性 | 说明 |
 |------|------|
-| **全流程覆盖** | 从选题到发布，23 个技能覆盖网文创作全生命周期 |
+| **全流程覆盖** | 从选题到发布，23 个技能 + 45 个原子技能覆盖网文创作全生命周期 |
 | **长篇 + 短篇** | 同时支持长篇连载和短篇创作，按篇幅自动分流 |
 | **智能路由** | `/story-mimo` 主入口自动识别用户意图，分发到对应技能 |
+| **原子技能** | 45 个原子技能可独立调用（`/atom:detect-banned-words`）或编排组合 |
 | **9 重质量门禁** | 禁用词、一致性、伏笔、字数、角色声音、情绪曲线、爽点密度、跨章重复、项目缺口 |
+| **写前预防** | 质量约束注入到写作上下文，AI 写之前就知道红线，不是写完再改 |
 | **Writing Project Rules** | 自动部署写作强制规则到项目，AI 每次会话自动读取 |
 | **跨会话连续** | 基于 MiMo Code 持久化记忆，写作进度自动保存/恢复 |
 | **去AI味** | 专业检测并清除 AI 写作痕迹，让文字更自然 |
@@ -142,7 +144,7 @@ cd ~/mimoCode-story; git pull; Copy-Item -Path "skills\*" -Destination "$HOME\.c
 
 | 更新类型 | 说明 |
 |---------|------|
-| 脚本更新 | `skills/story-long-write-mimo/scripts/` 下的自动化脚本 |
+| 脚本更新 | `skills/_shared/scripts/` 下的自动化脚本 |
 | 技能更新 | `skills/*/SKILL.md` 下的技能定义 |
 | 知识库更新 | `skills/_shared/references/` 下的参考文档 |
 | 模板更新 | `skills/_shared/templates/` 下的写作模板 |
@@ -152,7 +154,7 @@ cd ~/mimoCode-story; git pull; Copy-Item -Path "skills\*" -Destination "$HOME\.c
 如果已有写作项目需要使用新版本的技能包：
 
 1. 更新技能包（按上述步骤）
-2. 重新运行质量门禁：`node skills/story-long-write-mimo/scripts/quality-gate.js <章节文件>`
+2. 重新运行质量门禁：`node skills/_shared/scripts/quality-gate.js <章节文件>`
 3. 如需更新 AGENTS.md 中的规则，手动复制新规则到项目的 AGENTS.md
 
 ---
@@ -207,10 +209,10 @@ cd ~/mimoCode-story; git pull; Copy-Item -Path "skills\*" -Destination "$HOME\.c
 
 ```
 # 统一质量门禁（7 重检查）
-node skills/story-long-write-mimo/scripts/quality-gate.js <章节文件>
+node skills/_shared/scripts/quality-gate.js <章节文件>
 
 # 快速模式（仅阻断项检查）
-node skills/story-long-write-mimo/scripts/quality-gate.js --fast <章节文件>
+node skills/_shared/scripts/quality-gate.js --fast <章节文件>
 ```
 
 ---
@@ -243,11 +245,65 @@ node skills/story-long-write-mimo/scripts/quality-gate.js --fast <章节文件>
 | `audit-mimo` | `/audit-mimo`、`审计项目` | 全量项目审计 |
 | `project-health-mimo` | `/project-health-mimo`、`检查项目` | 项目健康检查与修复 |
 
+### 原子技能（45 个）
+
+原子技能可独立调用（`/atom:{id}`）或在编排 SKILL.md 中组合使用。
+
+| 类别 | 数量 | 原子 ID | 功能 |
+|------|------|---------|------|
+| **检测** | 11 | `detect-banned-words` | 禁用词扫描 |
+| | | `detect-ai-sentence` | AI腔句式检测 |
+| | | `detect-consistency` | 一致性检查 |
+| | | `detect-foreshadow` | 伏笔检测 |
+| | | `detect-wordcount` | 字数检测 |
+| | | `detect-voice` | 角色声音检测 |
+| | | `detect-emotion-curve` | 情绪曲线检测 |
+| | | `detect-cross-chapter` | 跨章重复检测 |
+| | | `detect-satisfaction` | 爽点密度检测 |
+| | | `detect-story-gaps` | 设定缺口检测 |
+| | | `full-consistency-audit` | 全量一致性审计 |
+| **修正** | 7 | `fix-banned-words` | 禁用词替换 |
+| | | `fix-ai-sentence` | 句式去套路化 |
+| | | `fix-psychology-externalize` | 心理外化 |
+| | | `fix-rhythm-break` | 节奏打散 |
+| | | `fix-dialogue-naturalize` | 对话去腔调 |
+| | | `fix-ending-desublimate` | 结尾去升华 |
+| | | `fix-punctuation` | 标点规范化 |
+| **评审** | 5 | `review-structure` | 结构评审 |
+| | | `review-character` | 角色评审 |
+| | | `review-writing` | 文笔评审 |
+| | | `review-commercial` | 商业评审 |
+| | | `review-consistency` | 一致性评审 |
+| **写前预防** | 6 | `rules-engine` | 规则引擎 |
+| | | `pre-write-checklist` | 写前检查清单 |
+| | | `prompt-template-inject` | Prompt模板注入 |
+| | | `banned-words-preload` | 禁用词预加载 |
+| | | `style-constraint-gen` | 风格约束生成 |
+| | | `character-anchor-load` | 角色锚点加载 |
+| **扫榜** | 4 | `scrape-platform` | 平台数据采集 |
+| | | `analyze-trend` | 题材趋势分析 |
+| | | `generate-topic-decision` | 选题决策生成 |
+| | | `analyze-reader-profile` | 读者画像分析 |
+| **拆文** | 7 | `extract-summary` | 概要提取 |
+| | | `analyze-golden-chapters` | 黄金三章拆解 |
+| | | `extract-chapter-summary` | 逐章摘要提取 |
+| | | `analyze-aggregate` | 聚合分析 |
+| | | `extract-settings` | 设定提取 |
+| | | `extract-characters` | 角色提取 |
+| | | `extract-style` | 文风提取 |
+| **写作** | 5 | `design-volume-outline` | 卷纲设计 |
+| | | `design-chapter-outline` | 细纲设计 |
+| | | `design-character` | 角色设计 |
+| | | `design-worldbuilding` | 世界观设计 |
+| | | `generate-chapter` | 正文生成 |
+
 ---
 
 ## 自动化脚本
 
-### 长篇写作脚本（skills/story-long-write-mimo/scripts/）
+### 长篇写作脚本（skills/_shared/scripts/）
+
+> 原 `story-long-write-mimo/scripts/` 已全部提升到 `_shared/scripts/`
 
 | 脚本 | 功能 | `--json` | 退出码 |
 |------|------|---------|--------|
@@ -260,9 +316,9 @@ node skills/story-long-write-mimo/scripts/quality-gate.js --fast <章节文件>
 | `satisfaction-meter.js` | 爽点密度度量 | ✅ | 0=达标, 1=不足 |
 | `detect-story-gaps.js` | 项目缺口检测 | ✅ | 0=通过, 1=警告, 2=阻断 |
 | `full-consistency-audit.js` | 全量一致性审计 | ✅ | 0=通过, 1=警告, 2=错误 |
+| `cross-chapter-check.js` | 跨章重复检测（n-gram 指纹） | ✅ | 0=通过, 1=重复 |
 | `repair-scripts.js` | 脚本修复器 | ✅ | 0=成功, 1=需修复, 2=错误 |
 | `wordcount-pacer.js` | 字数节奏指导 | - | - |
-| `normalize-punctuation.js` | 标点规范化 | - | - |
 | `detect-python.js` | Python 检测 | - | - |
 
 ### 共享脚本（skills/_shared/scripts/）
@@ -272,7 +328,11 @@ node skills/story-long-write-mimo/scripts/quality-gate.js --fast <章节文件>
 | `goal.js` | /goal 命令 | 设置写作目标，监控进度 |
 | `dream.js` | /dream 命令 | 扫描章节，提取写作经验 |
 | `distill.js` | /distill 命令 | 分析工作流，发现重复模式 |
-| `punctuation-normalize.js` | 标点规范化 | 检查/修复 AI 生成内容的标点问题 |
+| `punctuation-normalize.js` | 标点规范化（合并版） | 检查/修复 AI 标点，支持 `--quote-mode` 引号切换 |
+| `banned-words.js` | 禁用词列表 | Level1（31词）+ Level2（18词） |
+| `cdp-utils.js` | CDP 工具函数 | 浏览器自动化辅助 |
+| `cross-chapter-check.js` | 跨章重复检测 | n-gram 指纹 + Jaccard 相似度 |
+| `detect-story-gaps.js` | 设定缺口检测 | 设定/大纲/追踪完整性 |
 
 ### 短篇写作脚本（skills/story-short-write-mimo/scripts/）
 
@@ -284,23 +344,23 @@ node skills/story-long-write-mimo/scripts/quality-gate.js --fast <章节文件>
 
 ```bash
 # 运行统一质量门禁
-node skills/story-long-write-mimo/scripts/quality-gate.js 正文/第001章_XXX.md
+node skills/_shared/scripts/quality-gate.js 正文/第001章_XXX.md
 
 # JSON 格式输出（供自动化流水线使用）
-node skills/story-long-write-mimo/scripts/quality-gate.js --json 正文/第001章_XXX.md
+node skills/_shared/scripts/quality-gate.js --json 正文/第001章_XXX.md
 
 # 快速模式（跳过警告项检查）
-node skills/story-long-write-mimo/scripts/quality-gate.js --fast 正文/第001章_XXX.md
+node skills/_shared/scripts/quality-gate.js --fast 正文/第001章_XXX.md
 
 # 单独运行某个检查
-node skills/story-long-write-mimo/scripts/style-lint.js --json 正文/第001章_XXX.md
-node skills/story-long-write-mimo/scripts/consistency-check.js --json 正文/第001章_XXX.md
+node skills/_shared/scripts/style-lint.js --json 正文/第001章_XXX.md
+node skills/_shared/scripts/consistency-check.js --json 正文/第001章_XXX.md
 
 # 情绪曲线可视化
-node skills/story-long-write-mimo/scripts/emotion-analyzer.js 正文/第001章_XXX.md
+node skills/_shared/scripts/emotion-analyzer.js 正文/第001章_XXX.md
 
 # 字数节奏指导
-node skills/story-long-write-mimo/scripts/wordcount-pacer.js 大纲/细纲_第001章.md
+node skills/_shared/scripts/wordcount-pacer.js 大纲/细纲_第001章.md
 ```
 
 ---
@@ -451,7 +511,7 @@ node skills/story-long-write-mimo/scripts/wordcount-pacer.js 大纲/细纲_第00
 4. 更新 `追踪/物品.md` — 物品位置/状态变化
 5. 更新 `追踪/环境.md` — 季节/天气/场景
 6. 更新 `追踪/上下文.md` — 进度摘要
-7. 运行质量门禁：`node skills/story-long-write-mimo/scripts/quality-gate.js <章节文件>`
+7. 运行质量门禁：`node skills/_shared/scripts/quality-gate.js <章节文件>`
 
 ### 质量门禁规则
 
@@ -536,7 +596,7 @@ node skills/story-long-write-mimo/scripts/wordcount-pacer.js 大纲/细纲_第00
 /story-long-write
 
 # 5. 质量检查
-node skills/story-long-write-mimo/scripts/quality-gate.js 正文/第001章_XXX.md
+node skills/_shared/scripts/quality-gate.js 正文/第001章_XXX.md
 
 # 6. 去AI味
 /story-deslop
@@ -575,9 +635,11 @@ node skills/story-long-write-mimo/scripts/quality-gate.js 正文/第001章_XXX.m
 | 维度 | 原版 (oh-story-claudecode) | MiMo Code 版 |
 |------|---------------------------|-------------|
 | 平台 | Claude Code | MiMo Code |
-| 技能数 | 14 | 23 |
-| 脚本数 | 3 | 14 |
+| 技能数 | 14 | 23 + 45 原子 |
+| 脚本数 | 3 | 19（共享） |
+| 原子技能 | 无 | 45 个可独立调用/编排组合 |
 | 质量门禁 | 无统一入口 | `quality-gate.js`（9 重检查） |
+| 写前预防 | 无 | 质量约束注入到写作上下文 |
 | 情绪分析 | 无 | `emotion-analyzer.js` |
 | 爽点检测 | 无 | `satisfaction-meter.js` |
 | 角色声音 | 无 | `voice-check.js` |
@@ -594,6 +656,34 @@ node skills/story-long-write-mimo/scripts/quality-gate.js 正文/第001章_XXX.m
 ---
 
 ## 更新日志
+
+### v4.0.0（2026-06-16）
+
+**原子化重构**：
+- 新增 45 个原子技能（`skills/atoms/`），分为 7 类：检测 11 + 修正 7 + 评审 5 + 写前预防 6 + 扫榜 4 + 拆文 7 + 写作 5
+- 每个原子独立可用（`/atom:detect-banned-words`），可在编排 SKILL.md 中自由组合
+- 原子注册表：`skills/atoms/ATOMS-REGISTRY.md`
+
+**脚本重组**：
+- 14 个脚本从 `story-long-write-mimo/scripts/` 提升到 `_shared/scripts/`（共 19 个共享脚本）
+- 合并两个标点规范化脚本为 `punctuation-normalize.js`（支持 `--quote-mode keep|ascii|yan`）
+- `story-long-write-mimo/scripts/` 目录已清空
+
+**旧技能内部重构**：
+- `quality-mimo` → 调用 10 个检测原子（行为不变）
+- `story-deslop-mimo` → 调用 7 个修正原子（行为不变）
+- `story-review-mimo` → 调用 5 个评审原子（行为不变）
+- `story-long-write-mimo` Phase 5 → 调用检测+修正原子
+
+**长篇写作工作流升级**：
+- Step 1 合并细纲检查 + 15 项上下文读取（不可偷懒，逐项输出状态）
+- 严重度分级：BLOCK 强制修复 / WARN 询问用户 / 可选静默跳过
+- Step 2.5 新增质量约束注入（从原子技能加载禁用词/AI腔/标点规则到写作上下文）
+- Phase 5 移到 Step 10（更新追踪）之后，三轮流程（检测→处理→复查→追踪同步）
+
+**安装脚本更新**：
+- `install.sh` / `install.ps1` 新增 45 个原子技能验证 + 关键脚本验证
+- 缺失原子/脚本降级为 Warning 不阻断安装
 
 ### v3.3.2（2026-06-15）
 

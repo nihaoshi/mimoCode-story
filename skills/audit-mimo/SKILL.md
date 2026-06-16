@@ -33,7 +33,7 @@ description: |
 ### Step 2：运行全量审计
 
 ```bash
-node skills/story-long-write-mimo/scripts/full-consistency-audit.js <项目目录>
+node skills/_shared/scripts/full-consistency-audit.js <项目目录>
 ```
 
 ### Step 3：输出审计报告

@@ -503,7 +503,7 @@ AI喜欢把事情凑成三个以显"完整"。→ 砍到只剩最有力的一条
 
 ### 10.3 写完后检测
 
-**自动检测**：运行 `node skills/story-long-write-mimo/scripts/cross-chapter-check.js` 自动检测跨章重复。
+**自动检测**：运行 `node skills/_shared/scripts/cross-chapter-check.js` 自动检测跨章重复。
 
 **检测范围**：当前章 + 前 5 章（滑动窗口）
 

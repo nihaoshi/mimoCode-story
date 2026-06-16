@@ -70,13 +70,15 @@ if (-not (Get-Command agent-browser -ErrorAction SilentlyContinue)) {
 }
 
 Write-Host "[5/5] Verifying..." -ForegroundColor Yellow
+
+# 1. 验证 23 个技能
 $skills = @(
     "story-mimo", "story-setup-mimo", "story-long-write-mimo", "story-short-write-mimo",
     "story-long-analyze-mimo", "story-short-analyze-mimo", "story-scan-mimo",
     "story-long-scan-mimo", "story-short-scan-mimo", "story-deslop-mimo",
     "story-review-mimo", "story-cover-mimo", "story-import-mimo", "browser-cdp-mimo",
     "story-synopsis-mimo", "story-export-mimo", "audit-mimo", "quality-mimo",
-    "project-health-mimo", "distill-mimo", "dream-mimo", "goal-mimo"
+    "project-health-mimo", "distill-mimo", "dream-mimo", "goal-mimo", "story-session-mimo"
 )
 $missing = @()
 foreach ($s in $skills) {
@@ -91,12 +93,55 @@ if ($missing.Count -gt 0) {
     exit 1
 }
 
+# 2. 验证 45 个原子技能
+$atoms = @(
+    "detect-banned-words", "detect-ai-sentence", "detect-consistency", "detect-foreshadow",
+    "detect-wordcount", "detect-voice", "detect-emotion-curve", "detect-cross-chapter",
+    "detect-satisfaction", "detect-story-gaps", "full-consistency-audit",
+    "fix-banned-words", "fix-ai-sentence", "fix-psychology-externalize", "fix-rhythm-break",
+    "fix-dialogue-naturalize", "fix-ending-desublimate", "fix-punctuation",
+    "review-structure", "review-character", "review-writing", "review-commercial", "review-consistency",
+    "rules-engine", "pre-write-checklist", "prompt-template-inject", "banned-words-preload",
+    "style-constraint-gen", "character-anchor-load",
+    "scrape-platform", "analyze-trend", "generate-topic-decision", "analyze-reader-profile",
+    "extract-summary", "analyze-golden-chapters", "extract-chapter-summary", "analyze-aggregate",
+    "extract-settings", "extract-characters", "extract-style",
+    "design-volume-outline", "design-chapter-outline", "design-character", "design-worldbuilding", "generate-chapter"
+)
+$atomMissing = @()
+foreach ($a in $atoms) {
+    $p = Join-Path $SkillDir (Join-Path "atoms" (Join-Path $a "SKILL.md"))
+    if (-not (Test-Path $p)) {
+        $atomMissing += $a
+    }
+}
+
+if ($atomMissing.Count -gt 0) {
+    Write-Host "Warning: Missing atoms ($($atomMissing.Count)): $($atomMissing -join ', ')" -ForegroundColor Yellow
+    Write-Host "  Atom skills may not work. Try: git pull && re-run installer" -ForegroundColor Yellow
+}
+
+# 3. 验证关键脚本
+$requiredScripts = @("quality-gate.js", "style-lint.js", "consistency-check.js", "punctuation-normalize.js")
+$scriptMissing = @()
+foreach ($sc in $requiredScripts) {
+    $p = Join-Path $SkillDir (Join-Path "_shared" (Join-Path "scripts" $sc))
+    if (-not (Test-Path $p)) {
+        $scriptMissing += $sc
+    }
+}
+
+if ($scriptMissing.Count -gt 0) {
+    Write-Host "Warning: Missing scripts ($($scriptMissing.Count)): $($scriptMissing -join ', ')" -ForegroundColor Yellow
+    Write-Host "  Quality checks will not work. Try: git pull && re-run installer" -ForegroundColor Yellow
+}
+
 Write-Host ""
 Write-Host "=== Done ===" -ForegroundColor Green
-Write-Host "Installed $($skills.Count) skills to: $SkillDir"
+Write-Host "Installed $($skills.Count) skills + $($atoms.Count) atoms to: $SkillDir"
 Write-Host ""
 Write-Host "Restart MiMo Code, then use:"
 Write-Host "  /story-mimo           - Main entry"
 Write-Host "  /story-setup-mimo     - Init project"
-Write-Host "  /story-long-write-mimo  - Long fiction"
-Write-Host "  /story-short-write-mimo - Short fiction"
+Write-Host "  /atom:detect-banned-words - Run single atom"
+Write-Host "  /atom:fix-punctuation     - Fix punctuation"

@@ -40,7 +40,7 @@ metadata:
 
 ### Step 4：检测设定缺口
 
-运行 `node skills/story-long-write-mimo/scripts/detect-story-gaps.js <项目目录>`，检测：
+运行 `node skills/_shared/scripts/detect-story-gaps.js <项目目录>`，检测：
 - 设定文件完整性
 - 大纲缺失
 - 伏笔断线
