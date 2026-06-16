@@ -44,6 +44,7 @@
 | **实时市场数据** | 通过浏览器 CDP 采集起点/番茄/七猫/晋江等平台榜单数据 |
 | **简介生成** | 按平台规范生成简介文案，支持 A/B 测试版 |
 | **多格式导出** | 支持 TXT、平台专用格式、校对稿导出 |
+| **Agent角色系统** | 6个专业子智能体各司其职，支持并行/串行执行 |
 
 ---
 
@@ -483,6 +484,10 @@ node skills/story-long-write-mimo/scripts/wordcount-pacer.js 大纲/细纲_第00
 | **Goal** | 自主写作 | `/goal-mimo` 设置写作目标，通过 story-long-write-mimo 工作流自动循环 |
 | **Dream** | 经验沉淀 | `/dream-mimo` 提取写作经验到记忆，保存禁用词/有效技法/重复模式 |
 | **Distill** | 工作流优化 | `/distill-mimo` 分析写作模式，发现重复句式并建议优化 |
+
+#### Agent角色系统
+- **6个专业子智能体**：story-architect（题材定位·大纲结构）、character-designer（角色设计）、narrative-writer（正文写作）、consistency-checker（一致性检查）、story-explorer（只读查询）、chapter-extractor（拆文分析）
+- **调用规范**：轻量任务主会话完成，复杂任务 spawn 子智能体；拆文/审稿/研究可并行，追踪文件更新串行
 
 ### 能力详解
 
