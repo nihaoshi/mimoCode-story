@@ -127,10 +127,11 @@ metadata:
 **触发时第一步：创建完整任务树，然后逐个执行。不跳步。**
 
 **正确执行顺序**：
-1. 创建完整任务树（不可跳过）
-2. 运行 `node skills/_shared/scripts/task-gate.js <项目目录> <章节号> mark` 标记已创建
-3. 逐个执行任务
-4. 写正文前运行 `node skills/_shared/scripts/task-gate.js <项目目录> <章节号> check` 确认就绪
+1. 创建1个父任务（如"T-WRITE-5: 写第5章"）
+2. 根据下方任务树模板，批量创建所有子任务（挂在父任务下）
+3. 运行 `node skills/_shared/scripts/task-gate.js <项目目录> <章节号> mark` 标记已创建
+4. 逐个执行子任务
+5. 写正文前运行 `node skills/_shared/scripts/task-gate.js <项目目录> <章节号> check` 确认就绪
 
 #### 单章任务树模板（写第{N}章时创建）
 
