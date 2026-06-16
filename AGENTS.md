@@ -8,47 +8,27 @@
 
 ### 强制执行规则（story-long-write-mimo）
 
-**触发 story-long-write-mimo 时，必须按以下顺序执行，不可跳过任何步骤：**
+**触发 story-long-write-mimo 时，必须按以下顺序执行：**
 
 ```
 步骤1: 检查是否有 in_progress 的任务
         → 有则从断点继续，不重复创建
         → 无则执行步骤2
 
-步骤2: 运行任务生成脚本获取固定列表
-        执行：node skills/_shared/scripts/task-gen-write.js <章节号> <章名>
-        → 脚本输出51条固定任务命令
+步骤2: 读取 SKILL.md 的「固定任务列表」章节
 
-步骤3: 严格按照脚本输出逐条创建任务
-        → 脚本输出什么就创建什么，不得增减、合并、改名
-        → 每条 task create 的 summary 必须与脚本输出完全一致
+步骤3: 严格按照列表逐条创建任务
+        → 列表写什么就创建什么，不得增减、合并、改名
 
-步骤4: 运行 task-gate.js mark 标记已创建
-        执行：node skills/_shared/scripts/task-gate.js <项目目录> <章节号> mark
-
-步骤5: 逐个执行任务
+步骤4: 逐个执行任务
         → 每个任务 start → 执行 → done
-        → 不跳步，不合并
 ```
-
-### 任务生成脚本
-
-| Skill | 脚本 | 用法 |
-|-------|------|------|
-| story-long-write-mimo | `task-gen-write.js` | `node task-gen-write.js <章节号> <章名>` |
-| story-deslop-mimo | `task-gen-deslop.js` | `node task-gen-deslop.js <文件名>` |
-| story-review-mimo | `task-gen-review.js` | `node task-gen-review.js <文件名>` |
-| quality-mimo | `task-gen-quality.js` | `node task-gen-quality.js <文件名> [--full]` |
-| audit-mimo | `task-gen-audit.js` | `node task-gen-audit.js <项目名>` |
-
-脚本位于 `skills/_shared/scripts/`，从全局skill目录执行。
 
 ### 禁止行为
 
-- ❌ 不运行脚本就直接创建任务
-- ❌ 自己决定创建哪些任务（必须按脚本输出）
+- ❌ 不读 SKILL.md 就直接创建任务
+- ❌ 自己决定创建哪些任务（必须按固定列表）
 - ❌ 合并多个步骤为一个任务
-- ❌ 跳过 task-gate.js mark
 - ❌ 检测到问题后直接修改，不创建修正任务
 - ❌ 修正后不重新验证字数
 - ❌ 跳过追踪文件更新
