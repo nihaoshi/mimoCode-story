@@ -284,8 +284,9 @@ node skills/story-short-write-mimo/scripts/quality-gate.js <文件> --json
 25. task create "T-SHORT-P4-07: 标点规范化"                                parent=T-SHORT-P4
 26. task create "T-SHORT-P4-08: 质量门禁（quality-gate.js）"               parent=T-SHORT-P4
 27. task create "T-SHORT-P4-09: 一致性检查（物品/角色/环境/时间线）"        parent=T-SHORT-P4
-28. task create "T-SHORT-P4-FIX: 修正（条件创建，检测不通过时start）"       parent=T-SHORT-P4
-29. task create "T-SHORT-P4-RECHECK: 复查（条件创建，FIX后start）"         parent=T-SHORT-P4
+28. task create "T-SHORT-P4-10: 重复语句检测+记录到追踪/重复语句.md"        parent=T-SHORT-P4
+29. task create "T-SHORT-P4-FIX: 修正（条件创建，检测不通过时start）"       parent=T-SHORT-P4
+30. task create "T-SHORT-P4-RECHECK: 复查（条件创建，FIX后start）"         parent=T-SHORT-P4
 ```
 
 ### 条件创建规则

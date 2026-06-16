@@ -146,7 +146,7 @@ metadata:
 7. task create "T-CONSIST-{N}: 一致性检查"  parent=T-WRITE-{N}       → 获得 T-CONSIST-{N}
 8. task create "T-TRACK-{N}: 追踪文件更新"  parent=T-WRITE-{N}       → 获得 T-TRACK-{N}
 
-# ===== 第3层：上下文读取（15项，每项一个任务） =====
+# ===== 第3层：上下文读取（16项，每项一个任务） =====
 9.  task create "T-CTX-{N}-01: 读上一章正文"           parent=T-CTX-{N}
 10. task create "T-CTX-{N}-02: 读本章细纲"             parent=T-CTX-{N}
 11. task create "T-CTX-{N}-03: 读追踪/伏笔.md"         parent=T-CTX-{N}
@@ -158,10 +158,11 @@ metadata:
 17. task create "T-CTX-{N}-09: 读追踪/物品.md"         parent=T-CTX-{N}
 18. task create "T-CTX-{N}-10: 读追踪/环境.md"         parent=T-CTX-{N}
 19. task create "T-CTX-{N}-11: 读追踪/物资.md"         parent=T-CTX-{N}
-20. task create "T-CTX-{N}-12: 读对标剧情/故事线.md"   parent=T-CTX-{N}
-21. task create "T-CTX-{N}-13: 读对标剧情/{相关线}.md" parent=T-CTX-{N}
-22. task create "T-CTX-{N}-14: 读对标设定/世界观/*.md"  parent=T-CTX-{N}
-23. task create "T-CTX-{N}-15: 读cross-chapter-fingerprint.md" parent=T-CTX-{N}
+20. task create "T-CTX-{N}-12: 读追踪/重复语句.md"     parent=T-CTX-{N}
+21. task create "T-CTX-{N}-13: 读对标剧情/故事线.md"   parent=T-CTX-{N}
+22. task create "T-CTX-{N}-14: 读对标剧情/{相关线}.md" parent=T-CTX-{N}
+23. task create "T-CTX-{N}-15: 读对标设定/世界观/*.md"  parent=T-CTX-{N}
+24. task create "T-CTX-{N}-16: 读cross-chapter-fingerprint.md" parent=T-CTX-{N}
 
 # ===== 第3层：准备层（5个子任务） =====
 24. task create "T-PREP-{N}-01: 状态筛选"              parent=T-PREP-{N}
@@ -182,27 +183,29 @@ metadata:
 35. task create "T-GATE-{N}-FIX: 修正（条件创建）"     parent=T-GATE-{N}
 36. task create "T-GATE-{N}-RECHECK: 复查（条件创建）" parent=T-GATE-{N}
 
-# ===== 第3层：一致性检查（6个检测+修正+复查） =====
+# ===== 第3层：一致性检查（7个检测+修正+复查） =====
 37. task create "T-CONSIST-{N}-ITEM: 物品位置一致性"    parent=T-CONSIST-{N}
 38. task create "T-CONSIST-{N}-CHAR: 角色状态一致性"    parent=T-CONSIST-{N}
 39. task create "T-CONSIST-{N}-ENV: 环境描述一致性"     parent=T-CONSIST-{N}
 40. task create "T-CONSIST-{N}-TIME: 时间线合理性"      parent=T-CONSIST-{N}
 41. task create "T-CONSIST-{N}-CROSS: 跨章节重复/矛盾"  parent=T-CONSIST-{N}
 42. task create "T-CONSIST-{N}-VOICE: 角色声音一致性"   parent=T-CONSIST-{N}
-43. task create "T-CONSIST-{N}-FIX: 一致性修正（条件创建）" parent=T-CONSIST-{N}
-44. task create "T-CONSIST-{N}-RECHECK: 一致性复查（条件创建）" parent=T-CONSIST-{N}
+43. task create "T-CONSIST-{N}-REPEAT: 重复语句检测+记录到追踪/重复语句.md"  parent=T-CONSIST-{N}
+44. task create "T-CONSIST-{N}-FIX: 一致性修正（条件创建）" parent=T-CONSIST-{N}
+45. task create "T-CONSIST-{N}-RECHECK: 一致性复查（条件创建）" parent=T-CONSIST-{N}
 
-# ===== 第3层：追踪文件更新（7个子任务） =====
-45. task create "T-TRACK-{N}-FORESH: 更新伏笔.md"      parent=T-TRACK-{N}
-46. task create "T-TRACK-{N}-TIME: 更新时间线.md"       parent=T-TRACK-{N}
-47. task create "T-TRACK-{N}-CHAR: 更新角色状态.md"     parent=T-TRACK-{N}
-48. task create "T-TRACK-{N}-ITEM: 更新物品.md"         parent=T-TRACK-{N}
-49. task create "T-TRACK-{N}-ENV: 更新环境.md"          parent=T-TRACK-{N}
-50. task create "T-TRACK-{N}-SUPPLY: 更新物资.md"       parent=T-TRACK-{N}
-51. task create "T-TRACK-{N}-CTX: 更新上下文.md"        parent=T-TRACK-{N}
+# ===== 第3层：追踪文件更新（8个子任务） =====
+46. task create "T-TRACK-{N}-FORESH: 更新伏笔.md"      parent=T-TRACK-{N}
+47. task create "T-TRACK-{N}-TIME: 更新时间线.md"       parent=T-TRACK-{N}
+48. task create "T-TRACK-{N}-CHAR: 更新角色状态.md"     parent=T-TRACK-{N}
+49. task create "T-TRACK-{N}-ITEM: 更新物品.md"         parent=T-TRACK-{N}
+50. task create "T-TRACK-{N}-ENV: 更新环境.md"          parent=T-TRACK-{N}
+51. task create "T-TRACK-{N}-SUPPLY: 更新物资.md"       parent=T-TRACK-{N}
+52. task create "T-TRACK-{N}-REPEAT: 更新重复语句.md"   parent=T-TRACK-{N}
+53. task create "T-TRACK-{N}-CTX: 更新上下文.md"        parent=T-TRACK-{N}
 ```
 
-**共51条任务，必须逐条创建。条件创建的任务（第35、36、43、44条）先创建为 open 状态，执行时再判断是否跳过。**
+**共53条任务，必须逐条创建。条件创建的任务（第44、45条）先创建为 open 状态，执行时再判断是否跳过。**
 │   ├── T-CTX-{N}-12: 读对标剧情/故事线.md [WARN: 无对标则跳过]
 │   ├── T-CTX-{N}-13: 读对标剧情/{相关线}.md [WARN: 无对标则跳过]
 │   ├── T-CTX-{N}-14: 读对标设定/世界观/*.md [WARN: 无对标则跳过]
