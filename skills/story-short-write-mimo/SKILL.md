@@ -236,70 +236,74 @@ node skills/story-short-write-mimo/scripts/quality-gate.js <文件> --json
 
 > 规范详见 `references/task-tracking-conventions.md`。
 
-**触发时第一步：创建完整任务树，然后逐个执行。不跳步。**
+**触发时第一步：读取下方固定任务列表，然后逐条创建。不跳步。**
 
-### 任务树模板
+**强制执行顺序**：
+1. 读取下方「固定任务列表」
+2. 严格按照列表逐条创建任务
+3. 逐个执行
+
+#### 固定任务列表（写短篇时，逐条创建）
 
 ```
-T-SHORT-WRITE: 写短篇「{标题}」 [in_progress]
-│
-├── T-SHORT-P1: Phase 1 确定情绪目标
-│   ├── T-SHORT-P1-01: 问用户情绪方向
-│   ├── T-SHORT-P1-02: 匹配情绪类型（意难平/反转震撼/爽感/治愈/细思极恐/共鸣）
-│   └── T-SHORT-P1-03: 确认目标情绪+强度
-│
-├── T-SHORT-P2: Phase 2 构思核心框架
-│   ├── T-SHORT-P2-01: 确定基本信息（标题/字数/平台）
-│   ├── T-SHORT-P2-02: 一句话梗概（主角+困境+反转+情绪落点）
-│   ├── T-SHORT-P2-03: 核心反转设计（类型+内容+3个铺垫线索）
-│   ├── T-SHORT-P2-04: 情绪设计（开头/中段/反转/结尾 情绪强度）
-│   ├── T-SHORT-P2-05: 人设速写（主角+关键角色+关系）
-│   └── T-SHORT-P2-06: 输出设定.md
-│
-├── T-SHORT-P3: Phase 3 逐场景写作
-│   ├── T-SHORT-P3-01: 创建项目目录+小节大纲.md
-│   ├── [循环] T-SHORT-P3-SEC-{i}: 写第{i}节
-│   │   ├── 读小节大纲中本节要点
-│   │   ├── 加载质量约束（禁用词/AI腔/段落/对话/心理/比喻/节奏/留白）
-│   │   ├── 三维度织入+镜头断段
-│   │   ├── 写入正文.md
-│   │   ├── 字数验证（≥800/节）
-│   │   └── [条件] T-SHORT-P3-SEC-{i}-FIX: 补写（不达标时）
-│   └── 总字数验证（≥8000）
-│
-├── T-SHORT-P4: Phase 4 精修打磨
-│   ├── T-SHORT-P4-01: 开头钩子检查（前3句吸引力）
-│   ├── T-SHORT-P4-02: 情绪曲线检查（是否有起伏）
-│   ├── T-SHORT-P4-03: 反转铺垫检查（3+线索是否到位）
-│   ├── T-SHORT-P4-04: 每句话价值检查（不推动剧情→删）
-│   ├── T-SHORT-P4-05: 格式规范检查
-│   ├── T-SHORT-P4-06: AI腔排查（七步检查）
-│   ├── T-SHORT-P4-07: 标点规范化（punctuation-normalize.js）
-│   ├── T-SHORT-P4-08: 质量门禁（quality-gate.js）
-│   ├── [条件] T-SHORT-P4-FIX: 修正（检测不通过时）
-│   └── [条件] T-SHORT-P4-RECHECK: 复查（FIX后）
-│
-└── T-SHORT-OUTPUT: 输出完成报告
-    ├── 总字数
-    ├── 情绪目标达成度
-    └── 质量检查结果
+# ===== 第1层：父任务 =====
+1. task create "T-SHORT-WRITE: 写短篇「{标题}」"                    → T-SHORT-WRITE
+
+# ===== 第2层：4个阶段任务 =====
+2. task create "T-SHORT-P1: Phase1 确定情绪目标"     parent=T-SHORT-WRITE → T-SHORT-P1
+3. task create "T-SHORT-P2: Phase2 构思核心框架"     parent=T-SHORT-WRITE → T-SHORT-P2
+4. task create "T-SHORT-P3: Phase3 逐场景写作"       parent=T-SHORT-WRITE → T-SHORT-P3
+5. task create "T-SHORT-P4: Phase4 精修打磨"         parent=T-SHORT-WRITE → T-SHORT-P4
+6. task create "T-SHORT-OUTPUT: 输出完成报告"        parent=T-SHORT-WRITE → T-SHORT-OUTPUT
+
+# ===== 第3层-Phase1：3个子任务 =====
+7.  task create "T-SHORT-P1-01: 问用户情绪方向"                             parent=T-SHORT-P1
+8.  task create "T-SHORT-P1-02: 匹配情绪类型（意难平/反转震撼/爽感/治愈/细思极恐/共鸣）" parent=T-SHORT-P1
+9.  task create "T-SHORT-P1-03: 确认目标情绪+强度"                          parent=T-SHORT-P1
+
+# ===== 第3层-Phase2：6个子任务 =====
+10. task create "T-SHORT-P2-01: 确定基本信息（标题/字数/平台）"              parent=T-SHORT-P2
+11. task create "T-SHORT-P2-02: 一句话梗概（主角+困境+反转+情绪落点）"       parent=T-SHORT-P2
+12. task create "T-SHORT-P2-03: 核心反转设计（类型+内容+3个铺垫线索）"       parent=T-SHORT-P2
+13. task create "T-SHORT-P2-04: 情绪设计（开头/中段/反转/结尾 情绪强度）"    parent=T-SHORT-P2
+14. task create "T-SHORT-P2-05: 人设速写（主角+关键角色+关系）"              parent=T-SHORT-P2
+15. task create "T-SHORT-P2-06: 输出设定.md"                                parent=T-SHORT-P2
+
+# ===== 第3层-Phase3：写作+字数验证 =====
+16. task create "T-SHORT-P3-01: 创建项目目录+小节大纲.md"                    parent=T-SHORT-P3
+17. task create "T-SHORT-P3-SEC: 逐节写作（循环，每节一个任务）"             parent=T-SHORT-P3
+18. task create "T-SHORT-P3-WC: 总字数验证（≥8000）"                       parent=T-SHORT-P3
+
+# ===== 第3层-Phase4：精修+质量门禁+一致性检查 =====
+19. task create "T-SHORT-P4-01: 开头钩子检查（前3句吸引力）"                parent=T-SHORT-P4
+20. task create "T-SHORT-P4-02: 情绪曲线检查（是否有起伏）"                 parent=T-SHORT-P4
+21. task create "T-SHORT-P4-03: 反转铺垫检查（3+线索是否到位）"             parent=T-SHORT-P4
+22. task create "T-SHORT-P4-04: 每句话价值检查（不推动剧情→删）"            parent=T-SHORT-P4
+23. task create "T-SHORT-P4-05: 格式规范检查"                              parent=T-SHORT-P4
+24. task create "T-SHORT-P4-06: AI腔排查（七步检查）"                       parent=T-SHORT-P4
+25. task create "T-SHORT-P4-07: 标点规范化"                                parent=T-SHORT-P4
+26. task create "T-SHORT-P4-08: 质量门禁（quality-gate.js）"               parent=T-SHORT-P4
+27. task create "T-SHORT-P4-09: 一致性检查（物品/角色/环境/时间线）"        parent=T-SHORT-P4
+28. task create "T-SHORT-P4-FIX: 修正（条件创建，检测不通过时start）"       parent=T-SHORT-P4
+29. task create "T-SHORT-P4-RECHECK: 复查（条件创建，FIX后start）"         parent=T-SHORT-P4
 ```
 
 ### 条件创建规则
 
-| 任务 | 创建条件 | 跳过条件 |
-|------|---------|---------|
-| T-SHORT-P3-SEC-{i}-FIX | 字数<800 | 字数达标 |
-| T-SHORT-P4-FIX | 质量门禁BLOCK | 全部通过 |
-| T-SHORT-P4-RECHECK | FIX后 | 无FIX |
+| 任务 | 执行时判断 | 跳过则 abandoned |
+|------|-----------|-----------------|
+| T-SHORT-P3-SEC 各节 | 逐节执行，字数<800时创建FIX | "字数达标" |
+| T-SHORT-P4-FIX | 任一检测BLOCK时start | 全部通过则abandoned |
+| T-SHORT-P4-RECHECK | FIX完成后start | 无FIX则abandoned |
 
 ### 循环处理
 
 | 循环 | 触发 | 处理 |
 |------|------|------|
-| 节数循环 | 小节大纲有N节 | 逐节创建T-SHORT-P3-SEC-{i} |
+| 节数循环 | 小节大纲有N节 | 逐节创建T-SHORT-P3-SEC |
 | 字数不达标 | <800/节 或 <8000总 | 创建FIX → 补写 → 重新验证 |
 | 质量修正 | 门禁BLOCK | 创建FIX → 修正 → RECHECK |
+| 一致性修正 | 检测不通过 | 创建FIX → 修正 → RECHECK |
 
 ---
 

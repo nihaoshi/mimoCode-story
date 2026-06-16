@@ -128,48 +128,41 @@ MiMo Code 的 memory 系统在 checkpoint rebuild 时自动注入上下文。此
 
 > 规范详见 `references/task-tracking-conventions.md`。
 
-**会话生命周期的每个阶段都创建对应任务，确保不遗漏。**
+**触发时第一步：读取下方固定任务列表，然后逐条创建。不跳步。**
 
-### 会话开始任务树
+**强制执行顺序**：
+1. 读取下方「固定任务列表」
+2. 严格按照列表逐条创建任务
+3. 逐个执行
 
-```
-T-SESSION-START: 会话恢复 [in_progress]
-│
-├── T-SESSION-CTX: 读取追踪/上下文.md — 获取当前章节+上次决策
-├── T-SESSION-CHAR: 读取追踪/角色状态.md — 获取角色状态+性格锚点
-├── T-SESSION-FORESH: 读取追踪/伏笔.md — 获取待回收伏笔
-├── T-SESSION-GAP: 运行 detect-story-gaps.js — 检测设定缺口
-└── T-SESSION-SNAPSHOT: 输出进度快照 — 项目/进度/伏笔数/缺口数
-```
-
-### 上下文压缩前任务树
+#### 固定任务列表（会话恢复时，逐条创建）
 
 ```
-T-SESSION-PRE-COMPRESS: 上下文压缩保存 [in_progress]
-│
-├── T-SESSION-SAVE-CTX: 更新追踪/上下文.md — 写入进度+决策+问题
-└── T-SESSION-SAVE-MEM: 写入MEMORY.md — 保存关键决策
-```
+# ===== 会话开始 =====
+1. task create "T-SESSION-START: 会话恢复"                              → T-SESSION-START
+2. task create "T-SESSION-CTX: 读取追踪/上下文.md"                      parent=T-SESSION-START
+3. task create "T-SESSION-CHAR: 读取追踪/角色状态.md"                   parent=T-SESSION-START
+4. task create "T-SESSION-FORESH: 读取追踪/伏笔.md"                    parent=T-SESSION-START
+5. task create "T-SESSION-GAP: 检测设定缺口"                            parent=T-SESSION-START
+6. task create "T-SESSION-SNAPSHOT: 输出进度快照"                       parent=T-SESSION-START
 
-### 会话结束任务树
+# ===== 上下文压缩前 =====
+7.  task create "T-SESSION-PRE-COMPRESS: 上下文压缩保存"                → T-SESSION-PRE-COMPRESS
+8.  task create "T-SESSION-SAVE-CTX: 更新追踪/上下文.md"                parent=T-SESSION-PRE-COMPRESS
+9.  task create "T-SESSION-SAVE-MEM: 写入MEMORY.md"                    parent=T-SESSION-PRE-COMPRESS
 
-```
-T-SESSION-END: 会话结束 [in_progress]
-│
-├── T-SESSION-END-CTX: 更新追踪/上下文.md — 最终进度摘要
-├── T-SESSION-END-MEM: 更新MEMORY.md — 当前进度+重要决策
-└── [条件] T-SESSION-END-DREAM: 经验提取（用户说"提取经验"时创建）
-    ├── 扫描禁用词频率
-    ├── 扫描AI腔模式
-    ├── 提取有效技法
-    └── 发现重复模式
+# ===== 会话结束 =====
+10. task create "T-SESSION-END: 会话结束"                                → T-SESSION-END
+11. task create "T-SESSION-END-CTX: 更新追踪/上下文.md"                 parent=T-SESSION-END
+12. task create "T-SESSION-END-MEM: 更新MEMORY.md"                     parent=T-SESSION-END
+13. task create "T-SESSION-END-DREAM: 经验提取（条件创建）"             parent=T-SESSION-END
 ```
 
 ### 条件创建规则
 
-| 任务 | 创建条件 | 跳过条件 |
-|------|---------|---------|
-| T-SESSION-END-DREAM | 用户说"提取经验" | 用户未要求 |
+| 任务 | 执行时判断 | 跳过则 abandoned |
+|------|-----------|-----------------|
+| T-SESSION-END-DREAM | 用户说"提取经验"时start | 用户未要求则abandoned |
 
 ---
 

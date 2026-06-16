@@ -196,52 +196,63 @@ AI味是风格问题——过于书面化、过于对仗工整、过于面面俱
 
 > 规范详见 `references/task-tracking-conventions.md`。
 
-**触发时第一步：创建完整任务树，然后逐个执行。不跳步。**
+**触发时第一步：读取下方固定任务列表，然后逐条创建。不跳步。**
 
-### 任务树模板
+**强制执行顺序**：
+1. 读取下方「固定任务列表」
+2. 严格按照列表逐条创建任务
+3. 逐个执行
+
+#### 固定任务列表（去AI味时，逐条创建）
 
 ```
-T-DESLOP: 去AI味「{文件名}」 [in_progress]
-│
-├── T-DESLOP-SCAN: Phase 1 AI味扫描
-│   ├── 统计禁用词数量
-│   ├── 标记AI腔句式位置
-│   ├── 标记心理直述位置
-│   ├── 标记排比/节奏问题
-│   ├── 标记对话腔调问题
-│   └── 输出扫描报告
-│
-├── T-DESLOP-GRADE: Phase 2 诊断分级
-│   ├── 计算禁用词密度（处/千字）
-│   ├── 判定等级：轻度≤5 / 中度6-15 / 重度>15
-│   └── 确定需要过哪些Gate
-│
-├── T-DESLOP-FIX: Phase 3 逐项清除
-│   ├── T-DESLOP-GATE-A: Gate A — fix-banned-words
-│   ├── T-DESLOP-GATE-B: Gate B — fix-ai-sentence
-│   ├── [条件] T-DESLOP-GATE-C: Gate C — fix-psychology-externalize（中度+）
-│   ├── [条件] T-DESLOP-GATE-D: Gate D — fix-rhythm-break（中度+）
-│   ├── [条件] T-DESLOP-GATE-E: Gate E — fix-dialogue-naturalize（中度+）
-│   ├── [条件] T-DESLOP-GATE-F: Gate F — fix-ending-desublimate（中度+）
-│   └── T-DESLOP-PUNCT: 附加 — fix-punctuation
-│
-├── [条件] T-DESLOP-RECHECK: 复查（FIX完成后创建）
-│   ├── 重新扫描禁用词
-│   └── 重新扫描AI腔
-│
-└── T-DESLOP-OUTPUT: Phase 4 输出润色结果
-    ├── 统计原文字数
-    ├── 统计修订字数
-    ├── 计算净变化
-    └── 输出修改前后对比
+# ===== 第1层：父任务 =====
+1. task create "T-DESLOP: 去AI味「{文件名}」"                    → T-DESLOP
+
+# ===== 第2层：4个阶段任务 =====
+2. task create "T-DESLOP-SCAN: Phase1 AI味扫描"     parent=T-DESLOP → T-DESLOP-SCAN
+3. task create "T-DESLOP-GRADE: Phase2 诊断分级"    parent=T-DESLOP → T-DESLOP-GRADE
+4. task create "T-DESLOP-FIX: Phase3 逐项清除"      parent=T-DESLOP → T-DESLOP-FIX
+5. task create "T-DESLOP-OUTPUT: Phase4 输出结果"    parent=T-DESLOP → T-DESLOP-OUTPUT
+
+# ===== 第3层-扫描：6个子任务 =====
+6.  task create "T-DESLOP-SCAN-01: 统计禁用词数量"           parent=T-DESLOP-SCAN
+7.  task create "T-DESLOP-SCAN-02: 标记AI腔句式位置"         parent=T-DESLOP-SCAN
+8.  task create "T-DESLOP-SCAN-03: 标记心理直述位置"         parent=T-DESLOP-SCAN
+9.  task create "T-DESLOP-SCAN-04: 标记排比/节奏问题"        parent=T-DESLOP-SCAN
+10. task create "T-DESLOP-SCAN-05: 标记对话腔调问题"         parent=T-DESLOP-SCAN
+11. task create "T-DESLOP-SCAN-06: 输出扫描报告"             parent=T-DESLOP-SCAN
+
+# ===== 第3层-分级：3个子任务 =====
+12. task create "T-DESLOP-GRADE-01: 计算禁用词密度（处/千字）" parent=T-DESLOP-GRADE
+13. task create "T-DESLOP-GRADE-02: 判定等级（轻度≤5/中度6-15/重度>15）" parent=T-DESLOP-GRADE
+14. task create "T-DESLOP-GRADE-03: 确定需要过哪些Gate"       parent=T-DESLOP-GRADE
+
+# ===== 第3层-清除：7个Gate =====
+15. task create "T-DESLOP-GATE-A: fix-banned-words — 禁用词替换为具体动作/细节"       parent=T-DESLOP-FIX
+16. task create "T-DESLOP-GATE-B: fix-ai-sentence — 句式去套路"                      parent=T-DESLOP-FIX
+17. task create "T-DESLOP-GATE-C: fix-psychology-externalize — 心理直述→动作展示"    parent=T-DESLOP-FIX
+18. task create "T-DESLOP-GATE-D: fix-rhythm-break — 打散排比+长句拆短"              parent=T-DESLOP-FIX
+19. task create "T-DESLOP-GATE-E: fix-dialogue-naturalize — 对话加口语化+打断"        parent=T-DESLOP-FIX
+20. task create "T-DESLOP-GATE-F: fix-ending-desublimate — 删总结升华+动作收尾"      parent=T-DESLOP-FIX
+21. task create "T-DESLOP-PUNCT: fix-punctuation — 标点规范化+智能引号+不可见字符"    parent=T-DESLOP-FIX
+
+# ===== 第3层-复查（条件创建） =====
+22. task create "T-DESLOP-RECHECK: 复查 — FIX完成后start，无FIX abandoned"           parent=T-DESLOP
+
+# ===== 第3层-输出：4个子任务 =====
+23. task create "T-DESLOP-OUTPUT-01: 统计原文字数"             parent=T-DESLOP-OUTPUT
+24. task create "T-DESLOP-OUTPUT-02: 统计修订字数"             parent=T-DESLOP-OUTPUT
+25. task create "T-DESLOP-OUTPUT-03: 计算净变化"               parent=T-DESLOP-OUTPUT
+26. task create "T-DESLOP-OUTPUT-04: 输出修改前后对比"         parent=T-DESLOP-OUTPUT
 ```
 
 ### 条件创建规则
 
-| 任务 | 创建条件 | 跳过条件 |
-|------|---------|---------|
-| T-DESLOP-GATE-C~F | 诊断为中度或重度 | 轻度（只过A+B） |
-| T-DESLOP-RECHECK | FIX完成后 | 无FIX |
+| 任务 | 执行时判断 | 跳过则 abandoned |
+|------|-----------|-----------------|
+| T-DESLOP-GATE-C~F | 诊断为中度或重度时start | 轻度则abandoned |
+| T-DESLOP-RECHECK | FIX完成后start | 无FIX则abandoned |
 
 ### 循环处理
 

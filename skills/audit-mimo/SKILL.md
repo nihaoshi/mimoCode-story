@@ -89,52 +89,56 @@ node skills/_shared/scripts/full-consistency-audit.js <项目目录>
 
 > 规范详见 `references/task-tracking-conventions.md`。
 
-**触发时第一步：创建完整任务树，然后逐个执行。不跳步。**
+**触发时第一步：读取下方固定任务列表，然后逐条创建。不跳步。**
 
-### 任务树模板
+**强制执行顺序**：
+1. 读取下方「固定任务列表」
+2. 严格按照列表逐条创建任务
+3. 逐个执行
+
+#### 固定任务列表（全量审计时，逐条创建）
 
 ```
-T-AUDIT: 全量审计「{项目名}」 [in_progress]
-│
-├── T-AUDIT-TRACK: 追踪文件完整性检查
-│   ├── 检查伏笔.md 存在且有内容
-│   ├── 检查时间线.md 存在且有内容
-│   ├── 检查角色状态.md 存在且有内容
-│   ├── 检查物品.md 存在且有内容
-│   ├── 检查环境.md 存在且有内容
-│   ├── 检查上下文.md 存在且有内容
-│   └── 输出完整性报告
-│
-├── T-AUDIT-CONSIST: 跨章节一致性检查
-│   ├── 物品位置是否前后一致
-│   ├── 角色状态是否前后一致
-│   ├── 环境描述是否前后一致
-│   ├── 身份设定是否前后一致
-│   └── 输出一致性问题列表
-│
-├── T-AUDIT-CONTRA: 跨章节矛盾检测
-│   ├── 时间线是否合理
-│   ├── 伏笔是否遗漏
-│   ├── 角色行为是否符合人设
-│   └── 输出矛盾问题列表
-│
-├── [条件] T-AUDIT-FIX: 修正（发现问题时创建）
-│   ├── 修正追踪文件缺失/不完整
-│   ├── 修正一致性错误
-│   └── 修正矛盾描述
-│
-└── T-AUDIT-REPORT: 输出审计报告
-    ├── 项目信息（章节数、追踪文件数）
-    ├── 检查结果汇总
-    ├── 问题详情（按严重度排序）
-    └── 修复建议
+# ===== 第1层：父任务 =====
+1. task create "T-AUDIT: 全量审计「{项目名}」"                    → T-AUDIT
+
+# ===== 第2层：3个审计维度+修正+报告 =====
+2. task create "T-AUDIT-TRACK: 追踪文件完整性检查"    parent=T-AUDIT → T-AUDIT-TRACK
+3. task create "T-AUDIT-CONSIST: 跨章节一致性检查"    parent=T-AUDIT → T-AUDIT-CONSIST
+4. task create "T-AUDIT-CONTRA: 跨章节矛盾检测"      parent=T-AUDIT → T-AUDIT-CONTRA
+5. task create "T-AUDIT-FIX: 修正（条件创建）"        parent=T-AUDIT → T-AUDIT-FIX
+6. task create "T-AUDIT-REPORT: 输出审计报告"         parent=T-AUDIT → T-AUDIT-REPORT
+
+# ===== 第3层-追踪完整性：6项 =====
+7.  task create "T-AUDIT-TRACK-01: 检查伏笔.md 存在且有内容"       parent=T-AUDIT-TRACK
+8.  task create "T-AUDIT-TRACK-02: 检查时间线.md 存在且有内容"     parent=T-AUDIT-TRACK
+9.  task create "T-AUDIT-TRACK-03: 检查角色状态.md 存在且有内容"   parent=T-AUDIT-TRACK
+10. task create "T-AUDIT-TRACK-04: 检查物品.md 存在且有内容"       parent=T-AUDIT-TRACK
+11. task create "T-AUDIT-TRACK-05: 检查环境.md 存在且有内容"       parent=T-AUDIT-TRACK
+12. task create "T-AUDIT-TRACK-06: 检查上下文.md 存在且有内容"     parent=T-AUDIT-TRACK
+
+# ===== 第3层-一致性检查：4项 =====
+13. task create "T-AUDIT-CONSIST-01: 物品位置是否前后一致"          parent=T-AUDIT-CONSIST
+14. task create "T-AUDIT-CONSIST-02: 角色状态是否前后一致"          parent=T-AUDIT-CONSIST
+15. task create "T-AUDIT-CONSIST-03: 环境描述是否前后一致"          parent=T-AUDIT-CONSIST
+16. task create "T-AUDIT-CONSIST-04: 身份设定是否前后一致"          parent=T-AUDIT-CONSIST
+
+# ===== 第3层-矛盾检测：3项 =====
+17. task create "T-AUDIT-CONTRA-01: 时间线是否合理"                 parent=T-AUDIT-CONTRA
+18. task create "T-AUDIT-CONTRA-02: 伏笔是否遗漏"                  parent=T-AUDIT-CONTRA
+19. task create "T-AUDIT-CONTRA-03: 角色行为是否符合人设"           parent=T-AUDIT-CONTRA
+
+# ===== 第3层-报告：3项 =====
+20. task create "T-AUDIT-REPORT-01: 项目信息（章节数、追踪文件数）" parent=T-AUDIT-REPORT
+21. task create "T-AUDIT-REPORT-02: 问题详情（按严重度排序）"       parent=T-AUDIT-REPORT
+22. task create "T-AUDIT-REPORT-03: 修复建议"                       parent=T-AUDIT-REPORT
 ```
 
 ### 条件创建规则
 
-| 任务 | 创建条件 | 跳过条件 |
-|------|---------|---------|
-| T-AUDIT-FIX | 发现BLOCK级问题 | 无问题 |
+| 任务 | 执行时判断 | 跳过则 abandoned |
+|------|-----------|-----------------|
+| T-AUDIT-FIX | 发现BLOCK级问题时start | 无问题则abandoned |
 
 ---
 

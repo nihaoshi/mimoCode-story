@@ -150,52 +150,46 @@ AI执行：
 
 > 规范详见 `references/task-tracking-conventions.md`。
 
-**触发时第一步：创建完整任务树，然后逐个执行。不跳步。**
+**触发时第一步：读取下方固定任务列表，然后逐条创建。不跳步。**
 
-### 标准模式任务树
+**强制执行顺序**：
+1. 读取下方「固定任务列表」
+2. 严格按照列表逐条创建任务
+3. 逐个执行
 
-```
-T-QUALITY: 质量检查「{文件名}」 [in_progress]
-│
-├── T-QUALITY-BAN: detect-banned-words — 禁用词扫描
-├── T-QUALITY-AI: detect-ai-sentence — AI腔扫描
-├── T-QUALITY-CON: detect-consistency — 一致性检查
-├── T-QUALITY-FORESH: detect-foreshadow — 伏笔检查
-├── T-QUALITY-WC: detect-wordcount — 字数检查
-├── T-QUALITY-VOICE: detect-voice — 角色声音检查
-├── T-QUALITY-EMO: detect-emotion-curve — 情绪曲线检查
-│
-├── [条件] T-QUALITY-FIX: 修正（任一检测BLOCK时创建）
-│   ├── fix-banned-words
-│   ├── fix-ai-sentence
-│   ├── fix-punctuation
-│   ├── fix-psychology-externalize
-│   ├── fix-rhythm-break
-│   ├── fix-dialogue-naturalize
-│   └── fix-ending-desublimate
-│
-├── [条件] T-QUALITY-RECHECK: 复查（FIX后创建）
-│   ├── 重新 detect-banned-words
-│   └── 重新 detect-ai-sentence
-│
-└── T-QUALITY-REPORT: 输出检查报告
-```
-
-### 增强模式（--full）额外任务
+#### 固定任务列表（质量检查时，逐条创建）
 
 ```
-├── T-QUALITY-XCHAPTER: detect-cross-chapter — 跨章节一致性
-├── T-QUALITY-SAT: detect-satisfaction — 读者满意度预检
-└── T-QUALITY-GAPS: detect-story-gaps — 故事漏洞检测
+# ===== 第1层：父任务 =====
+1. task create "T-QUALITY: 质量检查「{文件名}」"                    → T-QUALITY
+
+# ===== 第2层：标准7项检测 =====
+2. task create "T-QUALITY-BAN: detect-banned-words — 禁用词扫描"       parent=T-QUALITY
+3. task create "T-QUALITY-AI: detect-ai-sentence — AI腔扫描"          parent=T-QUALITY
+4. task create "T-QUALITY-CON: detect-consistency — 一致性检查"        parent=T-QUALITY
+5. task create "T-QUALITY-FORESH: detect-foreshadow — 伏笔检查"       parent=T-QUALITY
+6. task create "T-QUALITY-WC: detect-wordcount — 字数检查"            parent=T-QUALITY
+7. task create "T-QUALITY-VOICE: detect-voice — 角色声音检查"         parent=T-QUALITY
+8. task create "T-QUALITY-EMO: detect-emotion-curve — 情绪曲线检查"   parent=T-QUALITY
+
+# ===== 第2层：增强3项（--full模式） =====
+9.  task create "T-QUALITY-XCHAPTER: detect-cross-chapter — 跨章节一致性"   parent=T-QUALITY
+10. task create "T-QUALITY-SAT: detect-satisfaction — 读者满意度预检"        parent=T-QUALITY
+11. task create "T-QUALITY-GAPS: detect-story-gaps — 故事漏洞检测"          parent=T-QUALITY
+
+# ===== 第2层：修正+复查+报告 =====
+12. task create "T-QUALITY-FIX: 修正 — 任一BLOCK时start，全部通过abandoned"  parent=T-QUALITY
+13. task create "T-QUALITY-RECHECK: 复查 — FIX完成后start，无FIX abandoned"  parent=T-QUALITY
+14. task create "T-QUALITY-REPORT: 输出检查报告"                            parent=T-QUALITY
 ```
 
 ### 条件创建规则
 
-| 任务 | 创建条件 | 跳过条件 |
-|------|---------|---------|
-| T-QUALITY-FIX | 任一检测返回BLOCK | 全部通过 |
-| T-QUALITY-RECHECK | FIX完成后 | 无FIX |
-| T-QUALITY-XCHAPTER/SAT/GAPS | --full模式 | 标准模式 |
+| 任务 | 执行时判断 | 跳过则 abandoned |
+|------|-----------|-----------------|
+| T-QUALITY-XCHAPTER/SAT/GAPS | --full模式时创建 | 标准模式abandoned |
+| T-QUALITY-FIX | 任一检测返回BLOCK时start | 全部通过则abandoned |
+| T-QUALITY-RECHECK | FIX完成后start | 无FIX则abandoned |
 
 ### 循环处理
 

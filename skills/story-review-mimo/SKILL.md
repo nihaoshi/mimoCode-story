@@ -133,61 +133,63 @@ atoms:
 
 > 规范详见 `references/task-tracking-conventions.md`。
 
-**触发时第一步：创建完整任务树，然后逐个执行。不跳步。**
+**触发时第一步：读取下方固定任务列表，然后逐条创建。不跳步。**
 
-### 任务树模板
+**强制执行顺序**：
+1. 读取下方「固定任务列表」
+2. 严格按照列表逐条创建任务
+3. 逐个执行
+
+#### 固定任务列表（审稿时，逐条创建）
 
 ```
-T-REVIEW: 审稿「{文件名}」 [in_progress]
-│
-├── T-REVIEW-STRUCT: 结构审查 — review-structure
-│   ├── 检查开篇钩子（前3句吸引力）
-│   ├── 检查情绪曲线（是否有起伏）
-│   ├── 检查节奏把控（高潮/铺垫比例）
-│   ├── 检查反转铺垫（是否有足够铺垫）
-│   ├── 检查章尾钩子（是否有悬念）
-│   └── 输出结构评分(1-10)+问题列表
-│
-├── T-REVIEW-CHAR: 人物审查 — review-character
-│   ├── 检查角色一致性（人设前后一致）
-│   ├── 检查动机合理性（行为有动机支撑）
-│   ├── 检查角色弧线（主角有成长/变化）
-│   ├── 检查配角功能（配角有存在价值）
-│   └── 输出人物评分(1-10)+问题列表
-│
-├── T-REVIEW-WRITE: 文笔审查 — review-writing
-│   ├── 检查AI味（明显AI写作痕迹）
-│   ├── 检查对话质量（自然、有信息量）
-│   ├── 检查描写密度（过多/过少）
-│   ├── 检查禁用词（高频AI词汇）
-│   └── 输出文笔评分(1-10)+问题列表
-│
-├── T-REVIEW-BIZ: 商业审查 — review-commercial
-│   ├── 检查爽点密度（每3000-5000字有爽点）
-│   ├── 检查钩子效果（足够吸引翻页）
-│   ├── 检查题材适配（写法符合题材特点）
-│   ├── 检查平台适配（适合目标平台）
-│   └── 输出商业评分(1-10)+问题列表
-│
-├── T-REVIEW-CON: 一致性审查 — review-consistency
-│   ├── 检查事实一致（设定/属性前后一致）
-│   ├── 检查时间线（时间线是否混乱）
-│   ├── 检查伏笔回收（已埋伏笔有回收）
-│   ├── 检查角色状态（角色状态跟踪正确）
-│   └── 输出一致性评分(1-10)+问题列表
-│
-└── T-REVIEW-REPORT: 综合报告
-    ├── 计算加权平均分
-    ├── 汇总优点
-    ├── 汇总问题（按P0/P1/P2排序）
-    └── 输出修改建议
+# ===== 第1层：父任务 =====
+1. task create "T-REVIEW: 审稿「{文件名}」"                    → T-REVIEW
+
+# ===== 第2层：5个审查维度+综合报告 =====
+2. task create "T-REVIEW-STRUCT: 结构审查 — review-structure"     parent=T-REVIEW → T-REVIEW-STRUCT
+3. task create "T-REVIEW-CHAR: 人物审查 — review-character"       parent=T-REVIEW → T-REVIEW-CHAR
+4. task create "T-REVIEW-WRITE: 文笔审查 — review-writing"       parent=T-REVIEW → T-REVIEW-WRITE
+5. task create "T-REVIEW-BIZ: 商业审查 — review-commercial"      parent=T-REVIEW → T-REVIEW-BIZ
+6. task create "T-REVIEW-CON: 一致性审查 — review-consistency"   parent=T-REVIEW → T-REVIEW-CON
+7. task create "T-REVIEW-REPORT: 综合报告"                       parent=T-REVIEW → T-REVIEW-REPORT
+
+# ===== 第3层-结构审查：5项 =====
+8.  task create "T-REVIEW-STRUCT-01: 检查开篇钩子（前3句吸引力）"      parent=T-REVIEW-STRUCT
+9.  task create "T-REVIEW-STRUCT-02: 检查情绪曲线（是否有起伏）"       parent=T-REVIEW-STRUCT
+10. task create "T-REVIEW-STRUCT-03: 检查节奏把控（高潮/铺垫比例）"    parent=T-REVIEW-STRUCT
+11. task create "T-REVIEW-STRUCT-04: 检查反转铺垫（是否有足够铺垫）"   parent=T-REVIEW-STRUCT
+12. task create "T-REVIEW-STRUCT-05: 检查章尾钩子（是否有悬念）"       parent=T-REVIEW-STRUCT
+
+# ===== 第3层-人物审查：4项 =====
+13. task create "T-REVIEW-CHAR-01: 检查角色一致性（人设前后一致）"      parent=T-REVIEW-CHAR
+14. task create "T-REVIEW-CHAR-02: 检查动机合理性（行为有动机支撑）"    parent=T-REVIEW-CHAR
+15. task create "T-REVIEW-CHAR-03: 检查角色弧线（主角有成长/变化）"     parent=T-REVIEW-CHAR
+16. task create "T-REVIEW-CHAR-04: 检查配角功能（配角有存在价值）"      parent=T-REVIEW-CHAR
+
+# ===== 第3层-文笔审查：4项 =====
+17. task create "T-REVIEW-WRITE-01: 检查AI味（明显AI写作痕迹）"        parent=T-REVIEW-WRITE
+18. task create "T-REVIEW-WRITE-02: 检查对话质量（自然、有信息量）"     parent=T-REVIEW-WRITE
+19. task create "T-REVIEW-WRITE-03: 检查描写密度（过多/过少）"          parent=T-REVIEW-WRITE
+20. task create "T-REVIEW-WRITE-04: 检查禁用词（高频AI词汇）"          parent=T-REVIEW-WRITE
+
+# ===== 第3层-商业审查：4项 =====
+21. task create "T-REVIEW-BIZ-01: 检查爽点密度（每3000-5000字有爽点）"  parent=T-REVIEW-BIZ
+22. task create "T-REVIEW-BIZ-02: 检查钩子效果（足够吸引翻页）"        parent=T-REVIEW-BIZ
+23. task create "T-REVIEW-BIZ-03: 检查题材适配（写法符合题材特点）"     parent=T-REVIEW-BIZ
+24. task create "T-REVIEW-BIZ-04: 检查平台适配（适合目标平台）"        parent=T-REVIEW-BIZ
+
+# ===== 第3层-一致性审查：4项 =====
+25. task create "T-REVIEW-CON-01: 检查事实一致（设定/属性前后一致）"    parent=T-REVIEW-CON
+26. task create "T-REVIEW-CON-02: 检查时间线（时间线是否混乱）"         parent=T-REVIEW-CON
+27. task create "T-REVIEW-CON-03: 检查伏笔回收（已埋伏笔有回收）"       parent=T-REVIEW-CON
+28. task create "T-REVIEW-CON-04: 检查角色状态（角色状态跟踪正确）"     parent=T-REVIEW-CON
+
+# ===== 第3层-综合报告：3项 =====
+29. task create "T-REVIEW-REPORT-01: 计算加权平均分"                    parent=T-REVIEW-REPORT
+30. task create "T-REVIEW-REPORT-02: 汇总优点+问题（按P0/P1/P2排序）"  parent=T-REVIEW-REPORT
+31. task create "T-REVIEW-REPORT-03: 输出修改建议"                      parent=T-REVIEW-REPORT
 ```
-
-### 条件创建规则
-
-| 任务 | 创建条件 | 跳过条件 |
-|------|---------|---------|
-| 所有审查任务 | 默认全部创建 | 用户指定只审某些维度时跳过其他 |
 
 ### 审查顺序
 
