@@ -109,6 +109,23 @@ const preChecks = {
     return true;
   },
 
+  // Step 04.5: 对标文件处理（条件：存在对标或拆文库目录）
+  '04.5': (wf) => {
+    const projectDir = process.argv[5];
+    if (!projectDir) {
+      error('项目目录未指定');
+      return false;
+    }
+    const hasBenchmark = fs.existsSync(path.join(projectDir, '对标')) || 
+                         fs.existsSync(path.join(projectDir, '拆文库'));
+    if (!hasBenchmark) {
+      warn('无对标或拆文库目录，跳过');
+      return false;
+    }
+    log('检测到对标目录，准备处理');
+    return true;
+  },
+
   // Step 05: 需要 step03 完成
   '05': (wf) => {
     const s03 = readJson('step03-outline-check.json');
@@ -294,6 +311,21 @@ const postChecks = {
     const outlineFile = `大纲/细纲_第${s02.next_chapter_padded}章.md`;
     if (!fileExists(outlineFile)) { error('细纲文件不存在: ' + outlineFile); return false; }
     log('Step 04 输出验证通过: 细纲已创建');
+    return true;
+  },
+
+  // Step 04.5: 验证对标文件处理
+  '04.5': (wf) => {
+    const data = readJson('step04-benchmark.json');
+    if (!data) { error('step04-benchmark.json 不存在'); return false; }
+    if (typeof data.has_benchmark !== 'boolean') { error('has_benchmark 无效'); return false; }
+    if (data.has_benchmark) {
+      if (!data.benchmark_book) { error('benchmark_book 缺失'); return false; }
+      if (!data.style_profile) { error('style_profile 缺失'); return false; }
+      log(`Step 04.5 输出验证通过: 对标书=${data.benchmark_book}`);
+    } else {
+      log('Step 04.5 输出验证通过: 无对标书');
+    }
     return true;
   },
 

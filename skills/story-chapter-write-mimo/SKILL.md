@@ -53,6 +53,7 @@ T-CHAP-{N}: 写第{N}章
 │    ├── T-CHAP-{N}-02: 获取最新章节信息 [explore]
 │    ├── T-CHAP-{N}-03: 检查细纲是否存在 [explore]
 │    ├── [条件] T-CHAP-{N}-04: 创建细纲 [general]
+│    ├── [条件] T-CHAP-{N}-04.5: 对标文件处理 [general]
 │    ├── T-CHAP-{N}-05: 分析细纲确定读取文件 [general]
 │    ├── T-CHAP-{N}-06: 决策是否创建新设定 [general]
 │    └── [条件] T-CHAP-{N}-07: 创建新设定文件 [general]
@@ -106,6 +107,18 @@ T-CHAP-{N}: 写第{N}章
 - **输出**：`大纲/细纲_{N}章.md`
 - **防偷懒**：情节点 >= 10，必须有钩子和爽点
 
+### Step 04.5: 对标文件处理 [条件：存在对标目录或拆文库目录]
+- **Agent**: general（隔离执行）
+- **检查**：是否存在 对标/ 或 拆文库/ 目录
+- **职责**：
+  - 读取 设定/题材定位.md 的「主对标书」字段
+  - 确定对标书路径（优先 对标/{书名}/，回退 拆文库/{书名}/）
+  - 读取对标文风.md，提取原文锚点片段
+  - 读取拆文报告.md，提取可借鉴套路
+  - 读取本章涉及角色的角色档案
+- **输出**：`.workflow/step04-benchmark.json`
+- **防偷懒**：必须实际读取文件，不能凭记忆
+
 ### Step 05: 文件分析
 - **Agent**: general（隔离执行）
 - **检查**：从细纲解析角色、场景、伏笔
@@ -154,12 +167,19 @@ T-CHAP-{N}: 写第{N}章
   - `故事线/故事线_索引.md` — 故事线总览
   - `故事线/故事线_主线_*.md` — 当前相关主线
   - `故事线/故事线_交叉点.md` — 交叉点标记
+- **对标上下文**（如存在）：
+  - 读取 `.workflow/step04-benchmark.json`（如存在）
+  - 输出到 step08-context.json 的 `benchmark` 字段
 - **输出**：`.workflow/step08-context.json`
 - **防偷懒**：上一章结尾必须是最后500字原文；设定文件必须全部读取，不能跳过；跨卷追踪和故事线文件存在时必须加载
 
 ### Step 09: 生成约束
 - **Agent**: general（隔离执行）
 - **检查**：加载禁用词、文风规则、字数限制
+- **对标约束**（如 benchmark 存在）：
+  - 原文锚点片段 → 作为 few-shot 示范
+  - 可借鉴套路 → 设计剧情时参考
+  - 写法技巧 → 写作时参考
 - **输出**：`.workflow/step09-constraints.json`
 - **防偷懒**：禁用词必须从文件加载，字数限制必须明确
 
@@ -226,6 +246,7 @@ T-CHAP-{N}: 写第{N}章
 | 任务 | 触发条件 | 跳过则 |
 |------|---------|--------|
 | Step 04 | step03.need_create=true | abandoned |
+| Step 04.5 | 存在 对标/ 或 拆文库/ 目录 | abandoned |
 | Step 07 | step06.need_new_settings=true | abandoned |
 | Step 12 | step11有任何WARN或BLOCK | abandoned |
 | Step 13 | step12存在 | abandoned |
@@ -257,6 +278,7 @@ Step 13 复查
 ├── step01-health-check.json
 ├── step02-chapter-info.json
 ├── step03-outline-check.json
+├── step04-benchmark.json           # 对标文件处理（条件）
 ├── step05-required-files.json
 ├── step06-new-settings.json
 ├── step08-context.json
