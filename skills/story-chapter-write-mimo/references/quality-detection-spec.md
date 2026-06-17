@@ -10,9 +10,10 @@
 |------|--------|--------|----------|------|
 | 1 | 字数达标 | BLOCK | Python 统计 | 字数 < 目标90% 阻断 |
 | 2 | 禁用词+AI腔 | BLOCK | style-lint.js | 命中一级禁用词阻断 |
-| 3 | 一致性 | BLOCK | consistency-check.js | 与追踪文件矛盾阻断 |
-| 4 | 章内逻辑性 | WARN | LLM 分析 | 事件逻辑不连贯警告 |
-| 5 | 跨章节检查 | WARN | cross-chapter-check.js | 重复内容警告 |
+| 3 | AI标点符号 | BLOCK | punctuation-normalize.js | 全角/半角混用、多余标点 |
+| 4 | 一致性 | BLOCK | consistency-check.js | 与追踪文件矛盾阻断 |
+| 5 | 章内逻辑性 | WARN | LLM 分析 | 事件逻辑不连贯警告 |
+| 6 | 跨章节检查 | WARN | cross-chapter-check.js | 重复内容警告 |
 
 **关键规则**：只要检测结果中存在任何 WARN 或 BLOCK，就必须进入修复流程，不能跳过。
 
@@ -81,6 +82,25 @@ def count_chars(text):
 
 **判定标准**：发现矛盾即 BLOCK
 
+### 3. AI标点符号（BLOCK）
+
+**检测方法**：punctuation-normalize.js 脚本扫描
+
+**检测内容**：
+- 全角/半角标点混用（如中文用英文逗号）
+- 多余标点（连续多个句号、省略号不规范）
+- AI 常用标点模式（过度使用省略号、感叹号）
+- 引号配对错误
+- 顿号、逗号使用不当
+
+**常见 AI 标点问题**：
+- 连续使用"……"而非"……"
+- 中英文标点混用（"你好,世界" vs "你好，世界"）
+- 省略号后紧跟标点（"……。"）
+- 过度使用感叹号表达情绪
+
+**判定标准**：发现标点问题即 BLOCK
+
 ### 4. 章内逻辑性（WARN）
 
 **检测方法**：LLM 分析（参照 logic-check-rules.md）
@@ -132,6 +152,14 @@ def count_chars(text):
       "details": "发现2个一级禁用词"
     },
     {
+      "name": "punctuation",
+      "status": "fail",
+      "severity": "BLOCK",
+      "found": ["中英文标点混用", "省略号不规范"],
+      "positions": [78, 234],
+      "details": "发现2处标点问题"
+    },
+    {
       "name": "consistency",
       "status": "pass",
       "severity": "BLOCK",
@@ -157,9 +185,9 @@ def count_chars(text):
       "details": "无重复"
     }
   ],
-  "block_count": 1,
+  "block_count": 2,
   "warn_count": 1,
-  "total_issues": 2,
+  "total_issues": 3,
   "overall": "BLOCK"
 }
 ```

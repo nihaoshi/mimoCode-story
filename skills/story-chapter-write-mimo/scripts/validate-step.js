@@ -225,8 +225,8 @@ const validators = {
     }
     if (!Array.isArray(data.checks)) {
       errors.push('checks 必须是数组');
-    } else if (data.checks.length < 5) {
-      errors.push(`checks 应有5项检测，当前 ${data.checks.length} 项`);
+    } else if (data.checks.length < 6) {
+      errors.push(`checks 应有6项检测，当前 ${data.checks.length} 项`);
     } else {
       data.checks.forEach((check, i) => {
         if (!check.name) errors.push(`checks[${i}].name 缺失`);

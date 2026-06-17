@@ -366,7 +366,7 @@ const postChecks = {
     const data = readJson('step11-quality-report.json');
     if (!data) { error('step11-quality-report.json 不存在'); return false; }
     if (!Array.isArray(data.checks)) { error('checks 无效'); return false; }
-    if (data.checks.length < 5) { error('checks 应有5项检测'); return false; }
+    if (data.checks.length < 6) { error('checks 应有6项检测'); return false; }
     if (!['BLOCK', 'WARN', 'PASS'].includes(data.overall)) { error('overall 无效'); return false; }
     
     const totalIssues = (data.block_count || 0) + (data.warn_count || 0);
