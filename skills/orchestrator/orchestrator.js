@@ -336,17 +336,26 @@ class Orchestrator {
       }
     }
 
-    // Step 4: 生成内容（调用AI）
-    console.log('\n🤖 Step 4: 生成正文...');
-    const content = await this.generateContent(chapterNum, outline, prevContent);
-    if (!content) {
-      console.log('❌ 内容生成失败');
-      return false;
-    }
-    console.log(`  ✅ 正文已生成（${content.length}字）`);
+    // Step 4: 生成 prompt（输出给 AI）
+    console.log('\n🤖 Step 4: 生成写作 prompt...');
+    const prompt = this.generatePrompt(chapterNum, outline, prevContent);
+    const promptFile = path.join(this.projectDir, `.prompt-chapter-${chapterNum}.md`);
+    writeFile(promptFile, prompt);
+    console.log(`  ✅ Prompt 已保存到 ${promptFile}`);
+    console.log('  ⏸️ 等待 AI 生成内容...');
 
-    // Step 5: 质量检查
+    // Step 5: 质量检查（AI 生成后执行）
     console.log('\n🔍 Step 5: 质量检查...');
+    const chapterFile = path.join(this.projectDir, '正文', `第${String(chapterNum).padStart(3, '0')}章.md`);
+    const content = readFile(chapterFile);
+
+    if (!content) {
+      console.log('  ⚠️ 正文文件不存在，跳过质量检查');
+      console.log('  📝 请让 AI 根据 prompt 生成内容后保存到：');
+      console.log(`     ${chapterFile}`);
+      return { promptFile, chapterFile, needsAI: true };
+    }
+
     const targetWords = this.extractTargetWords(outline);
     const blacklist = this.state.getRepeatBlacklist();
     const qualityResults = QualityChecker.runAll(content, targetWords, blacklist);
@@ -366,20 +375,14 @@ class Orchestrator {
       // 自动修复禁用词
       console.log('\n🔧 自动修复禁用词...');
       const fixedContent = this.fixBannedWords(content);
-      writeFile(path.join(this.projectDir, '正文', `第${String(chapterNum).padStart(3, '0')}章.md`), fixedContent);
+      writeFile(chapterFile, fixedContent);
       console.log('  ✅ 禁用词已修复');
     } else {
       console.log('  ✅ 质量检查通过');
     }
 
-    // Step 6: 保存正文
-    console.log('\n💾 Step 6: 保存正文...');
-    const chapterFile = path.join(this.projectDir, '正文', `第${String(chapterNum).padStart(3, '0')}章.md`);
-    writeFile(chapterFile, qualityResults.allPassed ? content : this.fixBannedWords(content));
-    console.log(`  ✅ 已保存到 ${chapterFile}`);
-
-    // Step 7: 更新追踪文件
-    console.log('\n📝 Step 7: 更新追踪文件...');
+    // Step 6: 更新追踪文件
+    console.log('\n📝 Step 6: 更新追踪文件...');
     TrackingUpdater.updateContext(this.projectDir, chapterNum, `第${chapterNum}章完成`);
     console.log('  ✅ 上下文已更新');
 
@@ -405,18 +408,37 @@ class Orchestrator {
     return match ? parseInt(match[1]) : 3000;
   }
 
-  // 生成内容（调用AI）
-  async generateContent(chapterNum, outline, prevContent) {
-    // 这里应该调用 AI 生成内容
-    // 在实际实现中，这会调用 MiMo Code 的 actor 工具
-    // 这里返回一个占位符
-    console.log('  [AI] 正在生成内容...');
-    console.log('  [AI] 细纲已加载');
-    console.log('  [AI] 上下文已加载');
-    console.log('  [AI] 质量约束已加载');
+  // 生成内容 prompt（输出给 AI）
+  generatePrompt(chapterNum, outline, prevContent) {
+    const blacklist = this.state.getRepeatBlacklist();
+    const blacklistText = blacklist.length > 0 ? blacklist.join('、') : '无';
 
-    // 返回示例内容（实际应由 AI 生成）
-    return `[第${chapterNum}章内容占位符]\n\n这是由编排器调用AI生成的章节内容。`;
+    const prevSummary = prevContent ? prevContent.slice(0, 500) + '...' : '无（第一章）';
+
+    const prompt = `你是一个网文写手。请根据以下信息写第${chapterNum}章正文。
+
+## 细纲
+${outline}
+
+## 上一章摘要
+${prevSummary}
+
+## 重复语句黑名单（禁止使用）
+${blacklistText}
+
+## 禁用词（禁止使用）
+不禁、竟然、居然、仿佛、宛如、恰似、犹如、嘴角勾起、嘴角上扬、眼中闪过、深吸一口气、缓缓开口、淡淡说道、轻声说道、值得一提、不得不说、总而言之
+
+## 要求
+1. 严格按照细纲的情节点序列写作
+2. 字数目标：${this.extractTargetWords(outline)}字
+3. 不要使用黑名单中的语句
+4. 不要使用禁用词
+5. 直接输出正文，不要有其他内容
+
+请写第${chapterNum}章正文：`;
+
+    return prompt;
   }
 
   // 修复禁用词
