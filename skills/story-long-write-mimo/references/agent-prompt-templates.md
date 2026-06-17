@@ -98,8 +98,16 @@ actor({
 2. 禁用词+AI腔（style-lint.js）— BLOCK
 3. AI标点符号（punctuation-normalize.js）— BLOCK
 4. 一致性（consistency-check.js）— BLOCK
-5. 逻辑性（LLM分析）— WARN
-6. 跨章节检查（cross-chapter-check.js）— WARN
+5. 设定校验（LLM分析）— BLOCK
+6. 逻辑性（LLM分析）— WARN
+7. 跨章节检查（cross-chapter-check.js）— WARN
+
+【设定校验内容】
+- 世界观规则是否遵守（如时代背景、社会规则、技术设定）
+- 金手指规则是否正确（如系统机制、能力限制）
+- 文风是否符合设定（如语言风格、叙事视角）
+- 题材核心梗是否体现（如爽点模式、情绪目标）
+- 角色关系是否符合设定（如亲疏、敌友、势力归属）
 
 【修复规则】
 - 只有问题（WARN或BLOCK）就必须修复

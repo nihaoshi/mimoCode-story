@@ -842,16 +842,28 @@ node skills/story-long-write-mimo/scripts/workflow-guard.js post <step> <workflo
    | (11) | `追踪/物资.md` | 角色经济状态 | ⚠️ WARN |
    | (12) | 对标书路径下 `剧情/故事线.md` | 剧情线索引 | ⚠️ WARN |
    | (13) | 对标书路径下 `剧情/{相关剧情线}.md` | 相关剧情线 | ⚠️ WARN |
-   | (14) | 对标书路径下 `设定/世界观/*.md` | 世界观设定。**回退顺序**：① glob `设定/世界观/*.md`；② 读单文件 `设定/世界观.md`；③ 读 `设定/金手指.md`；④ 都没有则缺失 | ⚠️ WARN |
-   | (15) | `追踪/cross-chapter-fingerprint.md` | 前5章 n-gram 指纹摘要 | ℹ️ 可选 |
+   | (14) | `设定/世界观/*.md` | 世界观设定（时代背景、社会规则、技术设定） | 🚫 BLOCK |
+   | (15) | `设定/世界观/金手指.md` | 金手指规则（系统机制、能力限制） | 🚫 BLOCK |
+   | (16) | `设定/势力/*.md` | 势力设定（组织结构、势力关系） | ⚠️ WARN |
+   | (17) | `设定/关系.md` | 角色关系网络 | ⚠️ WARN |
+   | (18) | `设定/题材定位.md` | 题材核心梗、卖点 | ⚠️ WARN |
+   | (19) | `设定/文风.md` | 文风约束 | ⚠️ WARN |
+   | (20) | `追踪/cross-chapter-fingerprint.md` | 前5章 n-gram 指纹摘要 | ℹ️ 可选 |
 
-   **输出格式**：读取完 15 项后，输出清单：
+   **输出格式**：读取完 20 项后，输出清单：
    ```
    第{N}章上下文检查：
    ✅ (1) 上一章：正文/第003章_XXX.md
    ✅ (2) 细纲：大纲/细纲_第004章.md
    ⚠️ (3) 伏笔：追踪/伏笔.md — 文件不存在，需要创建吗？
    ✅ (4) 角色：设定/角色/江晨.md, 设定/角色/钟嘉嘉.md
+   ...
+   ✅ (14) 世界观：设定/世界观/背景设定.md, 设定/世界观/金手指.md
+   ✅ (15) 金手指：设定/世界观/金手指.md
+   ✅ (16) 势力：设定/势力/火箭军.md
+   ✅ (17) 关系：设定/关系.md
+   ✅ (18) 题材：设定/题材定位.md
+   ✅ (19) 文风：设定/文风.md
    ...
    ```
 
@@ -1019,7 +1031,7 @@ node skills/story-long-write-mimo/scripts/workflow-guard.js pre check .workflow 
 node skills/story-long-write-mimo/scripts/workflow-guard.js post check .workflow
 ```
 
-**检测项**（6项，必须全部运行）：
+**检测项**（7项，必须全部运行）：
 
 | 序号 | 检测项 | 严重度 | 脚本/方法 |
 |------|--------|--------|----------|
@@ -1027,8 +1039,16 @@ node skills/story-long-write-mimo/scripts/workflow-guard.js post check .workflow
 | 2 | 禁用词+AI腔 | BLOCK | style-lint.js |
 | 3 | AI标点符号 | BLOCK | punctuation-normalize.js |
 | 4 | 一致性 | BLOCK | consistency-check.js |
-| 5 | 逻辑性 | WARN | LLM 分析 |
-| 6 | 跨章节检查 | WARN | cross-chapter-check.js |
+| 5 | **设定校验** | BLOCK | LLM 分析 |
+| 6 | 逻辑性 | WARN | LLM 分析 |
+| 7 | 跨章节检查 | WARN | cross-chapter-check.js |
+
+**设定校验内容**：
+- 世界观规则是否遵守（如时代背景、社会规则、技术设定）
+- 金手指规则是否正确（如系统机制、能力限制）
+- 文风是否符合设定（如语言风格、叙事视角）
+- 题材核心梗是否体现（如爽点模式、情绪目标）
+- 角色关系是否符合设定（如亲疏、敌友、势力归属）
 
 **修复规则**：只要有任何 WARN 或 BLOCK，就必须修复，不能跳过。
 
