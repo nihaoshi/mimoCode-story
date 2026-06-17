@@ -384,12 +384,34 @@ const postChecks = {
     return true;
   },
 
-  // Step 10: 验证正文文件存在
+  // Step 10: 验证正文文件存在且内容合格
   '10': (wf) => {
     const s02 = readJson('step02-chapter-info.json');
+    const s09 = readJson('step09-constraints.json');
     const chapterFile = `正文/第${s02.next_chapter_padded}章.md`;
+    
     if (!fileExists(chapterFile)) { error('正文文件不存在'); return false; }
-    log('Step 10 输出验证通过: 正文已写入');
+    
+    // 验证字数
+    const content = fs.readFileSync(chapterFile, 'utf-8');
+    const wordCount = content.replace(/\s/g, '').length;
+    const minWords = (s09.word_count_target || 3000) * 0.9;
+    
+    if (wordCount < minWords) {
+      error(`字数不足: ${wordCount}/${s09.word_count_target} (最低${minWords})`);
+      return false;
+    }
+    
+    // 验证场景完整性（检查细纲中的场景关键词）
+    const s03 = readJson('step03-outline-check.json');
+    if (s03 && s03.scenes) {
+      const missingScenes = s03.scenes.filter(s => !content.includes(s));
+      if (missingScenes.length > 0) {
+        warn(`可能缺少场景: ${missingScenes.join(', ')}`);
+      }
+    }
+    
+    log(`Step 10 输出验证通过: ${wordCount}字`);
     return true;
   },
 
