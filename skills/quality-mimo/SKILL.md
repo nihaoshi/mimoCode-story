@@ -5,16 +5,13 @@ description: |
   统一质量检查入口。检查章节质量、一致性、禁用词、AI腔等。
   触发方式：/quality-mimo、/检查质量、「检查一下」「质量检查」
 atoms:
-  - detect-banned-words
-  - detect-ai-sentence
+  - detect-quality
   - detect-consistency
-  - detect-foreshadow
+  - detect-story
   - detect-wordcount
   - detect-voice
-  - detect-emotion-curve
+  - detect-emotion
   - detect-cross-chapter
-  - detect-satisfaction
-  - detect-story-gaps
 ---
 
 # quality-mimo：统一质量检查
@@ -47,13 +44,12 @@ node skills/_shared/scripts/quality-gate.js <章节文件> <项目目录>
 ```
 
 **检查项目**（由以下原子 skill 执行）：
-- 调用原子 `detect-banned-words` — 禁用词检测
-- 调用原子 `detect-ai-sentence` — AI腔检测
+- 调用原子 `detect-quality` — 禁用词+AI腔检测
 - 调用原子 `detect-consistency` — 一致性检查
-- 调用原子 `detect-foreshadow` — 伏笔检查
+- 调用原子 `detect-story` — 伏笔+设定缺口检查
 - 调用原子 `detect-wordcount` — 字数检查
 - 调用原子 `detect-voice` — 角色声音检查
-- 调用原子 `detect-emotion-curve` — 情绪曲线检查
+- 调用原子 `detect-emotion` — 情绪曲线+爽点检查
 
 **增强模式**：
 ```bash
@@ -87,16 +83,13 @@ node skills/_shared/scripts/full-consistency-audit.js <项目目录>
 
 | 检查类型 | 调用原子 |
 |---------|----------|
-| 禁用词检测 | 调用原子 `detect-banned-words` |
-| AI腔检测 | 调用原子 `detect-ai-sentence` |
+| 禁用词+AI腔检测 | 调用原子 `detect-quality` |
 | 一致性检查 | 调用原子 `detect-consistency` |
-| 伏笔检查 | 调用原子 `detect-foreshadow` |
+| 伏笔+设定缺口 | 调用原子 `detect-story` |
 | 字数检查 | 调用原子 `detect-wordcount` |
 | 角色声音检查 | 调用原子 `detect-voice` |
-| 情绪曲线检查 | 调用原子 `detect-emotion-curve` |
+| 情绪+爽点检查 | 调用原子 `detect-emotion` |
 | 跨章节检查 | 调用原子 `detect-cross-chapter` |
-| 读者满意度 | 调用原子 `detect-satisfaction` |
-| 故事漏洞 | 调用原子 `detect-story-gaps` |
 
 ---
 
@@ -163,19 +156,16 @@ AI执行：
 # ===== 第1层：父任务 =====
 1. task create "T-QUALITY: 质量检查「{文件名}」"                    → T-QUALITY
 
-# ===== 第2层：标准7项检测 =====
-2. task create "T-QUALITY-BAN: detect-banned-words — 禁用词扫描"       parent=T-QUALITY
-3. task create "T-QUALITY-AI: detect-ai-sentence — AI腔扫描"          parent=T-QUALITY
-4. task create "T-QUALITY-CON: detect-consistency — 一致性检查"        parent=T-QUALITY
-5. task create "T-QUALITY-FORESH: detect-foreshadow — 伏笔检查"       parent=T-QUALITY
-6. task create "T-QUALITY-WC: detect-wordcount — 字数检查"            parent=T-QUALITY
-7. task create "T-QUALITY-VOICE: detect-voice — 角色声音检查"         parent=T-QUALITY
-8. task create "T-QUALITY-EMO: detect-emotion-curve — 情绪曲线检查"   parent=T-QUALITY
+# ===== 第2层：标准6项检测 =====
+2. task create "T-QUALITY-QUAL: detect-quality — 禁用词+AI腔扫描"       parent=T-QUALITY
+3. task create "T-QUALITY-CON: detect-consistency — 一致性检查"          parent=T-QUALITY
+4. task create "T-QUALITY-STORY: detect-story — 伏笔+设定缺口检查"      parent=T-QUALITY
+5. task create "T-QUALITY-WC: detect-wordcount — 字数检查"              parent=T-QUALITY
+6. task create "T-QUALITY-VOICE: detect-voice — 角色声音检查"           parent=T-QUALITY
+7. task create "T-QUALITY-EMO: detect-emotion — 情绪+爽点检查"          parent=T-QUALITY
 
-# ===== 第2层：增强3项（--full模式） =====
-9.  task create "T-QUALITY-XCHAPTER: detect-cross-chapter — 跨章节一致性"   parent=T-QUALITY
-10. task create "T-QUALITY-SAT: detect-satisfaction — 读者满意度预检"        parent=T-QUALITY
-11. task create "T-QUALITY-GAPS: detect-story-gaps — 故事漏洞检测"          parent=T-QUALITY
+# ===== 第2层：增强1项（--full模式） =====
+8.  task create "T-QUALITY-XCHAPTER: detect-cross-chapter — 跨章节一致性"  parent=T-QUALITY
 
 # ===== 第2层：修正+复查+报告 =====
 12. task create "T-QUALITY-FIX: 修正 — 任一BLOCK时start，全部通过abandoned"  parent=T-QUALITY

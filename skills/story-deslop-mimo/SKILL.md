@@ -5,13 +5,9 @@ description: |
   网文去AI味。检测并清除文本中的AI写作痕迹。
   触发方式：/story-deslop-mimo、/去AI味、「去AI味」「这篇太AI了」
 atoms:
-  - fix-banned-words
-  - fix-ai-sentence
-  - fix-psychology-externalize
-  - fix-rhythm-break
-  - fix-dialogue-naturalize
-  - fix-ending-desublimate
-  - fix-punctuation
+  - fix-text
+  - fix-dialogue
+  - fix-style
 ---
 
 # story-deslop-mimo：网文去AI味
@@ -97,7 +93,7 @@ AI味是风格问题——过于书面化、过于对仗工整、过于面面俱
 
 #### Gate A：禁用词替换
 
-调用原子 `fix-banned-words`。
+调用原子 `fix-text`（fix_type=banned）。
 
 对照禁用词表逐项检查。替换规则：
 - 禁用词 → 具体动作/细节描写
@@ -111,7 +107,7 @@ AI味是风格问题——过于书面化、过于对仗工整、过于面面俱
 
 #### Gate B：句式去套路
 
-调用原子 `fix-ai-sentence`。
+调用原子 `fix-text`（fix_type=ai）。
 
 | 句式 | 替代方案 |
 |------|----------|
@@ -124,7 +120,7 @@ AI味是风格问题——过于书面化、过于对仗工整、过于面面俱
 
 #### Gate C：心理描写外化
 
-调用原子 `fix-psychology-externalize`。
+调用原子 `fix-dialogue`（fix_type=psychology）。
 
 - "他很紧张" → "他的手在抖"
 - "她很愤怒" → "她一把掀翻了桌子"
@@ -132,7 +128,7 @@ AI味是风格问题——过于书面化、过于对仗工整、过于面面俱
 
 #### Gate D：节奏打碎
 
-调用原子 `fix-rhythm-break`。
+调用原子 `fix-style`（fix_type=rhythm）。
 
 - 打断连续排比句
 - 长句拆短句
@@ -141,7 +137,7 @@ AI味是风格问题——过于书面化、过于对仗工整、过于面面俱
 
 #### Gate E：对话去腔调
 
-调用原子 `fix-dialogue-naturalize`。
+调用原子 `fix-dialogue`（fix_type=dialogue）。
 
 - 加入口语化表达（"嗯""哦""行吧"）
 - 适当打断对话（答非所问）
@@ -150,7 +146,7 @@ AI味是风格问题——过于书面化、过于对仗工整、过于面面俱
 
 #### Gate F：结尾去升华
 
-调用原子 `fix-ending-desublimate`。
+调用原子 `fix-style`（fix_type=ending）。
 
 - 删掉总结性语句
 - 用动作/场景收尾
@@ -158,7 +154,7 @@ AI味是风格问题——过于书面化、过于对仗工整、过于面面俱
 
 #### 附加：标点清理
 
-调用原子 `fix-punctuation`。
+调用原子 `fix-text`（fix_type=punctuation）。
 
 - 检查并替换智能引号（" " ' '）为直引号
 - 清理不可见Unicode字符
@@ -228,14 +224,10 @@ AI味是风格问题——过于书面化、过于对仗工整、过于面面俱
 13. task create "T-DESLOP-GRADE-02: 判定等级（轻度≤5/中度6-15/重度>15）" parent=T-DESLOP-GRADE
 14. task create "T-DESLOP-GRADE-03: 确定需要过哪些Gate"       parent=T-DESLOP-GRADE
 
-# ===== 第3层-清除：7个Gate =====
-15. task create "T-DESLOP-GATE-A: fix-banned-words — 禁用词替换为具体动作/细节"       parent=T-DESLOP-FIX
-16. task create "T-DESLOP-GATE-B: fix-ai-sentence — 句式去套路"                      parent=T-DESLOP-FIX
-17. task create "T-DESLOP-GATE-C: fix-psychology-externalize — 心理直述→动作展示"    parent=T-DESLOP-FIX
-18. task create "T-DESLOP-GATE-D: fix-rhythm-break — 打散排比+长句拆短"              parent=T-DESLOP-FIX
-19. task create "T-DESLOP-GATE-E: fix-dialogue-naturalize — 对话加口语化+打断"        parent=T-DESLOP-FIX
-20. task create "T-DESLOP-GATE-F: fix-ending-desublimate — 删总结升华+动作收尾"      parent=T-DESLOP-FIX
-21. task create "T-DESLOP-PUNCT: fix-punctuation — 标点规范化+智能引号+不可见字符"    parent=T-DESLOP-FIX
+# ===== 第3层-清除：3个Gate =====
+15. task create "T-DESLOP-GATE-TEXT: fix-text — AI腔+禁用词+标点修正"       parent=T-DESLOP-FIX
+16. task create "T-DESLOP-GATE-DIALOGUE: fix-dialogue — 对话去腔调+心理外化"  parent=T-DESLOP-FIX
+17. task create "T-DESLOP-GATE-STYLE: fix-style — 结尾去升华+节奏打散"       parent=T-DESLOP-FIX
 
 # ===== 第3层-复查（条件创建） =====
 22. task create "T-DESLOP-RECHECK: 复查 — FIX完成后start，无FIX abandoned"           parent=T-DESLOP

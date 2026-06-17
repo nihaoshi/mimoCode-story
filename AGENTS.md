@@ -124,13 +124,13 @@ skill-name/
 
 | 类别 | 说明 | 包含的原子 |
 |------|------|-----------|
-| analyze | 拆文提取 | `extract-summary`、`extract-characters`、`extract-settings`、`extract-style`、`extract-chapter-summary`、`analyze-golden-chapters`、`analyze-aggregate` |
+| analyze | 拆文提取 | `extract-summary`、`extract-characters`、`extract-world`、`analyze-story` |
 | scan | 扫榜选题 | `scrape-platform`、`analyze-trend`、`analyze-reader-profile`、`generate-topic-decision` |
-| pre-write | 写前准备 | `character-anchor-load`、`style-constraint-gen`、`banned-words-preload`、`prompt-template-inject`、`pre-write-checklist`、`rules-engine` |
+| pre-write | 写前准备 | `pre-write-load`、`pre-write-constraints`、`pre-write-context`、`pre-write-checklist` |
 | write | 设计生成 | `generate-chapter`、`design-worldbuilding`、`design-character`、`design-chapter-outline`、`design-volume-outline` |
 | review | 多维评审 | `review-consistency`、`review-commercial`、`review-writing`、`review-character`、`review-structure` |
-| fix | 精准修复 | `fix-ai-sentence`、`fix-banned-words`、`fix-dialogue-naturalize`、`fix-ending-desublimate`、`fix-psychology-externalize`、`fix-punctuation`、`fix-rhythm-break` |
-| detect | 检测诊断 | `detect-ai-sentence`、`detect-banned-words`、`detect-consistency`、`detect-cross-chapter`、`detect-emotion-curve`、`detect-foreshadow`、`detect-satisfaction`、`detect-story-gaps`、`detect-voice`、`detect-wordcount`、`full-consistency-audit` |
+| fix | 精准修复 | `fix-text`、`fix-dialogue`、`fix-style` |
+| detect | 检测诊断 | `detect-quality`、`detect-consistency`、`detect-cross-chapter`、`detect-emotion`、`detect-story`、`detect-voice`、`detect-wordcount`、`full-consistency-audit` |
 
 原子技能既可被上层 skill 内部调用，也可由用户直接使用 `/atom:{atom-id}` 按需组合。
 
@@ -226,13 +226,13 @@ skill-name/
 
 | 类别 | 调用方式 | 用途 |
 |------|---------|------|
-| 拆文提取 | `/atom:extract-summary` 等 7 个 | 从原文提取结构、角色、设定、风格 |
+| 拆文提取 | `/atom:extract-summary` 等 4 个 | 从原文提取结构、角色、设定、风格 |
 | 扫榜选题 | `/atom:scrape-platform` 等 4 个 | 抓取排行、分析趋势、生成选题建议 |
-| 写前准备 | `/atom:character-anchor-load` 等 6 个 | 加载锚点、禁用词、生成约束和规则集 |
+| 写前准备 | `/atom:pre-write-constraints` 等 3 个 | 加载约束、上下文、检查清单 |
 | 设计生成 | `/atom:generate-chapter` 等 5 个 | 设计世界观、角色、大纲、生成正文 |
 | 多维评审 | `/atom:review-consistency` 等 5 个 | 一致性、商业性、文笔、角色、结构评审 |
-| 精准修复 | `/atom:fix-ai-sentence` 等 7 个 | 去AI腔、替换禁用词、修复对话和节奏 |
-| 检测诊断 | `/atom:detect-banned-words` 等 11 个 | 禁用词扫描、一致性检查、情绪曲线分析 |
+| 精准修复 | `/atom:fix-text` 等 3 个 | 文本修正、对话心理、风格修正 |
+| 检测诊断 | `/atom:detect-quality` 等 8 个 | 质量检测、一致性、情绪、声音、字数 |
 
 ### Git Hooks 安装
 

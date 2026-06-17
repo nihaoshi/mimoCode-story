@@ -176,10 +176,9 @@ metadata:
 30. task create "T-COUNT-{N}-02: 判断是否≥90%"        parent=T-COUNT-{N}
 
 # ===== 第3层：质量门禁（4个检测+修正+复查） =====
-31. task create "T-GATE-{N}-BAN: detect-banned-words"  parent=T-GATE-{N}
-32. task create "T-GATE-{N}-AI: detect-ai-sentence"    parent=T-GATE-{N}
-33. task create "T-GATE-{N}-CON: detect-consistency"   parent=T-GATE-{N}
-34. task create "T-GATE-{N}-FORESH: detect-foreshadow" parent=T-GATE-{N}
+31. task create "T-GATE-{N}-QUAL: detect-quality"      parent=T-GATE-{N}
+32. task create "T-GATE-{N}-CON: detect-consistency"   parent=T-GATE-{N}
+33. task create "T-GATE-{N}-STORY: detect-story"       parent=T-GATE-{N}
 35. task create "T-GATE-{N}-FIX: 修正（条件创建）"     parent=T-GATE-{N}
 36. task create "T-GATE-{N}-RECHECK: 复查（条件创建）" parent=T-GATE-{N}
 
@@ -253,22 +252,16 @@ metadata:
 │   └── T-CHECK-{N}-SAT: 爽点检查
 │
 ├── T-GATE-{N}: 质量门禁
-│   ├── T-GATE-{N}-BAN: detect-banned-words
-│   ├── T-GATE-{N}-AI: detect-ai-sentence
+│   ├── T-GATE-{N}-QUAL: detect-quality（禁用词+AI腔）
 │   ├── T-GATE-{N}-CON: detect-consistency
-│   ├── T-GATE-{N}-FORESH: detect-foreshadow
+│   ├── T-GATE-{N}-STORY: detect-story（伏笔+设定缺口）
 │   ├── [条件] T-GATE-{N}-FIX: 修正（任一BLOCK时创建）
-│   │   ├── T-GATE-{N}-FIX-BAN: fix-banned-words
-│   │   ├── T-GATE-{N}-FIX-AI: fix-ai-sentence
-│   │   ├── T-GATE-{N}-FIX-PUNCT: fix-punctuation
-│   │   ├── T-GATE-{N}-FIX-PSY: fix-psychology-externalize
-│   │   ├── T-GATE-{N}-FIX-RHYTHM: fix-rhythm-break
-│   │   ├── T-GATE-{N}-FIX-DIAL: fix-dialogue-naturalize
-│   │   └── T-GATE-{N}-FIX-END: fix-ending-desublimate
+│   │   ├── T-GATE-{N}-FIX-TEXT: fix-text（AI腔+禁用词+标点）
+│   │   ├── T-GATE-{N}-FIX-DIALOGUE: fix-dialogue（对话+心理）
+│   │   └── T-GATE-{N}-FIX-STYLE: fix-style（结尾+节奏）
 │   └── [条件] T-GATE-{N}-RECHECK: 复查（FIX后创建）
 │       ├── T-GATE-{N}-RECHECK-COUNT: 回到字数验证（改了内容必须重验字数）
-│       ├── T-GATE-{N}-RECHECK-BAN: 重新detect-banned-words
-│       └── T-GATE-{N}-RECHECK-AI: 重新detect-ai-sentence
+│       └── T-GATE-{N}-RECHECK-QUAL: 重新detect-quality
 │
 ├── T-CONSIST-{N}: 一致性检查（质量门禁通过后执行）
 │   ├── T-CONSIST-{N}-ITEM: detect-consistency — 物品位置是否前后一致
@@ -330,9 +323,7 @@ T-GATE-{N}-FIX 完成
     ↓
 T-GATE-{N}-RECHECK-COUNT: 回到字数验证（改了内容可能影响字数）
     ↓
-T-GATE-{N}-RECHECK-BAN: 重新detect-banned-words
-    ↓
-T-GATE-{N}-RECHECK-AI: 重新detect-ai-sentence
+T-GATE-{N}-RECHECK-QUAL: 重新detect-quality
     ↓
 如果仍有BLOCK → 再创建FIX（上限3轮）
 如果全部通过 → 进入T-CONSIST（一致性检查）
@@ -851,7 +842,7 @@ story-architect 属于高层级结构设计。轻量题材定位优先由主会�
       - (f) **比喻限制**：每千字不超过1个比喻，且必须是新奇比喻（读者没见过的）
       - (g) **节奏规则**：紧张处连续短句（3-8字），舒缓处允许长句，关键转折一句极短独立成段
       - (h) **留白规则**：最强烈的感情不写，最重要的转折不解释，最美的画面不形容
-      - (i) **标点规则**：调用原子 `fix-punctuation`（或读取 `_shared/scripts/punctuation-normalize.js` 的检测规则），将以下标点禁令加载到上下文——写作时直接使用正确标点，不要写完再清理
+      - (i) **标点规则**：调用原子 `fix-text`（fix_type=punctuation）（或读取 `_shared/scripts/punctuation-normalize.js` 的检测规则），将以下标点禁令加载到上下文——写作时直接使用正确标点，不要写完再清理
       - (j) **上次质量问题**：读取 `追踪/上下文.md` 中最近记录的质量问题（如有），本次写作直接避开
 3. **资料研究**（按需）：如果写作中遇到需要查证的外部事实（历史年代、地理方位、职业细节等），spawn `story-researcher` agent 搜索并输出到 `参考资料/` 目录。研究完成后再继续写作。
 4. **标题预检**：写正文前从细纲读取章名；如与既有章节同名或明显重复，先按本章核心事件改名，并同步细纲标题与正文文件名。
@@ -962,30 +953,25 @@ story-architect 属于高层级结构设计。轻量题材定位优先由主会�
 
 **第一轮：全量检测**（通过原子 skill 执行）：
 
-1. 调用原子 `detect-banned-words` — 检测禁用词残留
-2. 调用原子 `detect-ai-sentence` — 检测AI腔残留
-3. 调用原子 `detect-consistency` — 一致性检查
-4. 调用原子 `detect-foreshadow` — 伏笔检查
+1. 调用原子 `detect-quality` — 检测禁用词+AI腔残留
+2. 调用原子 `detect-consistency` — 一致性检查
+3. 调用原子 `detect-story` — 伏笔+设定缺口检查
 
 **第二轮：处理检测结果**：
 
 严重度处理规则（与 Step 1 相同）：
-- 🚫 **BLOCK（阻断）**：**强制修正**，不问用户。禁用词残留 → 直接调用 `fix-banned-words` 替换；一致性错误 → 直接修正正文
+- 🚫 **BLOCK（阻断）**：**强制修正**，不问用户。禁用词/AI腔残留 → 直接调用 `fix-text` 替换；一致性错误 → 直接修正正文
 - ⚠️ **WARN（警告）**：**列出问题，问用户怎么办**——「发现AI腔句式3处，要修正吗？还是保留？」用户选择：修正 / 保留
 - ℹ️ **可选**：标记但不修正，仅记录到 `追踪/上下文.md` 质量问题栏
 
 修正原子（按需调用）：
-- `fix-banned-words` — 禁用词替换
-- `fix-ai-sentence` — AI腔句式修正
-- `fix-punctuation` — 标点规范化
-- `fix-psychology-externalize` — 心理描写外化
-- `fix-rhythm-break` — 排比节奏打散
-- `fix-dialogue-naturalize` — 对话去腔调
-- `fix-ending-desublimate` — 结尾去升华
+- `fix-text` — AI腔+禁用词+标点修正
+- `fix-dialogue` — 对话去腔调+心理描写外化
+- `fix-style` — 结尾去升华+排比节奏打散
 
 **第三轮：复查**：
 
-- 重新运行 `detect-banned-words` 和 `detect-ai-sentence`，确认修正生效
+- 重新运行 `detect-quality`，确认修正生效
 - 如仍有残留 → 手动修正并记入 `追踪/上下文.md` 的质量问题栏，下次写作加强前置约束
 
 **第四轮：追踪文件同步**（如 Phase 5 修正了正文内容）：
@@ -993,12 +979,12 @@ story-architect 属于高层级结构设计。轻量题材定位优先由主会�
 如果 Phase 5 对正文做了修改，需要回到 Step 10 重新更新受影响的追踪文件（伏笔、角色状态等），确保追踪与正文一致。
 
 **AI标点清理**（写完每章后必做）：
-- 调用原子 `fix-punctuation` 自动清理AI特殊标点
+- 调用原子 `fix-text`（fix_type=punctuation）自动清理AI特殊标点
 - 检查并替换智能引号（" " ' '）为直引号
 - 清理不可见Unicode字符（零宽空格、NBSP等）
 - 归一化空格和标点
 
-**标点确定性收尾**：本批正文写完后，对所有新写正文文件调用原子 `fix-punctuation`（或运行 `node skills/_shared/scripts/punctuation-normalize.js 正文/第XXX章_*.md`，需从全局skill目录执行，默认 `--quote-mode keep`），确定性清除叙述里的破折号 `——`/`—`、双连字符 `--` 和独立行 `---`，防止长篇累积横线。对话被打断的 `——`、数字区间与盐言「」不受影响。子智能体不运行本脚本，由主会话在子智能体返回后针对实际落盘文件运行。
+**标点确定性收尾**：本批正文写完后，对所有新写正文文件调用原子 `fix-text`（fix_type=punctuation）（或运行 `node skills/_shared/scripts/punctuation-normalize.js 正文/第XXX章_*.md`，需从全局skill目录执行，默认 `--quote-mode keep`），确定性清除叙述里的破折号 `——`/`—`、双连字符 `--` 和独立行 `---`，防止长篇累积横线。对话被打断的 `——`、数字区间与盐言「」不受影响。子智能体不运行本脚本，由主会话在子智能体返回后针对实际落盘文件运行。
 
 #### 子智能体调用：consistency-checker
 

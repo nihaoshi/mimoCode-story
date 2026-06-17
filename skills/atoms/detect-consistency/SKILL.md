@@ -1,17 +1,22 @@
 ---
 name: detect-consistency
-version: 1.0.0
+version: 2.0.0
 description: 检测章节与追踪文件的一致性
 category: detect
+dual_mode:
+  standalone: true
+  orchestrator: true
 inputs:
   - name: chapter_file
-    type: file_path
+    type: file
     required: true
     description: 章节文件路径
+    default_source: "正文/第{N}章.md"
   - name: tracking_dir
-    type: dir_path
-    required: true
+    type: directory
+    required: false
     description: 追踪目录路径
+    default_source: "追踪"
 outputs:
   - name: report
     type: report
@@ -28,9 +33,13 @@ triggers:
 ## 功能
 校验章节内容与追踪文件（角色状态、物品、环境、时间线）的一致性。
 
+## 双模执行
+- **独立模式**：输入为空时，读取 `正文/` 最新章节和 `追踪/` 目录
+- **编排器模式**：输入不为空时，以传入数据为准
+
 ## 执行步骤
 1. 读取 {chapter_file} 和 {tracking_dir} 下的追踪文件
-2. 运行：`node skills/_shared/scripts/consistency-check.js {chapter_file} {tracking_dir}`
+2. 运行：`node _shared/scripts/consistency-check.js {chapter_file} {tracking_dir}`
 3. 输出不一致项
 
 ## 输出格式

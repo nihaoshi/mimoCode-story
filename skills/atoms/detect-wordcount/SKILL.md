@@ -1,23 +1,27 @@
 ---
 name: detect-wordcount
-version: 1.0.0
+version: 2.0.0
 description: 检测章节字数是否达标
 category: detect
+dual_mode:
+  standalone: true
+  orchestrator: true
 inputs:
   - name: chapter_file
-    type: file_path
+    type: file
     required: true
     description: 章节文件路径
+    default_source: "正文/第{N}章.md"
   - name: target_count
     type: number
-    required: true
+    required: false
     description: 目标字数
+    default_value: 2000
 outputs:
   - name: report
     type: report
     format: markdown
 severity: BLOCK
-script: manual
 triggers:
   - /atom:detect-wordcount
   - 检测字数
@@ -27,6 +31,10 @@ triggers:
 
 ## 功能
 统计章节字数，判断是否达到目标字数的 90% 门槛。
+
+## 双模执行
+- **独立模式**：输入为空时，读取 `正文/` 最新章节，默认目标 2000 字
+- **编排器模式**：输入不为空时，以传入数据为准
 
 ## 执行步骤
 1. 读取 {chapter_file}

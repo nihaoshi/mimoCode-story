@@ -1,13 +1,17 @@
 ---
 name: full-consistency-audit
-version: 1.0.0
+version: 2.0.0
 description: 全量一致性审计，覆盖所有追踪维度
 category: detect
+dual_mode:
+  standalone: true
+  orchestrator: true
 inputs:
   - name: project_dir
-    type: dir_path
-    required: true
+    type: directory
+    required: false
     description: 写作项目根目录
+    default_source: "."
 outputs:
   - name: report
     type: report
@@ -24,9 +28,13 @@ triggers:
 ## 功能
 对整个项目执行全量一致性审计，覆盖角色、物品、环境、时间线、伏笔五大维度。
 
+## 双模执行
+- **独立模式**：输入为空时，审计当前项目目录
+- **编排器模式**：输入不为空时，以传入的 {project_dir} 为准
+
 ## 执行步骤
 1. 读取 {project_dir} 下所有正文和追踪文件
-2. 运行：`node skills/_shared/scripts/full-consistency-audit.js {project_dir}`
+2. 运行：`node _shared/scripts/full-consistency-audit.js {project_dir}`
 3. 输出全量审计报告
 
 ## 输出格式
