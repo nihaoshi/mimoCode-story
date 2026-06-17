@@ -8,8 +8,9 @@
 
 1. **必须读文件** — 禁止凭记忆或假设，必须用 Read 工具实际读取
 2. **必须写文件** — 输出必须写入 `.workflow/` 目录，不能只在对话中输出
-3. **必须验证** — 每步完成后运行 `node scripts/validate-step.js <步骤号> <workflow目录>`
+3. **必须验证** — 每步完成后运行守卫脚本验证
 4. **必须展示** — 每步结果必须展示给用户
+5. **有问题必修** — 检测到任何 WARN 或 BLOCK 都必须修复
 
 ---
 
@@ -57,28 +58,28 @@
 
 ### Step 09: 约束生成
 - ❌ 偷懒：硬编码禁用词
-- ✅ 正确：从实际文件加载禁用词
-- 🔍 验证：`step09-constraints.json` 中 banned_words_l1 有 31 个
+- ✅ 正确：从实际文件加载禁用词，字数限制必须明确
+- 🔍 验证：`step09-constraints.json` 中 banned_words_l1 有 31 个，word_count_target 存在
 
 ### Step 10: 正文写作
-- ❌ 偷懒：字数不足、场景缺失
-- ✅ 正确：必须包含细纲所有场景，字数 >= 目标 90%
-- 🔍 验证：正文文件存在且字数达标
+- ❌ 偷懒：检查质量、运行脚本
+- ✅ 正确：只写作，不检查，写入文件
+- 🔍 验证：正文文件存在，包含所有场景
 
-### Step 11: 质量检测
-- ❌ 偷懒：跳过某些检测项
-- ✅ 正确：必须运行所有 7 项检测
-- 🔍 验证：`step11-quality-report.json` 中 checks 数组有 7 项
+### Step 11: 综合质量检测
+- ❌ 偷懒：跳过某些检测项、忽略 WARN
+- ✅ 正确：运行全部 5 项检测，记录所有问题
+- 🔍 验证：`step11-quality-report.json` 中 checks 数组有 5 项
 
-### Step 12: 修复 [条件]
-- ❌ 偷懒：只修部分问题
-- ✅ 正确：每个 BLOCK 项必须修复
-- 🔍 验证：`step12-fix-log.json` 中 remaining_blocks = 0
+### Step 12: 综合修复 [条件]
+- ❌ 偷懒：只修 BLOCK 忽略 WARN
+- ✅ 正确：修复所有问题（BLOCK 和 WARN 都要修）
+- 🔍 验证：`step12-fix-log.json` 中所有问题都有修复记录
 
 ### Step 13: 复查 [条件]
 - ❌ 偷懒：假设修复成功
 - ✅ 正确：重新运行完整检测
-- 🔍 验证：`step13-recheck-report.json` 中 overall != "BLOCK"
+- 🔍 验证：`step13-recheck-report.json` 中 total_issues = 0
 
 ### Step 14: 追踪更新
 - ❌ 偷懒：凭记忆更新
@@ -92,6 +93,7 @@
 ```
 读文件，写文件，跑脚本，给用户看
 不凭记忆，不跳步骤，不偷懒
+有问题必修，WARN 也要修
 ```
 
 ---
@@ -100,8 +102,8 @@
 
 ```bash
 # 验证某步骤输出
-node {skill_dir}/scripts/validate-step.js <步骤号> {project_dir}/.workflow
+node {skill_dir}/scripts/step-guard.js post <步骤号> {workflow_dir}
 
 # 示例
-node skills/story-chapter-write-mimo/scripts/validate-step.js 01 demo/让你管账号/.workflow
+node skills/story-chapter-write-mimo/scripts/step-guard.js post 11 demo/项目/.workflow
 ```

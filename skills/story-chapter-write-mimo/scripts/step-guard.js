@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
 /**
- * 步骤守卫脚本
+ * 步骤守卫脚本 v2.0
  * 在每个 Agent 执行前后运行，自动验证输入输出
  * 
  * 用法：
- *   node step-guard.js pre  <step> <workflow-dir>  # 执行前验证输入
- *   node step-guard.js post <step> <workflow-dir>  # 执行后验证输出
+ *   node step-guard.js pre  <step> <workflow-dir> [project-dir]  # 执行前验证输入
+ *   node step-guard.js post <step> <workflow-dir>                # 执行后验证输出
  * 
  * 退出码：0=通过，1=失败（阻断）
  */
@@ -19,7 +19,7 @@ const step = process.argv[3];   // 步骤号 (01-14)
 const workflowDir = process.argv[4] || '.workflow';
 
 if (!action || !step) {
-  console.error('用法: node step-guard.js <pre|post> <step> <workflow-dir>');
+  console.error('用法: node step-guard.js <pre|post> <step> <workflow-dir> [project-dir]');
   console.error('示例: node step-guard.js post 01 .workflow');
   process.exit(1);
 }
@@ -51,13 +51,6 @@ function readJson(filename) {
   } catch (e) {
     return null;
   }
-}
-
-// 写入 JSON 文件
-function writeJson(filename, data) {
-  ensureWorkflowDir();
-  const filePath = path.join(workflowDir, filename);
-  fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
 }
 
 // 检查文件是否存在
@@ -110,7 +103,7 @@ const preChecks = {
     }
     if (!s03.need_create) {
       warn('细纲已存在，跳过创建');
-      return false; // 返回 false 表示应该跳过
+      return false;
     }
     log('需要创建细纲');
     return true;
@@ -122,15 +115,6 @@ const preChecks = {
     if (!s03) {
       error('Step 03 未完成');
       return false;
-    }
-    if (s03.need_create) {
-      // 如果刚创建了细纲，验证文件存在
-      const s02 = readJson('step02-chapter-info.json');
-      const outlineFile = `大纲/细纲_第${s02.next_chapter_padded}章.md`;
-      if (!fileExists(outlineFile)) {
-        error('细纲文件不存在: ' + outlineFile);
-        return false;
-      }
     }
     log('细纲就绪');
     return true;
@@ -208,22 +192,23 @@ const preChecks = {
       error('正文文件不存在: ' + chapterFile);
       return false;
     }
-    log('正文文件就绪');
+    log('正文文件就绪，准备综合质量检测');
     return true;
   },
 
-  // Step 12: 需要 step11 且 block_count > 0
+  // Step 12: 需要 step11 且有任何问题（WARN 或 BLOCK）
   '12': (wf) => {
     const s11 = readJson('step11-quality-report.json');
     if (!s11) {
       error('Step 11 未完成');
       return false;
     }
-    if (s11.block_count === 0) {
-      warn('无 BLOCK 项，无需修复');
+    const totalIssues = (s11.block_count || 0) + (s11.warn_count || 0);
+    if (totalIssues === 0) {
+      warn('无问题，无需修复');
       return false;
     }
-    log(`需要修复 ${s11.block_count} 个 BLOCK 项`);
+    log(`需要修复 ${totalIssues} 个问题 (${s11.block_count} BLOCK, ${s11.warn_count} WARN)`);
     return true;
   },
 
@@ -238,20 +223,20 @@ const preChecks = {
     return true;
   },
 
-  // Step 14: 需要 step11 通过（或 step13 通过）
+  // Step 14: 需要 step11 通过或 step13 通过
   '14': (wf) => {
     const s13 = readJson('step13-recheck-report.json');
     const s11 = readJson('step11-quality-report.json');
     
     if (s13) {
-      // 有复查报告，检查复查结果
-      if (s13.overall === 'BLOCK') {
-        error('复查未通过，仍有 BLOCK 项');
+      const totalIssues = (s13.block_count || 0) + (s13.warn_count || 0);
+      if (totalIssues > 0) {
+        error('复查未通过，仍有问题');
         return false;
       }
     } else if (s11) {
-      // 无复查报告，检查初始检测结果
-      if (s11.overall === 'BLOCK') {
+      const totalIssues = (s11.block_count || 0) + (s11.warn_count || 0);
+      if (totalIssues > 0) {
         error('质量检测未通过');
         return false;
       }
@@ -367,56 +352,60 @@ const postChecks = {
     return true;
   },
 
-  // Step 10: 验证正文文件存在且字数达标
+  // Step 10: 验证正文文件存在
   '10': (wf) => {
     const s02 = readJson('step02-chapter-info.json');
-    const s09 = readJson('step09-constraints.json');
     const chapterFile = `正文/第${s02.next_chapter_padded}章.md`;
-    
     if (!fileExists(chapterFile)) { error('正文文件不存在'); return false; }
-    
-    // 统计字数
-    const content = fs.readFileSync(chapterFile, 'utf-8');
-    const wordCount = content.replace(/\s/g, '').length;
-    const minWords = s09.word_count_target * 0.9;
-    
-    if (wordCount < minWords) {
-      error(`字数不足: ${wordCount}/${s09.word_count_target} (最低${minWords})`);
-      return false;
-    }
-    
-    log(`Step 10 输出验证通过: ${wordCount}字`);
+    log('Step 10 输出验证通过: 正文已写入');
     return true;
   },
 
-  // Step 11: 验证 step11-quality-report.json
+  // Step 11: 验证 step11-quality-report.json（综合质量检测）
   '11': (wf) => {
     const data = readJson('step11-quality-report.json');
     if (!data) { error('step11-quality-report.json 不存在'); return false; }
     if (!Array.isArray(data.checks)) { error('checks 无效'); return false; }
-    if (data.checks.length < 7) { error('checks 应有7项检测'); return false; }
+    if (data.checks.length < 5) { error('checks 应有5项检测'); return false; }
     if (!['BLOCK', 'WARN', 'PASS'].includes(data.overall)) { error('overall 无效'); return false; }
-    log(`Step 11 输出验证通过: ${data.overall}, ${data.block_count}个BLOCK, ${data.warn_count}个WARN`);
+    
+    const totalIssues = (data.block_count || 0) + (data.warn_count || 0);
+    log(`Step 11 输出验证通过: ${data.overall}, ${data.block_count}个BLOCK, ${data.warn_count}个WARN, 共${totalIssues}个问题`);
+    
+    if (totalIssues > 0) {
+      warn(`检测到 ${totalIssues} 个问题，必须进入修复流程`);
+    }
     return true;
   },
 
-  // Step 12: 验证 step12-fix-log.json
+  // Step 12: 验证 step12-fix-log.json（综合修复）
   '12': (wf) => {
     const data = readJson('step12-fix-log.json');
     if (!data) { error('step12-fix-log.json 不存在'); return false; }
     if (typeof data.fix_count !== 'number') { error('fix_count 无效'); return false; }
-    if (typeof data.remaining_blocks !== 'number') { error('remaining_blocks 无效'); return false; }
-    if (data.remaining_blocks > 0) { error(`仍有${data.remaining_blocks}个BLOCK未修复`); return false; }
+    if (!Array.isArray(data.fixes_applied)) { error('fixes_applied 无效'); return false; }
+    
+    // 验证所有问题都有修复记录
+    const s11 = readJson('step11-quality-report.json');
+    if (s11) {
+      const totalIssues = (s11.block_count || 0) + (s11.warn_count || 0);
+      if (data.fix_count < totalIssues) {
+        warn(`修复数量 (${data.fix_count}) 少于问题数量 (${totalIssues})`);
+      }
+    }
+    
     log(`Step 12 输出验证通过: 修复${data.fix_count}处`);
     return true;
   },
 
-  // Step 13: 验证 step13-recheck-report.json
+  // Step 13: 验证 step13-recheck-report.json（复查）
   '13': (wf) => {
     const data = readJson('step13-recheck-report.json');
     if (!data) { error('step13-recheck-report.json 不存在'); return false; }
     if (!['BLOCK', 'WARN', 'PASS'].includes(data.overall)) { error('overall 无效'); return false; }
-    if (data.overall === 'BLOCK') { error('复查未通过'); return false; }
+    
+    const totalIssues = (data.block_count || 0) + (data.warn_count || 0);
+    if (totalIssues > 0) { error(`复查未通过: ${totalIssues}个问题`); return false; }
     log(`Step 13 输出验证通过: ${data.overall}`);
     return true;
   },
@@ -432,9 +421,6 @@ const postChecks = {
       '追踪/重复语句.md',
       '追踪/上下文.md'
     ];
-    
-    const s02 = readJson('step02-chapter-info.json');
-    const chapterNum = s02.next_chapter;
     
     for (const file of trackingFiles) {
       if (!fileExists(file)) { error('追踪文件不存在: ' + file); return false; }

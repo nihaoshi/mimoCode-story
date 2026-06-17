@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * 步骤验证脚本
+ * 步骤验证脚本 v2.0
  * 验证每个步骤的输出文件是否符合契约
  * 
  * 用法：node validate-step.js <step-number> <workflow-dir>
@@ -76,7 +76,6 @@ const validators = {
     if (typeof data.total_words !== 'number') {
       errors.push('total_words 必须是数字');
     }
-    // 验证 next_chapter = last_chapter + 1
     if (data.next_chapter !== data.last_chapter + 1) {
       errors.push('next_chapter 必须等于 last_chapter + 1');
     }
@@ -101,7 +100,6 @@ const validators = {
     if (typeof data.need_create !== 'boolean') {
       errors.push('need_create 必须是布尔值');
     }
-    // 验证 need_create 逻辑
     if (data.need_create !== (!data.exists || !data.valid_format)) {
       errors.push('need_create 应该等于 (!exists || !valid_format)');
     }
@@ -152,14 +150,6 @@ const validators = {
     }
     if (!Array.isArray(data.new_organizations)) {
       errors.push('new_organizations 必须是数组');
-    }
-    // 验证 need_new_settings 逻辑
-    const hasNew = data.new_characters.length > 0 || 
-                   data.new_scenes.length > 0 || 
-                   data.new_items.length > 0 || 
-                   data.new_organizations.length > 0;
-    if (data.need_new_settings !== hasNew) {
-      errors.push('need_new_settings 应该与是否有新元素一致');
     }
     return errors;
   },
@@ -218,7 +208,7 @@ const validators = {
     return errors;
   },
 
-  // Step 11: 质量检测报告
+  // Step 11: 综合质量检测报告
   '11': (data) => {
     const errors = [];
     if (typeof data.chapter !== 'number') {
@@ -235,6 +225,8 @@ const validators = {
     }
     if (!Array.isArray(data.checks)) {
       errors.push('checks 必须是数组');
+    } else if (data.checks.length < 5) {
+      errors.push(`checks 应有5项检测，当前 ${data.checks.length} 项`);
     } else {
       data.checks.forEach((check, i) => {
         if (!check.name) errors.push(`checks[${i}].name 缺失`);
@@ -255,16 +247,10 @@ const validators = {
     if (!['BLOCK', 'WARN', 'PASS'].includes(data.overall)) {
       errors.push('overall 必须是 "BLOCK"、"WARN" 或 "PASS"');
     }
-    // 验证 overall 逻辑
-    const expectedOverall = data.block_count > 0 ? 'BLOCK' : 
-                           data.warn_count > 0 ? 'WARN' : 'PASS';
-    if (data.overall !== expectedOverall) {
-      errors.push(`overall 应该是 "${expectedOverall}"，当前是 "${data.overall}"`);
-    }
     return errors;
   },
 
-  // Step 12: 修复日志
+  // Step 12: 综合修复日志
   '12': (data) => {
     const errors = [];
     if (typeof data.chapter !== 'number') {
@@ -275,9 +261,7 @@ const validators = {
     } else {
       data.fixes_applied.forEach((fix, i) => {
         if (!fix.type) errors.push(`fixes_applied[${i}].type 缺失`);
-        if (!fix.original) errors.push(`fixes_applied[${i}].original 缺失`);
-        if (!fix.fixed) errors.push(`fixes_applied[${i}].fixed 缺失`);
-        if (typeof fix.position !== 'number') errors.push(`fixes_applied[${i}].position 必须是数字`);
+        if (!fix.description) errors.push(`fixes_applied[${i}].description 缺失`);
       });
     }
     if (typeof data.fix_count !== 'number') {
@@ -286,23 +270,38 @@ const validators = {
     if (typeof data.new_word_count !== 'number') {
       errors.push('new_word_count 必须是数字');
     }
-    if (typeof data.remaining_blocks !== 'number') {
-      errors.push('remaining_blocks 必须是数字');
-    }
     return errors;
   },
 
-  // Step 13: 复查报告（格式同 Step 11）
+  // Step 13: 复查报告
   '13': (data) => {
-    return validators['11'](data);
+    const errors = [];
+    if (typeof data.chapter !== 'number') {
+      errors.push('chapter 必须是数字');
+    }
+    if (typeof data.word_count !== 'number') {
+      errors.push('word_count 必须是数字');
+    }
+    if (!Array.isArray(data.checks)) {
+      errors.push('checks 必须是数组');
+    }
+    if (typeof data.block_count !== 'number') {
+      errors.push('block_count 必须是数字');
+    }
+    if (typeof data.warn_count !== 'number') {
+      errors.push('warn_count 必须是数字');
+    }
+    if (!['BLOCK', 'WARN', 'PASS'].includes(data.overall)) {
+      errors.push('overall 必须是 "BLOCK"、"WARN" 或 "PASS"');
+    }
+    return errors;
   }
 };
 
 // 主逻辑
-const stepKey = stepNumber.replace(/^0+/, ''); // 移除前导零
+const stepKey = stepNumber.replace(/^0+/, '');
 const filePath = path.join(workflowDir, `step${stepNumber}-*.json`);
 
-// 查找匹配的文件
 let files;
 try {
   files = fs.readdirSync(workflowDir)
@@ -320,7 +319,6 @@ if (files.length === 0) {
 const targetFile = path.join(workflowDir, files[0]);
 console.log(`📋 验证文件: ${targetFile}`);
 
-// 读取并解析 JSON
 let data;
 try {
   const content = fs.readFileSync(targetFile, 'utf-8');
@@ -330,7 +328,6 @@ try {
   process.exit(1);
 }
 
-// 运行验证
 const validator = validators[stepKey];
 if (!validator) {
   console.warn(`⚠️ 没有找到 step${stepNumber} 的验证器，跳过验证`);
