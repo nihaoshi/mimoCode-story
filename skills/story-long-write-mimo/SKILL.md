@@ -163,52 +163,67 @@ metadata:
 22. task create "T-CTX-{N}-14: 读对标剧情/{相关线}.md" parent=T-CTX-{N}
 23. task create "T-CTX-{N}-15: 读对标设定/世界观/*.md"  parent=T-CTX-{N}
 24. task create "T-CTX-{N}-16: 读cross-chapter-fingerprint.md" parent=T-CTX-{N}
+25. task create "T-CTX-{N}-17: 读跨卷追踪/跨卷伏笔.md"     parent=T-CTX-{N}
+26. task create "T-CTX-{N}-18: 读跨卷追踪/跨卷角色弧线.md" parent=T-CTX-{N}
+27. task create "T-CTX-{N}-19: 读跨卷追踪/卷间过渡.md"     parent=T-CTX-{N}
+28. task create "T-CTX-{N}-20: 读故事线/故事线_索引.md"     parent=T-CTX-{N}
+29. task create "T-CTX-{N}-21: 读故事线/故事线_主线_*.md"   parent=T-CTX-{N}
+30. task create "T-CTX-{N}-22: 读故事线/故事线_交叉点.md"   parent=T-CTX-{N}
 
 # ===== 第3层：准备层（5个子任务） =====
-24. task create "T-PREP-{N}-01: 状态筛选"              parent=T-PREP-{N}
-25. task create "T-PREP-{N}-02: 文风召回"              parent=T-PREP-{N}
-26. task create "T-PREP-{N}-03: 指令确认"              parent=T-PREP-{N}
-27. task create "T-PREP-{N}-04: 性格锚点检查"          parent=T-PREP-{N}
-28. task create "T-PREP-{N}-05: 质量约束注入"          parent=T-PREP-{N}
+31. task create "T-PREP-{N}-01: 状态筛选"              parent=T-PREP-{N}
+32. task create "T-PREP-{N}-02: 文风召回"              parent=T-PREP-{N}
+33. task create "T-PREP-{N}-03: 指令确认"              parent=T-PREP-{N}
+34. task create "T-PREP-{N}-04: 性格锚点检查"          parent=T-PREP-{N}
+35. task create "T-PREP-{N}-05: 质量约束注入"          parent=T-PREP-{N}
 
 # ===== 第3层：字数验证（2个子任务） =====
-29. task create "T-COUNT-{N}-01: Python字符统计"       parent=T-COUNT-{N}
-30. task create "T-COUNT-{N}-02: 判断是否≥90%"        parent=T-COUNT-{N}
+36. task create "T-COUNT-{N}-01: Python字符统计"       parent=T-COUNT-{N}
+37. task create "T-COUNT-{N}-02: 判断是否≥90%"        parent=T-COUNT-{N}
 
 # ===== 第3层：质量门禁（4个检测+修正+复查） =====
-31. task create "T-GATE-{N}-QUAL: detect-quality"      parent=T-GATE-{N}
-32. task create "T-GATE-{N}-CON: detect-consistency"   parent=T-GATE-{N}
-33. task create "T-GATE-{N}-STORY: detect-story"       parent=T-GATE-{N}
-35. task create "T-GATE-{N}-FIX: 修正（条件创建）"     parent=T-GATE-{N}
-36. task create "T-GATE-{N}-RECHECK: 复查（条件创建）" parent=T-GATE-{N}
+38. task create "T-GATE-{N}-QUAL: detect-quality"      parent=T-GATE-{N}
+39. task create "T-GATE-{N}-CON: detect-consistency"   parent=T-GATE-{N}
+40. task create "T-GATE-{N}-STORY: detect-story"       parent=T-GATE-{N}
+41. task create "T-GATE-{N}-FIX: 修正（条件创建）"     parent=T-GATE-{N}
+42. task create "T-GATE-{N}-RECHECK: 复查（条件创建）" parent=T-GATE-{N}
 
 # ===== 第3层：一致性检查（7个检测+修正+复查） =====
-37. task create "T-CONSIST-{N}-ITEM: 物品位置一致性"    parent=T-CONSIST-{N}
-38. task create "T-CONSIST-{N}-CHAR: 角色状态一致性"    parent=T-CONSIST-{N}
-39. task create "T-CONSIST-{N}-ENV: 环境描述一致性"     parent=T-CONSIST-{N}
-40. task create "T-CONSIST-{N}-TIME: 时间线合理性"      parent=T-CONSIST-{N}
-41. task create "T-CONSIST-{N}-CROSS: 跨章节重复/矛盾"  parent=T-CONSIST-{N}
-42. task create "T-CONSIST-{N}-VOICE: 角色声音一致性"   parent=T-CONSIST-{N}
-43. task create "T-CONSIST-{N}-REPEAT: 重复语句检测+记录到追踪/重复语句.md"  parent=T-CONSIST-{N}
-44. task create "T-CONSIST-{N}-FIX: 一致性修正（条件创建）" parent=T-CONSIST-{N}
-45. task create "T-CONSIST-{N}-RECHECK: 一致性复查（条件创建）" parent=T-CONSIST-{N}
+43. task create "T-CONSIST-{N}-ITEM: 物品位置一致性"    parent=T-CONSIST-{N}
+44. task create "T-CONSIST-{N}-CHAR: 角色状态一致性"    parent=T-CONSIST-{N}
+45. task create "T-CONSIST-{N}-ENV: 环境描述一致性"     parent=T-CONSIST-{N}
+46. task create "T-CONSIST-{N}-TIME: 时间线合理性"      parent=T-CONSIST-{N}
+47. task create "T-CONSIST-{N}-CROSS: 跨章节重复/矛盾"  parent=T-CONSIST-{N}
+48. task create "T-CONSIST-{N}-VOICE: 角色声音一致性"   parent=T-CONSIST-{N}
+49. task create "T-CONSIST-{N}-REPEAT: 重复语句检测+记录到追踪/重复语句.md"  parent=T-CONSIST-{N}
+50. task create "T-CONSIST-{N}-FIX: 一致性修正（条件创建）" parent=T-CONSIST-{N}
+51. task create "T-CONSIST-{N}-RECHECK: 一致性复查（条件创建）" parent=T-CONSIST-{N}
 
-# ===== 第3层：追踪文件更新（8个子任务） =====
-46. task create "T-TRACK-{N}-FORESH: 更新伏笔.md"      parent=T-TRACK-{N}
-47. task create "T-TRACK-{N}-TIME: 更新时间线.md"       parent=T-TRACK-{N}
-48. task create "T-TRACK-{N}-CHAR: 更新角色状态.md"     parent=T-TRACK-{N}
-49. task create "T-TRACK-{N}-ITEM: 更新物品.md"         parent=T-TRACK-{N}
-50. task create "T-TRACK-{N}-ENV: 更新环境.md"          parent=T-TRACK-{N}
-51. task create "T-TRACK-{N}-SUPPLY: 更新物资.md"       parent=T-TRACK-{N}
-52. task create "T-TRACK-{N}-REPEAT: 更新重复语句.md"   parent=T-TRACK-{N}
-53. task create "T-TRACK-{N}-CTX: 更新上下文.md"        parent=T-TRACK-{N}
+# ===== 第3层：追踪文件更新（11个子任务） =====
+52. task create "T-TRACK-{N}-FORESH: 更新伏笔.md"      parent=T-TRACK-{N}
+53. task create "T-TRACK-{N}-TIME: 更新时间线.md"       parent=T-TRACK-{N}
+54. task create "T-TRACK-{N}-CHAR: 更新角色状态.md"     parent=T-TRACK-{N}
+55. task create "T-TRACK-{N}-ITEM: 更新物品.md"         parent=T-TRACK-{N}
+56. task create "T-TRACK-{N}-ENV: 更新环境.md"          parent=T-TRACK-{N}
+57. task create "T-TRACK-{N}-SUPPLY: 更新物资.md"       parent=T-TRACK-{N}
+58. task create "T-TRACK-{N}-REPEAT: 更新重复语句.md"   parent=T-TRACK-{N}
+59. task create "T-TRACK-{N}-CTX: 更新上下文.md"        parent=T-TRACK-{N}
+60. task create "T-TRACK-{N}-STORY-IDX: 更新故事线_索引.md" parent=T-TRACK-{N}
+61. task create "T-TRACK-{N}-STORY-MAIN: 更新故事线_主线_*.md" parent=T-TRACK-{N}
+62. task create "T-TRACK-{N}-STORY-CROSS: 更新故事线_交叉点.md" parent=T-TRACK-{N}
 ```
 
-**共53条任务，必须逐条创建。条件创建的任务（第44、45条）先创建为 open 状态，执行时再判断是否跳过。**
+**共62条任务，必须逐条创建。条件创建的任务（第41、42、50、51条）先创建为 open 状态，执行时再判断是否跳过。**
 │   ├── T-CTX-{N}-12: 读对标剧情/故事线.md [WARN: 无对标则跳过]
 │   ├── T-CTX-{N}-13: 读对标剧情/{相关线}.md [WARN: 无对标则跳过]
 │   ├── T-CTX-{N}-14: 读对标设定/世界观/*.md [WARN: 无对标则跳过]
-│   └── T-CTX-{N}-15: 读cross-chapter-fingerprint.md [可选: 不存在则跳过]
+│   ├── T-CTX-{N}-15: 读cross-chapter-fingerprint.md [可选: 不存在则跳过]
+│   ├── T-CTX-{N}-16: 读跨卷追踪/跨卷伏笔.md [BLOCK]
+│   ├── T-CTX-{N}-17: 读跨卷追踪/跨卷角色弧线.md [BLOCK]
+│   ├── T-CTX-{N}-18: 读跨卷追踪/卷间过渡.md [BLOCK]
+│   ├── T-CTX-{N}-19: 读故事线/故事线_索引.md [BLOCK]
+│   ├── T-CTX-{N}-20: 读故事线/故事线_主线_*.md [BLOCK]
+│   └── T-CTX-{N}-21: 读故事线/故事线_交叉点.md [BLOCK]
 │
 ├── T-PREP-{N}: 准备层
 │   ├── T-PREP-{N}-01: 状态筛选 — 输出最简记忆包
@@ -285,6 +300,9 @@ metadata:
 │   ├── T-TRACK-{N}-ENV: 环境.md
 │   ├── T-TRACK-{N}-SUPPLY: 物资.md
 │   ├── T-TRACK-{N}-CTX: 上下文.md
+│   ├── T-TRACK-{N}-STORY-IDX: 故事线_索引.md
+│   ├── T-TRACK-{N}-STORY-MAIN: 故事线_主线_*.md
+│   ├── T-TRACK-{N}-STORY-CROSS: 故事线_交叉点.md
 │   └── [条件] T-TRACK-{N}-NEWCHAR: 新角色建档
 │
 ├── [条件] T-PUNCT-{N}: 标点收尾（每批3章后）
@@ -373,6 +391,12 @@ cat <项目目录>/.story-goal.json
 - (4) `追踪/角色状态.md` — 角色状态+性格锚点
 - (5) `追踪/物品.md` — 物品位置
 - (6) `追踪/环境.md` — 当前环境
+- (7) `跨卷追踪/跨卷伏笔.md` — 跨卷伏笔状态
+- (8) `跨卷追踪/跨卷角色弧线.md` — 角色全书成长路线
+- (9) `跨卷追踪/卷间过渡.md` — 卷与卷衔接要点
+- (10) `故事线/故事线_索引.md` — 所有故事线列表+状态
+- (11) `故事线/故事线_主线_*.md` — 主线故事线
+- (12) `故事线/故事线_交叉点.md` — 线与线交汇标记
 
 **Step 3：准备层**
 - 3.1 **状态筛选**：从角色状态中筛选本章涉及角色
@@ -407,6 +431,9 @@ AI：（后台自动执行）
 4. `追踪/物品.md` — 物品位置变化
 5. `追踪/环境.md` — 季节/天气/场景
 6. `追踪/上下文.md` — 进度摘要
+7. `故事线/故事线_索引.md` — 更新故事线状态
+8. `故事线/故事线_主线_*.md` — 更新主线/副线进展
+9. `故事线/故事线_交叉点.md` — 更新交叉点标记
 
 **Step 7：写入记忆**
 ```javascript
@@ -664,6 +691,19 @@ story-architect 属于高层级结构设计。轻量题材定位优先由主会�
 
 ---
 
+### Phase 4 进度管理触发（每章写作前执行）
+
+进入 Phase 4 正文写作前，先检查当前章节号：
+
+1. 提取当前章节号 `{N}`
+2. 判断 `{N} % 5 == 0`（即章节号是 5 的倍数）
+3. **是** → 先运行 `story-progress-mimo` 进度管理流程，完成后**停止等待用户操作**，不自动继续下一章
+4. **否** → 继续正常写作流程
+
+> 此逻辑在 Goal 自主写作模式和日更续写模式中均生效。每 5 章强制停顿，让用户确认进度和方向。
+
+---
+
 ### Phase 4：正文写作辅助
 
 #### 项目文件结构
@@ -849,8 +889,14 @@ node skills/story-long-write-mimo/scripts/workflow-guard.js post <step> <workflo
    | (18) | `设定/题材定位.md` | 题材核心梗、卖点 | ⚠️ WARN |
    | (19) | `设定/文风.md` | 文风约束 | ⚠️ WARN |
    | (20) | `追踪/cross-chapter-fingerprint.md` | 前5章 n-gram 指纹摘要 | ℹ️ 可选 |
+   | (21) | `跨卷追踪/跨卷伏笔.md` | 跨卷伏笔状态 | 🚫 BLOCK |
+   | (22) | `跨卷追踪/跨卷角色弧线.md` | 角色全书成长路线 | 🚫 BLOCK |
+   | (23) | `跨卷追踪/卷间过渡.md` | 卷与卷衔接要点 | 🚫 BLOCK |
+   | (24) | `故事线/故事线_索引.md` | 所有故事线列表+状态 | 🚫 BLOCK |
+   | (25) | `故事线/故事线_主线_*.md` | 主线故事线 | 🚫 BLOCK |
+   | (26) | `故事线/故事线_交叉点.md` | 线与线交汇标记 | 🚫 BLOCK |
 
-   **输出格式**：读取完 20 项后，输出清单：
+   **输出格式**：读取完 26 项后，输出清单：
    ```
    第{N}章上下文检查：
    ✅ (1) 上一章：正文/第003章_XXX.md
@@ -919,6 +965,9 @@ node skills/story-long-write-mimo/scripts/workflow-guard.js post <step> <workflo
     - `追踪/环境.md`：更新季节、天气、场景位置，更新环境细节
     - `追踪/物资.md`：更新钱财、食物、工具状态（如本章有经济活动）
     - `追踪/上下文.md`：更新进度摘要
+    - `故事线/故事线_索引.md`：更新故事线状态（推进/暂停/完结）
+    - `故事线/故事线_主线_*.md`：更新主线/副线进展
+    - `故事线/故事线_交叉点.md`：更新线与线交汇标记（如有新交叉）
     本章若首次引入会复用的具名角色/势力，按 Phase 3「细纲后设定补全」规则补建对应 `设定/` 档案。角色状态更新规则详见 state-tracking.md。
 
     > **下一步**：追踪文件更新完成后，进入 Phase 5 质量检查。Phase 5 如果修正了正文内容，需要回到本步骤重新更新受影响的追踪文件。
@@ -1031,7 +1080,7 @@ node skills/story-long-write-mimo/scripts/workflow-guard.js pre check .workflow 
 node skills/story-long-write-mimo/scripts/workflow-guard.js post check .workflow
 ```
 
-**检测项**（7项，必须全部运行）：
+**检测项**（8项，必须全部运行）：
 
 | 序号 | 检测项 | 严重度 | 脚本/方法 |
 |------|--------|--------|----------|
@@ -1042,6 +1091,12 @@ node skills/story-long-write-mimo/scripts/workflow-guard.js post check .workflow
 | 5 | **设定校验** | BLOCK | LLM 分析 |
 | 6 | 逻辑性 | WARN | LLM 分析 |
 | 7 | 跨章节检查 | WARN | cross-chapter-check.js |
+| 8 | **跨卷一致性** | WARN | LLM 分析 |
+
+**跨卷一致性校验内容**：
+- 跨卷伏笔是否逾期（超过预期卷数仍未回收）
+- 角色弧线是否连贯（角色成长/转变是否与跨卷角色弧线一致）
+- 故事线是否断裂（主线/副线是否有未衔接的断点）
 
 **设定校验内容**：
 - 世界观规则是否遵守（如时代背景、社会规则、技术设定）
