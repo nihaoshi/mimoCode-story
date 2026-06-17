@@ -1,8 +1,8 @@
 ---
 name: quality-mimo
-version: 1.0.0
+version: 2.0.0
 description: |
-  统一质量检查入口。检查章节质量、一致性、禁用词、AI腔等。
+  统一质量检查入口。子agent隔离执行，有问题必修。
   触发方式：/quality-mimo、/检查质量、「检查一下」「质量检查」
 atoms:
   - detect-quality
@@ -14,9 +14,27 @@ atoms:
   - detect-cross-chapter
 ---
 
-# quality-mimo：统一质量检查
+# quality-mimo：统一质量检查 v2.0
 
-你是质量检查专家。提供多种质量检查能力，确保写作质量。
+## 核心设计
+
+1. **子 agent 隔离执行**：检测和修复由独立子 agent 执行，上下文完全隔离
+2. **有问题必修**：只要有任何 WARN 或 BLOCK，就必须修复
+3. **综合检测**：字数、禁用词、一致性、逻辑性合并为一次检测
+4. **综合修复**：一个修复 agent 处理所有问题
+
+## 防偷懒铁律
+
+```
+读文件，写文件，跑脚本，给用户看
+不凭记忆，不跳步骤，不偷懒
+```
+
+**每个 Agent 执行前后必须运行守卫脚本：**
+```bash
+node {skill_dir}/scripts/step-guard.js pre  <步骤号> {workflow_dir}
+node {skill_dir}/scripts/step-guard.js post <步骤号> {workflow_dir}
+```
 
 ---
 
@@ -29,6 +47,219 @@ atoms:
 | /quality-mimo --full <文件> | 增强检查（身份、时间线、完整性） |
 | 检查质量 | 同 /quality-mimo |
 | 检查一下 | 同 /quality-mimo |
+
+---
+
+## 任务树（4步）
+
+```
+T-QUALITY-{N}: 质量检查「{文件名}」
+│
+├─── Phase 1: 读取阶段
+│    └── T-QUALITY-{N}-01: 读取文本 [主 agent]
+│
+├─── Phase 2: 检测阶段
+│    └── T-QUALITY-{N}-02: 综合质量检测 [子 agent 隔离]
+│        ├── 字数检测（BLOCK）
+│        ├── 禁用词+AI腔检测（BLOCK）
+│        ├── AI标点符号（BLOCK）
+│        ├── 一致性检测（BLOCK）
+│        ├── 逻辑性检查（WARN）
+│        └── 跨章节检查（WARN）
+│
+├─── Phase 3: 修复阶段（有问题必修）
+│    ├── [条件] T-QUALITY-{N}-03: 综合修复 [子 agent 隔离]
+│    └── [条件] T-QUALITY-{N}-04: 复查 [子 agent 隔离]
+│
+└─── Phase 4: 报告阶段
+     └── T-QUALITY-{N}-05: 输出检查报告 [主 agent]
+```
+
+---
+
+## 各步骤说明
+
+### Step 01: 读取文本
+- **Agent**: 主 agent（不隔离）
+- **职责**：读取章节文件和追踪文件，准备检测上下文
+- **输入**：用户指定的文件路径
+- **输出**：`.workflow/step01-chapter-content.json`
+- **防偷懒**：必须用 Read 工具读取，不能从上下文推断
+
+### Step 02: 综合质量检测
+- **Agent**: general（隔离执行，context=none）
+- **职责**：运行所有检测脚本，汇总问题
+- **检测项**：
+  - 字数达标（Python 统计）— BLOCK
+  - 禁用词+AI腔（style-lint.js）— BLOCK
+  - AI标点符号（punctuation-normalize.js）— BLOCK
+  - 一致性（consistency-check.js）— BLOCK
+  - 逻辑性（LLM 分析）— WARN
+  - 跨章节检查（cross-chapter-check.js）— WARN
+- **输出**：`.workflow/step02-quality-report.json`
+- **关键规则**：只要有任何 WARN 或 BLOCK，必须进入修复流程
+
+### Step 03: 综合修复 [条件：有任何问题]
+- **Agent**: general（隔离执行，context=none）
+- **职责**：修复所有问题（字数扩充+禁用词替换+逻辑修正）
+- **输入**：检测报告、正文、约束
+- **输出**：修复后正文 + `.workflow/step03-fix-log.json`
+- **防偷懒**：每个问题必须修复，不能跳过 WARN
+
+### Step 04: 复查 [条件：执行了修复]
+- **Agent**: general（隔离执行，context=none）
+- **职责**：重新运行完整检测
+- **输出**：`.workflow/step04-recheck-report.json`
+- **防偷懒**：不能假设修复成功，最多3轮
+
+### Step 05: 输出检查报告
+- **Agent**: 主 agent（不隔离）
+- **职责**：汇总检测结果，输出格式化报告
+- **输入**：step02/step04 的报告文件
+- **输出**：用户可见的格式化报告
+
+---
+
+## 条件任务
+
+| 任务 | 触发条件 | 跳过则 |
+|------|---------|--------|
+| Step 03 | step02 有任何 WARN 或 BLOCK | abandoned |
+| Step 04 | step03 存在 | abandoned |
+
+---
+
+## 修复循环
+
+```
+Step 02 检测到 ANY 问题（WARN 或 BLOCK）
+  ↓
+Step 03 综合修复（所有问题）
+  ↓
+Step 04 复查
+  ↓
+仍有问题 → 再回 Step 03（上限3轮）
+  ↓
+全部通过 → Step 05
+```
+
+---
+
+## Agent 间通信
+
+所有中间结果存放在 `{PROJECT_DIR}/.workflow/` 目录：
+
+```
+.workflow/
+├── step01-chapter-content.json   # 章节内容
+├── step02-quality-report.json    # 综合检测报告
+├── step03-fix-log.json           # 修复日志
+└── step04-recheck-report.json    # 复查报告
+```
+
+---
+
+## Prompt 模板
+
+> 详见 `references/agent-prompt-templates.md`
+
+### 综合检测 Agent Prompt
+
+```
+你是 quality-checker，负责综合质量检测。
+
+【项目信息】
+- 项目目录：{project_dir}
+- 文件名：{chapter_file}
+
+【输入文件】（必须用 Read 工具读取）
+- 正文：{project_dir}/正文/{chapter_file}
+- 约束：{project_dir}/.workflow/step01-chapter-content.json
+
+【检测项】（必须全部运行）
+1. 字数达标（Python统计）— BLOCK
+2. 禁用词+AI腔（style-lint.js）— BLOCK
+3. AI标点符号（punctuation-normalize.js）— BLOCK
+4. 一致性（consistency-check.js）— BLOCK
+5. 逻辑性（LLM分析）— WARN
+6. 跨章节检查（cross-chapter-check.js）— WARN
+
+【输出】
+- 报告：{project_dir}/.workflow/step02-quality-report.json
+
+【报告格式】
+{
+  "chapter": "{chapter_file}",
+  "word_count": 3200,
+  "word_count_target": 3000,
+  "checks": [...],
+  "block_count": 0,
+  "warn_count": 0,
+  "total_issues": 0,
+  "overall": "PASS",
+  "issues": [...]
+}
+
+【防偷懒】
+- 必须用 Read 工具读取输入文件
+- 必须运行所有检测脚本
+- 必须写入报告文件
+```
+
+### 综合修复 Agent Prompt
+
+```
+你是 quality-fixer，负责修复所有质量问题。
+
+【项目信息】
+- 项目目录：{project_dir}
+- 文件名：{chapter_file}
+
+【输入文件】（必须用 Read 工具读取）
+- 正文：{project_dir}/正文/{chapter_file}
+- 检测报告：{project_dir}/.workflow/step02-quality-report.json
+
+【修复规则】
+- 只有问题（WARN或BLOCK）就必须修复
+- 修复后重新检测，直到全部通过
+- 最多3轮修复循环
+- 不能跳过 WARN
+
+【输出】
+- 更新：{project_dir}/正文/{chapter_file}
+- 报告：{project_dir}/.workflow/step03-fix-log.json
+
+【防偷懒】
+- 必须用 Read 工具读取输入文件
+- 有问题必须修复，不能跳过
+- 必须写入报告文件
+```
+
+---
+
+## 守卫脚本调用
+
+### 执行前验证
+
+```bash
+node {skill_dir}/scripts/step-guard.js pre {step} {workflow_dir} {project_dir}
+```
+
+### 执行后验证
+
+```bash
+node {skill_dir}/scripts/step-guard.js post {step} {workflow_dir}
+```
+
+### 步骤号定义
+
+| 步骤 | 说明 |
+|------|------|
+| 01 | 读取文本 |
+| 02 | 综合检测 |
+| 03 | 综合修复 |
+| 04 | 复查 |
+| 05 | 输出报告 |
 
 ---
 
@@ -93,32 +324,6 @@ node skills/_shared/scripts/full-consistency-audit.js <项目目录>
 
 ---
 
-## 执行流程
-
-### 用户触发检查
-
-```
-用户：检查一下第3章
-    ↓
-AI执行：
-1. 读取文件路径
-2. 调用 quality-gate.js 检查
-3. 输出检查报告
-4. 如有问题 → 提供修复建议
-```
-
-### 自动触发检查
-
-```
-写作流程中：
-1. 写完一章
-2. AI自动调用 quality-gate.js
-3. 通过 → 继续
-4. 有问题 → 自动修复 → 重新检查
-```
-
----
-
 ## 输出格式
 
 ```
@@ -156,36 +361,26 @@ AI执行：
 # ===== 第1层：父任务 =====
 1. task create "T-QUALITY: 质量检查「{文件名}」"                    → T-QUALITY
 
-# ===== 第2层：标准6项检测 =====
-2. task create "T-QUALITY-QUAL: detect-quality — 禁用词+AI腔扫描"       parent=T-QUALITY
-3. task create "T-QUALITY-CON: detect-consistency — 一致性检查"          parent=T-QUALITY
-4. task create "T-QUALITY-STORY: detect-story — 伏笔+设定缺口检查"      parent=T-QUALITY
-5. task create "T-QUALITY-WC: detect-wordcount — 字数检查"              parent=T-QUALITY
-6. task create "T-QUALITY-VOICE: detect-voice — 角色声音检查"           parent=T-QUALITY
-7. task create "T-QUALITY-EMO: detect-emotion — 情绪+爽点检查"          parent=T-QUALITY
-
-# ===== 第2层：增强1项（--full模式） =====
-8.  task create "T-QUALITY-XCHAPTER: detect-cross-chapter — 跨章节一致性"  parent=T-QUALITY
-
-# ===== 第2层：修正+复查+报告 =====
-12. task create "T-QUALITY-FIX: 修正 — 任一BLOCK时start，全部通过abandoned"  parent=T-QUALITY
-13. task create "T-QUALITY-RECHECK: 复查 — FIX完成后start，无FIX abandoned"  parent=T-QUALITY
-14. task create "T-QUALITY-REPORT: 输出检查报告"                            parent=T-QUALITY
+# ===== 第2层：4步子任务 =====
+2. task create "T-QUALITY-01: 读取文本"                               parent=T-QUALITY
+3. task create "T-QUALITY-02: 综合质量检测 [子agent隔离]"              parent=T-QUALITY
+4. task create "T-QUALITY-03: 综合修复 [条件，有问题才执行]"           parent=T-QUALITY
+5. task create "T-QUALITY-04: 复查 [条件，执行了修复才执行]"           parent=T-QUALITY
+6. task create "T-QUALITY-05: 输出检查报告"                            parent=T-QUALITY
 ```
 
 ### 条件创建规则
 
 | 任务 | 执行时判断 | 跳过则 abandoned |
 |------|-----------|-----------------|
-| T-QUALITY-XCHAPTER/SAT/GAPS | --full模式时创建 | 标准模式abandoned |
-| T-QUALITY-FIX | 任一检测返回BLOCK时start | 全部通过则abandoned |
-| T-QUALITY-RECHECK | FIX完成后start | 无FIX则abandoned |
+| T-QUALITY-03 | step02 有任何 WARN 或 BLOCK | 全部通过则 abandoned |
+| T-QUALITY-04 | step03 存在 | 无修复则 abandoned |
 
 ### 循环处理
 
 | 循环 | 触发 | 处理 |
 |------|------|------|
-| 修正后仍有残留 | RECHECK发现新问题 | 再创建FIX（上限3轮） |
+| 修复后仍有残留 | RECHECK 发现新问题 | 再创建 FIX（上限3轮） |
 
 ---
 
@@ -195,6 +390,7 @@ AI执行：
 |------|------|
 | 被调用 | `story-long-write-mimo`（写作流程中自动调用） |
 | 被调用 | `story-short-write-mimo`（短篇写作中调用） |
+| 被调用 | `story-chapter-write-mimo`（单章写作中调用） |
 | 调用 | `quality-gate.js`（质量门禁脚本） |
 | 调用 | `full-consistency-audit.js`（全量审计脚本） |
 
@@ -203,7 +399,7 @@ AI执行：
 ## 常见问题
 
 **Q1：检查发现问题后怎么办？**
-A：AI会自动尝试修复，修复后重新检查。
+A：子 agent 会自动尝试修复，修复后重新检查。
 
 **Q2：检查需要多久？**
 A：单章检查约5-10秒，全量审计约30秒。
