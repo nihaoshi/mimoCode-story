@@ -74,15 +74,39 @@
 
 ---
 
-## Step 5：质量检查
+## Step 5：质量检查（子 agent 隔离执行）
 
-对修改后的章节执行 Phase 5 质量检查（至少包含）：
+对修改后的章节执行 Phase 5 质量检查：
 
-1. **禁用词扫描**：如 Step 4 未覆盖全章，再次扫描
-2. **人物一致性**：修改后的角色行为是否与角色设定一致
-3. **节奏检查**：修改是否破坏了章节节奏
+**执行方式**：子 agent 隔离执行
 
-> 完整 Phase 5 检查清单见 SKILL.md Phase 5。
+```javascript
+actor({
+  operation: "run",
+  subagent_type: "general",
+  description: "综合质量检测+修复 - 第{X}章（修改后）",
+  prompt: "详见 references/agent-prompt-templates.md",
+  context: "none"
+})
+```
+
+**检测项**（6项，必须全部运行）：
+
+| 序号 | 检测项 | 严重度 | 脚本/方法 |
+|------|--------|--------|----------|
+| 1 | 字数达标 | BLOCK | Python 统计 |
+| 2 | 禁用词+AI腔 | BLOCK | style-lint.js |
+| 3 | AI标点符号 | BLOCK | punctuation-normalize.js |
+| 4 | 一致性 | BLOCK | consistency-check.js |
+| 5 | 逻辑性 | WARN | LLM 分析 |
+| 6 | 跨章节检查 | WARN | cross-chapter-check.js |
+
+**修复规则**：只要有任何 WARN 或 BLOCK，就必须修复，不能跳过。
+
+**守卫脚本验证**：
+```bash
+node skills/story-long-write-mimo/scripts/workflow-guard.js post check .workflow
+```
 
 ---
 

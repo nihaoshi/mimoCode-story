@@ -773,7 +773,55 @@ story-architect 属于高层级结构设计。轻量题材定位优先由主会�
 - **正文按章拆分**：每章一个文件，`第XXX章_章名.md`
 - 每章写完直接写入 `正文/` 目录，不要先输出到对话
 
-#### 单章写作流程
+#### 单章写作流程（混合模式）
+
+> **Phase 4（正文写作）和 Phase 5（质量检测）使用子 agent 隔离执行**，其他阶段由主 agent 执行。
+
+**执行模式**：
+
+| 阶段 | 执行方式 | 原因 |
+|------|---------|------|
+| 上下文读取 | 主 agent | 需要读取多个文件组装上下文 |
+| 准备层 | 主 agent | 需要创意决策 |
+| 正文写作 | **子 agent** | 质量隔离，防止偷懒 |
+| 综合检测+修复 | **子 agent** | 质量隔离，有问题必修 |
+| 追踪更新 | 主 agent | 需要上下文连贯 |
+
+**子 agent 调用方式**：
+
+```javascript
+// 正文写作
+actor({
+  operation: "run",
+  subagent_type: "general",
+  description: "正文写作 - 第{N}章",
+  prompt: "详见 references/agent-prompt-templates.md",
+  context: "none" // 隔离上下文
+})
+
+// 综合检测+修复
+actor({
+  operation: "run",
+  subagent_type: "general",
+  description: "质量检测+修复 - 第{N}章",
+  prompt: "详见 references/agent-prompt-templates.md",
+  context: "none" // 隔离上下文
+})
+```
+
+**守卫脚本调用**：
+
+```bash
+# 执行前验证
+node skills/story-long-write-mimo/scripts/workflow-guard.js pre <step> <workflow_dir> <project_dir>
+
+# 执行后验证
+node skills/story-long-write-mimo/scripts/workflow-guard.js post <step> <workflow_dir>
+```
+
+**prompt 模板**：详见 `references/agent-prompt-templates.md`
+
+---
 
 当用户准备写某一章时：
 
@@ -945,46 +993,48 @@ story-architect 属于高层级结构设计。轻量题材定位优先由主会�
 
 ---
 
-### Phase 5：质量检查
+### Phase 5：质量检查（子 agent 隔离执行）
 
-> 在 Step 10 更新追踪文件之后执行。先稳定正文内容，再检查修正，避免"追踪文件更新了但正文又改了"的冲突。
+> **Phase 5 使用子 agent 隔离执行**，确保质量检测不受主 agent 上下文影响。
 
-检查两个维度：(1) **情绪交付**——每章是否交付了细纲中规划的目标情绪？(2) **技术质量**——一致性、格式、禁用词。参考 [references/quality-checklist.md](references/quality-checklist.md) 中的通用检查和长篇专项清单。
+**执行方式**：
 
-**第一轮：全量检测**（通过原子 skill 执行）：
+```javascript
+actor({
+  operation: "run",
+  subagent_type: "general",
+  description: "综合质量检测+修复 - 第{N}章",
+  prompt: "详见 references/agent-prompt-templates.md",
+  context: "none" // 隔离上下文
+})
+```
 
-1. 调用原子 `detect-quality` — 检测禁用词+AI腔残留
-2. 调用原子 `detect-consistency` — 一致性检查
-3. 调用原子 `detect-story` — 伏笔+设定缺口检查
+**守卫脚本验证**：
 
-**第二轮：处理检测结果**：
+```bash
+# 执行前验证
+node skills/story-long-write-mimo/scripts/workflow-guard.js pre check .workflow <project_dir>
 
-严重度处理规则（与 Step 1 相同）：
-- 🚫 **BLOCK（阻断）**：**强制修正**，不问用户。禁用词/AI腔残留 → 直接调用 `fix-text` 替换；一致性错误 → 直接修正正文
-- ⚠️ **WARN（警告）**：**列出问题，问用户怎么办**——「发现AI腔句式3处，要修正吗？还是保留？」用户选择：修正 / 保留
-- ℹ️ **可选**：标记但不修正，仅记录到 `追踪/上下文.md` 质量问题栏
+# 执行后验证
+node skills/story-long-write-mimo/scripts/workflow-guard.js post check .workflow
+```
 
-修正原子（按需调用）：
-- `fix-text` — AI腔+禁用词+标点修正
-- `fix-dialogue` — 对话去腔调+心理描写外化
-- `fix-style` — 结尾去升华+排比节奏打散
+**检测项**（6项，必须全部运行）：
 
-**第三轮：复查**：
+| 序号 | 检测项 | 严重度 | 脚本/方法 |
+|------|--------|--------|----------|
+| 1 | 字数达标 | BLOCK | Python 统计 |
+| 2 | 禁用词+AI腔 | BLOCK | style-lint.js |
+| 3 | AI标点符号 | BLOCK | punctuation-normalize.js |
+| 4 | 一致性 | BLOCK | consistency-check.js |
+| 5 | 逻辑性 | WARN | LLM 分析 |
+| 6 | 跨章节检查 | WARN | cross-chapter-check.js |
 
-- 重新运行 `detect-quality`，确认修正生效
-- 如仍有残留 → 手动修正并记入 `追踪/上下文.md` 的质量问题栏，下次写作加强前置约束
+**修复规则**：只要有任何 WARN 或 BLOCK，就必须修复，不能跳过。
 
-**第四轮：追踪文件同步**（如 Phase 5 修正了正文内容）：
+**输出文件**：`.workflow/step-check-report.json`
 
-如果 Phase 5 对正文做了修改，需要回到 Step 10 重新更新受影响的追踪文件（伏笔、角色状态等），确保追踪与正文一致。
-
-**AI标点清理**（写完每章后必做）：
-- 调用原子 `fix-text`（fix_type=punctuation）自动清理AI特殊标点
-- 检查并替换智能引号（" " ' '）为直引号
-- 清理不可见Unicode字符（零宽空格、NBSP等）
-- 归一化空格和标点
-
-**标点确定性收尾**：本批正文写完后，对所有新写正文文件调用原子 `fix-text`（fix_type=punctuation）（或运行 `node skills/_shared/scripts/punctuation-normalize.js 正文/第XXX章_*.md`，需从全局skill目录执行，默认 `--quote-mode keep`），确定性清除叙述里的破折号 `——`/`—`、双连字符 `--` 和独立行 `---`，防止长篇累积横线。对话被打断的 `——`、数字区间与盐言「」不受影响。子智能体不运行本脚本，由主会话在子智能体返回后针对实际落盘文件运行。
+**prompt 模板**：详见 `references/agent-prompt-templates.md`
 
 #### 子智能体调用：consistency-checker
 

@@ -111,9 +111,32 @@ MiMo Code 的 checkpoint 恢复机制会自动注入 memory 内容，但如果 m
 
 ---
 
-## Step 2：串行批量写作
+## Step 2：串行批量写作（混合模式）
 
 一次加载多章细纲，但**必须在主会话内串行逐章写作**：不得把多章同时交给多个子代理并发写。长篇章节依赖上一章正文和追踪文件，并发会导致上下文断裂、追踪覆盖和标题去重失效。
+
+**混合模式执行**：
+- **上下文读取 + 准备层**：主 agent 执行
+- **正文写作**：子 agent 隔离执行（context=none）
+- **综合检测+修复**：子 agent 隔离执行（context=none）
+- **追踪更新**：主 agent 执行
+
+**守卫脚本调用**：
+```bash
+# 正文写作前验证
+node skills/story-long-write-mimo/scripts/workflow-guard.js pre write .workflow <project_dir>
+
+# 正文写作后验证
+node skills/story-long-write-mimo/scripts/workflow-guard.js post write .workflow
+
+# 质量检测前验证
+node skills/story-long-write-mimo/scripts/workflow-guard.js pre check .workflow <project_dir>
+
+# 质量检测后验证
+node skills/story-long-write-mimo/scripts/workflow-guard.js post check .workflow
+```
+
+**prompt 模板**：详见 `references/agent-prompt-templates.md`
 
 **批量 continuation 规则**：进入本 Step 后，"继续"/"续写"/"日更"只表示继续当前日更批量流程。不得把这些词解释为跳过 Step 2.2/Step 2.3 的直接正文续写；也不得在每章之间重复询问是否继续，除非用户明确要求逐章确认或出现阻塞。
 
@@ -167,16 +190,39 @@ MiMo Code 的 checkpoint 恢复机制会自动注入 memory 内容，但如果 m
 
 ---
 
-## Step 3：质量检查
+## Step 3：质量检查（子 agent 隔离执行）
 
-批量写作结束后，对本次所有新写章节执行 Phase 5 质量检查（至少包含）：
+批量写作结束后，对本次所有新写章节执行 Phase 5 质量检查：
 
-1. **禁用词扫描**：对照 `references/banned-words.md`，一级词命中即替换
-2. **标题去重检查**：汇总本轮新写章节与既有标题；发现同名或明显重复时，回到对应细纲和正文文件统一重命名
-3. **钩子检查**：每章章尾是否有钩子
-4. **伏笔盘点（仅本轮增量）**：只确认本批新增/推进/回收的伏笔已写入 `追踪/伏笔.md` 并更新状态；不得在日更流程中通读所有 session 或扫描全部正文做全量伏笔审计。全量伏笔审计只在 `/story-review-mimo` 或用户明确要求"全面检查伏笔"时执行
+**执行方式**：子 agent 隔离执行
 
-> 完整 Phase 5 检查清单见 SKILL.md Phase 5。
+```javascript
+actor({
+  operation: "run",
+  subagent_type: "general",
+  description: "综合质量检测+修复 - 第{N}章",
+  prompt: "详见 references/agent-prompt-templates.md",
+  context: "none"
+})
+```
+
+**检测项**（6项，必须全部运行）：
+
+| 序号 | 检测项 | 严重度 | 脚本/方法 |
+|------|--------|--------|----------|
+| 1 | 字数达标 | BLOCK | Python 统计 |
+| 2 | 禁用词+AI腔 | BLOCK | style-lint.js |
+| 3 | AI标点符号 | BLOCK | punctuation-normalize.js |
+| 4 | 一致性 | BLOCK | consistency-check.js |
+| 5 | 逻辑性 | WARN | LLM 分析 |
+| 6 | 跨章节检查 | WARN | cross-chapter-check.js |
+
+**修复规则**：只要有任何 WARN 或 BLOCK，就必须修复，不能跳过。
+
+**守卫脚本验证**：
+```bash
+node skills/story-long-write-mimo/scripts/workflow-guard.js post check .workflow
+```
 
 ---
 
