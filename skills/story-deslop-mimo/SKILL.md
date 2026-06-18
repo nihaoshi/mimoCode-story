@@ -199,8 +199,7 @@ actor({
 
 【输入文件】（必须用 Read 工具读取）
 - 原文：{project_dir}/.workflow/deslop-input.json
-- 禁用词表：{project_dir}/skills/_shared/references/banned-words.md（如存在）
-- 去AI味指南：{project_dir}/skills/_shared/references/anti-ai-writing.md（如存在）
+- 质量规则：读取 skills/_shared/references/quality-rules.md（含禁用词+AI腔+段落规则）
 
 【检测项】（必须全部运行，对应6个维度）
 1. 禁用词扫描 — 统计禁用词数量和位置
@@ -389,8 +388,7 @@ node skills/story-long-write-mimo/scripts/workflow-guard.js post exec {workflow_
 
 | 文件 | 何时加载 |
 |------|----------|
-| `../_shared/references/banned-words.md` | 子Agent检测禁用词时 |
-| `../_shared/references/anti-ai-writing.md` | 子Agent完整去AI味指南 |
+| `_shared/references/quality-rules.md` | 统一质量规则（禁用词+AI腔+段落规则） |
 | `../story-long-write-mimo/references/agent-prompt-templates.md` | 子Agent Prompt 模板参考 |
 
 ---
