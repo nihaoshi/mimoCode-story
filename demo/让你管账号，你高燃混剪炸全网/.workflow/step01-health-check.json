@@ -1,0 +1,58 @@
+﻿{
+    "timestamp":  "2026-06-17T20:14:33Z",
+    "checked":  [
+                    {
+                        "path":  "正文/",
+                        "created":  false,
+                        "exists":  true
+                    },
+                    {
+                        "path":  "追踪/",
+                        "created":  false,
+                        "exists":  true
+                    },
+                    {
+                        "path":  "大纲/",
+                        "created":  false,
+                        "exists":  true
+                    },
+                    {
+                        "path":  "设定/",
+                        "created":  false,
+                        "exists":  true
+                    },
+                    {
+                        "path":  "追踪/伏笔.md",
+                        "created":  false,
+                        "exists":  true
+                    },
+                    {
+                        "path":  "追踪/时间线.md",
+                        "created":  false,
+                        "exists":  true
+                    },
+                    {
+                        "path":  "追踪/角色状态.md",
+                        "created":  false,
+                        "exists":  true
+                    },
+                    {
+                        "path":  "追踪/物品.md",
+                        "created":  false,
+                        "exists":  true
+                    },
+                    {
+                        "path":  "追踪/环境.md",
+                        "created":  false,
+                        "exists":  true
+                    }
+                ],
+    "errors":  [
+
+               ],
+    "created":  [
+
+                ],
+    "project_dir":  "demo/让你管账号，你高燃混剪炸全网",
+    "status":  "pass"
+}

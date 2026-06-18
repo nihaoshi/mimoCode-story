@@ -193,6 +193,7 @@ Step 04 复查
 - 角色弧线：{project_dir}/跨卷追踪/跨卷角色弧线.md（如存在）
 - 故事线：{project_dir}/故事线/故事线_索引.md（如存在）
 - 主线：{project_dir}/故事线/故事线_主线_*.md（如存在）
+- 交叉点：{project_dir}/故事线/故事线_交叉点.md（如存在）
 
 【检测项】（必须全部运行）
 1. 字数达标（wordcount.js 统计）— BLOCK
