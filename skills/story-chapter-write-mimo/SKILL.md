@@ -230,7 +230,7 @@ actor({
     "action": "run",
     "subagent_type": "general",
     "description": "生成约束 - 第{N}章",
-    "prompt": "你是单章写作流程的约束生成器。\n\n【防偷懒铁律】禁用词必须从文件加载，字数限制必须明确。\n\n【任务】生成本章写作的质量约束参数。\n\n【执行】\n1. 读取 {project_dir}/.workflow/step08-context.json 获取上下文\n2. 从细纲读取字数目标\n3. 加载禁用词清单（读取 skills/_shared/scripts/banned-words.js）\n4. 加载 AI 腔禁令（读取 skills/_shared/references/anti-ai-writing.md）\n5. 如有对标，从 step04-benchmark.json 读取锚点片段和技法\n\n【输出】写入 {project_dir}/.workflow/step09-constraints.json，格式：\n{\"word_count_target\": 3000, \"banned_words\": [...], \"ai_patterns\": [...], \"benchmark_excerpts\": [...], \"techniques\": [...]}",
+    "prompt": "你是单章写作流程的约束生成器。\n\n【防偷懒铁律】禁用词必须从文件加载，字数限制必须明确。\n\n【任务】生成本章写作的质量约束参数。\n\n【执行】\n1. 读取 {project_dir}/.workflow/step08-context.json 获取上下文\n2. 从细纲读取字数目标\n3. 加载质量规则（读取 skills/_shared/references/quality-rules.md）\n4. 如有对标，从 step04-benchmark.json 读取锚点片段和技法\n\n【输出】写入 {project_dir}/.workflow/step09-constraints.json，格式：\n{\"word_count_target\": 3000, \"banned_words\": [...], \"ai_patterns\": [...], \"benchmark_excerpts\": [...], \"techniques\": [...]}",
     "context": "none"
   }
 })
@@ -243,7 +243,7 @@ actor({
     "action": "run",
     "subagent_type": "general",
     "description": "正文写作 - 第{N}章",
-    "prompt": "你是 narrative-writer，负责正文写作。只写作，不检查质量。\n\n【防偷懒铁律】必须写入文件，不在对话中输出。必须包含所有场景。\n\n【输入文件】\n1. {project_dir}/大纲/细纲_第{N}章.md — 细纲\n2. {project_dir}/.workflow/step08-context.json — 上下文\n3. {project_dir}/.workflow/step09-constraints.json — 约束\n\n【写作要求】\n1. 严格按细纲的事件序列写作\n2. 遵守约束参数（禁用词、文风、字数目标）\n3. 字数必须达到 {word_count_target}\n4. 写入文件，不在对话中输出\n\n【质量红线】（写作时直接避开，不要写完再改）\n- 禁用词清单中的词绝对不能出现\n- AI腔句式禁止\n- 禁止排比\n- 心理描写≤2句\n- 比喻≤1个/千字\n- 段落≤4行\n- 单句≤45字\n\n【输出】\n- 正文：{project_dir}/正文/第{N}章.md\n\n写完后运行字数验证：\nnode skills/_shared/scripts/wordcount.js {project_dir}/正文/第{N}章.md --json\n字数未达标禁止结束。",
+    "prompt": "你是 narrative-writer，负责正文写作。只写作，不检查质量。\n\n【防偷懒铁律】必须写入文件，不在对话中输出。必须包含所有场景。\n\n【输入文件】\n1. {project_dir}/大纲/细纲_第{N}章.md — 细纲\n2. {project_dir}/.workflow/step08-context.json — 上下文\n3. {project_dir}/.workflow/step09-constraints.json — 约束\n\n【写作要求】\n1. 严格按细纲的事件序列写作\n2. 遵守约束参数（禁用词、文风、字数目标）\n3. 字数必须达到 {word_count_target}\n4. 写入文件，不在对话中输出\n\n【质量红线】读取 skills/_shared/references/quality-rules.md 获取完整规则。写作时直接避开，不要写完再改。\n\n【输出】\n- 正文：{project_dir}/正文/第{N}章.md\n\n写完后运行字数验证：\nnode skills/_shared/scripts/wordcount.js {project_dir}/正文/第{N}章.md --json\n字数未达标禁止结束。",
     "context": "none"
   }
 })

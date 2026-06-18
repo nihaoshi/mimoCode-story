@@ -30,6 +30,7 @@ description: |
 | 质量检查 | 检查质量、质量检查 | `quality-mimo` |
 | 项目审计 | 审计项目、全量检查 | `audit-mimo` |
 | 进度管理 | 进度、存档、归档、下一弧、维护大纲 | `story-progress-mimo` |
+| 重写章节 | 重写、回炉、修改第X章、改写 | `story-rewrite-mimo` |
 
 ## 路由流程
 
