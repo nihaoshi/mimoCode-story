@@ -32,11 +32,9 @@ atoms:
 
 **每个阶段执行前后必须运行守卫脚本：**
 ```bash
-node {skill_dir}/scripts/workflow-guard.js pre  {step} {workflow_dir} {project_dir}
-node {skill_dir}/scripts/workflow-guard.js post {step} {workflow_dir}
+node skills/story-long-write-mimo/scripts/workflow-guard.js pre  {step} {workflow_dir} {project_dir}
+node skills/story-long-write-mimo/scripts/workflow-guard.js post {step} {workflow_dir}
 ```
-
-守卫脚本位于 `skills/story-long-write-mimo/scripts/workflow-guard.js`（共享）。
 
 ---
 
@@ -167,9 +165,9 @@ mkdir -p {project_dir}/.workflow
 ### 守卫验证
 
 ```bash
-node {skill_dir}/scripts/workflow-guard.js pre read {workflow_dir} {project_dir}
+node skills/story-long-write-mimo/scripts/workflow-guard.js pre read {workflow_dir} {project_dir}
 # 写入后
-node {skill_dir}/scripts/workflow-guard.js post read {workflow_dir}
+node skills/story-long-write-mimo/scripts/workflow-guard.js post read {workflow_dir}
 ```
 
 ---
@@ -284,9 +282,9 @@ actor({
 
 ```bash
 # 执行前
-node {skill_dir}/scripts/workflow-guard.js pre exec {workflow_dir} {project_dir}
+node skills/story-long-write-mimo/scripts/workflow-guard.js pre exec {workflow_dir} {project_dir}
 # 执行后
-node {skill_dir}/scripts/workflow-guard.js post exec {workflow_dir}
+node skills/story-long-write-mimo/scripts/workflow-guard.js post exec {workflow_dir}
 ```
 
 ---

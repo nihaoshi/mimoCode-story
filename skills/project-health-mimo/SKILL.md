@@ -110,7 +110,7 @@ node skills/project-health-mimo/scripts/project-health.js <项目目录> --check
 ✅ 已存在：
 - AGENTS.md
 - .story-deployed
-- 设定/世界观/世界观.md
+- 设定/世界观/背景设定.md
 - ...
 
 ❌ 缺失：
@@ -167,7 +167,7 @@ node skills/project-health-mimo/scripts/project-health.js <项目目录> --fix
 
 | 角色A | 角色B | 关系类型 | 当前状态 |
 |-------|-------|---------|---------|
-| 陈玄 | 薛十三 | 恩人→家人 | 信任 |
+| {主角} | {配角} | {关系} | {状态} |
 ```
 
 ### 时间线.md 模板
@@ -182,7 +182,7 @@ node skills/project-health-mimo/scripts/project-health.js <项目目录> --fix
 
 | 章节 | 故事时间 | 事件 | 涉及角色 |
 |------|---------|------|---------|
-| Ch001 | 贞观元年秋 | 穿越起点 | 陈玄 |
+| Ch001 | {时间} | {事件} | {角色} |
 ```
 
 ### 物品.md 模板
@@ -364,6 +364,7 @@ node skills/project-health-mimo/scripts/project-health.js <项目目录> --fix
 | 伏笔.md | 表格格式 |
 | 时间线.md | 表格格式 |
 | 上下文.md | 当前进度 |
+| 角色/ 角色设定 | 与追踪/角色状态.md 互相印证（character-sync.js） |
 
 ---
 

@@ -83,21 +83,19 @@ skill-name/
 - `skills/story-long-write-mimo/SKILL.md` 是最核心的 skill（553行），定义5阶段写作流程
 - Skill 间依赖：`story-import` 调用 `story-long-analyze` / `story-short-analyze` 的拆解管道
 - `demo/` 是示例数据（拆文库+写作项目），非 skill 代码
-- `skills/atoms/` 包含 45 个原子技能，是最小粒度的功能单元，可被上层 skill 调用或由用户直接使用
+- `skills/atoms/` 包含 15 个原子技能，是最小粒度的功能单元，可被上层 skill 调用或由用户直接使用
 
 ## Atom Skills（原子技能）
 
-原子技能通过 `/atom:{atom-id}` 直接调用，是 skill 的底层构建块。45 个原子技能分为 7 类：
+原子技能通过 `/atom:{atom-id}` 直接调用，是 skill 的底层构建块。15 个原子技能分为 3 类：
 
 | 类别 | 说明 | 包含的原子 |
 |------|------|-----------|
-| analyze | 拆文提取 | `extract-summary`、`extract-characters`、`extract-world`、`analyze-story` |
-| scan | 扫榜选题 | `scrape-platform`、`analyze-trend`、`analyze-reader-profile`、`generate-topic-decision` |
-| pre-write | 写前准备 | `pre-write-load`、`pre-write-constraints`、`pre-write-context`、`pre-write-checklist` |
-| write | 设计生成 | `generate-chapter`、`design-worldbuilding`、`design-character`、`design-chapter-outline`、`design-volume-outline` |
-| review | 多维评审 | `review-consistency`、`review-commercial`、`review-writing`、`review-character`、`review-structure` |
-| fix | 精准修复 | `fix-text`、`fix-dialogue`、`fix-style` |
 | detect | 检测诊断 | `detect-quality`、`detect-consistency`、`detect-cross-chapter`、`detect-emotion`、`detect-story`、`detect-voice`、`detect-wordcount`、`full-consistency-audit` |
+| fix | 精准修复 | `fix-text`、`fix-dialogue`、`fix-style` |
+| review | 多维评审 | `review-consistency`、`review-commercial`、`review-writing`、`review-character`、`review-structure` |
+
+其余 30 个原子（analyze、scan、pre-write、write 类）已合并到对应的主 skill 中（`story-long-analyze-mimo`、`story-long-scan-mimo`、`story-long-write-mimo` 等），不再独立存在。
 
 原子技能既可被上层 skill 内部调用，也可由用户直接使用 `/atom:{atom-id}` 按需组合。
 
@@ -145,7 +143,8 @@ skill-name/
 4. 更新 `追踪/物品.md` — 物品位置/状态变化
 5. 更新 `追踪/环境.md` — 季节/天气/场景
 6. 更新 `追踪/上下文.md` — 进度摘要
-7. 运行质量门禁：`node skills/_shared/scripts/quality-gate.js <章节文件>`
+7. **角色同步检查**：运行 `node skills/_shared/scripts/character-sync.js <项目目录>` 验证设定与追踪一致
+8. 运行质量门禁：`node skills/_shared/scripts/quality-gate.js <章节文件>`
 
 **质量门禁规则**：退出码 2（阻断）时**不得标记任务完成**，必须修复后重新运行。退出码 0 = 全部通过，1 = 有警告（可继续），2 = 有阻断项（必须修复）。
 
@@ -161,6 +160,13 @@ skill-name/
 ### 性格一致性规则
 
 写对话和行为描写前，必须检查角色的"性格锚点"（在 `追踪/角色状态.md` 中）。不得让角色说出/做出违背锚点的事，除非有充分铺垫。
+
+### 角色文件同步规则
+
+`设定/角色/{角色名}.md` 和 `追踪/角色状态.md` 必须相互印证：
+- 新角色建档时，**先建设定文件，再同步到追踪文件**（用 `character-sync.js --fix`）
+- 性格锚点以 `追踪/角色状态.md` 为准（动态演进），设定文件为初始参考
+- 每章写完运行 `character-sync.js` 检查一致性
 
 ### 一级禁用词（写正文时必查，命中即替换）
 
@@ -193,13 +199,9 @@ skill-name/
 
 | 类别 | 调用方式 | 用途 |
 |------|---------|------|
-| 拆文提取 | `/atom:extract-summary` 等 4 个 | 从原文提取结构、角色、设定、风格 |
-| 扫榜选题 | `/atom:scrape-platform` 等 4 个 | 抓取排行、分析趋势、生成选题建议 |
-| 写前准备 | `/atom:pre-write-constraints` 等 3 个 | 加载约束、上下文、检查清单 |
-| 设计生成 | `/atom:generate-chapter` 等 5 个 | 设计世界观、角色、大纲、生成正文 |
-| 多维评审 | `/atom:review-consistency` 等 5 个 | 一致性、商业性、文笔、角色、结构评审 |
-| 精准修复 | `/atom:fix-text` 等 3 个 | 文本修正、对话心理、风格修正 |
 | 检测诊断 | `/atom:detect-quality` 等 8 个 | 质量检测、一致性、情绪、声音、字数 |
+| 精准修复 | `/atom:fix-text` 等 3 个 | 文本修正、对话心理、风格修正 |
+| 多维评审 | `/atom:review-consistency` 等 5 个 | 一致性、商业性、文笔、角色、结构评审 |
 
 ### Git Hooks 安装
 

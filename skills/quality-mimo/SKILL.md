@@ -90,7 +90,7 @@ T-QUALITY-{N}: 质量检查「{文件名}」
 - **Agent**: general（隔离执行，context=none）
 - **职责**：运行所有检测脚本，汇总问题
 - **检测项**：
-  - 字数达标（Python 统计）— BLOCK
+  - 字数达标（wordcount.js 统计）— BLOCK
   - 禁用词+AI腔（style-lint.js）— BLOCK
   - AI标点符号（punctuation-normalize.js）— BLOCK
   - 一致性（consistency-check.js）— BLOCK
@@ -177,7 +177,7 @@ Step 04 复查
 - 约束：{project_dir}/.workflow/step01-chapter-content.json
 
 【检测项】（必须全部运行）
-1. 字数达标（Python统计）— BLOCK
+1. 字数达标（wordcount.js 统计）— BLOCK
 2. 禁用词+AI腔（style-lint.js）— BLOCK
 3. AI标点符号（punctuation-normalize.js）— BLOCK
 4. 一致性（consistency-check.js）— BLOCK

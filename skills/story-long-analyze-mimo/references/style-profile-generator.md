@@ -2,7 +2,7 @@
 
 > **何时加载**：story-long-analyze-mimo Stage 6 执行时。前置依赖：Stage 0-5 已完成，`拆文报告.md` + `章节/*_摘要.md` + `章节/第1-3章_深度拆解.md` + `原文/原文.txt`（或 `.md`）齐全。
 >
-> **输出**：`拆文库/{书名}/文风.md`（模板见 [style-profile-protocol.md](style-profile-protocol.md)）。
+> **输出**：`拆文库/{书名}/文风.md`（模板见 [_shared/references/style-profile-protocol.md](../../_shared/references/style-profile-protocol.md)）。
 
 ## 6 步流程
 
@@ -94,7 +94,7 @@ PYEOF
 
 实测输出形如 `sentences=6; short_lt15=66%; mid_15to30=33%; long_gt30=0%; avg_len=12; punct_density=15%`。
 
-把输出的 `short_lt15 / mid_15to30 / long_gt30 / avg_len / punct_density` 数值直接填进 `style-profile-protocol.md` 模板第 40 行的 `{...X% / Y% / Z%}` 占位符——`confidence: high`，因为是确定性测量，不是抽样估计。
+把输出的 `short_lt15 / mid_15to30 / long_gt30 / avg_len / punct_density` 数值直接填进 `style-profile-protocol.md` 模板第 40 行的 `{...X% / Y% / Z%}` 占位符——`confidence: high`，因为是确定性测量，不是抽样估计。按 [_shared/references/style-profile-protocol.md](../../_shared/references/style-profile-protocol.md) 模板填写。
 
 **Bash 不可用时的降级**（仅子代理上下文等极端情况，主线程不会触发）：
 
@@ -120,7 +120,7 @@ PYEOF
 
 ### Step 6: 落盘
 
-按 [style-profile-protocol.md](style-profile-protocol.md) 模板填写 `拆文库/{书名}/文风.md`：
+按 [_shared/references/style-profile-protocol.md](../../_shared/references/style-profile-protocol.md) 模板填写 `拆文库/{书名}/文风.md`：
 
 - **文风文件必须留在拆文库**（`拆文库/{书名}/文风.md`），**永不写入** `对标/` 或写作项目目录——拆文库是 analyze 的数据源，写作项目的 `对标/{书名}/` 由 story-import-mimo 从拆文库同步
 - 每段标 `confidence: high/med/low`（内部给写作 agent 判断强弱，普通用户可忽略）：

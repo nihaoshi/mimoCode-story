@@ -48,17 +48,15 @@ description: |
 
 用户可以通过 `/atom:{atom-id}` 前缀直接调用原子技能。原子技能是最小粒度的功能单元，可自由组合完成复杂任务。
 
-### 七大原子类别
+### 三大原子类别
 
 | 类别 | 说明 | 示例 |
 |------|------|------|
-| analyze | 拆文提取 | `extract-characters`、`extract-world`、`analyze-story` |
-| scan | 扫榜选题 | `scrape-platform`、`analyze-trend`、`generate-topic-decision` |
-| pre-write | 写前准备 | `pre-write-constraints`、`pre-write-context`、`pre-write-checklist` |
-| write | 设计生成 | `generate-chapter`、`design-character`、`design-chapter-outline` |
-| review | 多维评审 | `review-consistency`、`review-commercial`、`review-writing` |
-| fix | 精准修复 | `fix-text`、`fix-dialogue`、`fix-style` |
 | detect | 检测诊断 | `detect-quality`、`detect-consistency`、`detect-emotion` |
+| fix | 精准修复 | `fix-text`、`fix-dialogue`、`fix-style` |
+| review | 多维评审 | `review-consistency`、`review-commercial`、`review-writing` |
+
+其余原子（analyze、scan、pre-write、write 类）已合并到对应的主 skill 中，不再独立存在。
 
 原子技能既可被上层 skill 内部调用，也可由用户直接使用 `/atom:{atom-id}` 按需组合。
 

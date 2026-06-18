@@ -1,7 +1,7 @@
 ---
 name: cross-book-recall
 description: 多对标跨书召回
-sync-source: skills/story-long-write-mimo/references/cross-book-recall.md
+sync-source: _shared/references/cross-book-recall.md (canonical)
 ---
 
 # 跨书召回

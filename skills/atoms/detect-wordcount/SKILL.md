@@ -38,8 +38,8 @@ triggers:
 
 ## 执行步骤
 1. 读取 {chapter_file}
-2. 统计中文字符数（排除标点和空格）
-3. 与 {target_count} 对比，判断是否达标
+2. 运行统一字数统计：`node _shared/scripts/wordcount.js {chapter_file} --target {target_count} --json`
+3. 输出检测报告
 
 ## 输出格式
 ### 字数检测报告
