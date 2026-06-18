@@ -49,22 +49,22 @@ node {skill_dir}/scripts/step-guard.js post <步骤号> {workflow_dir}
 T-CHAP-{N}: 写第{N}章
 │
 ├─── Phase 1: 准备阶段
-│    ├── T-CHAP-{N}-01: 目录健全检查 [explore]
-│    ├── T-CHAP-{N}-02: 获取最新章节信息 [explore]
-│    ├── T-CHAP-{N}-03: 检查细纲是否存在 [explore]
-│    ├── [条件] T-CHAP-{N}-04: 创建细纲 [general]
-│    ├── [条件] T-CHAP-{N}-04.5: 对标文件处理 [general]
-│    ├── T-CHAP-{N}-05: 分析细纲确定读取文件 [general]
-│    ├── T-CHAP-{N}-06: 决策是否创建新设定 [general]
-│    └── [条件] T-CHAP-{N}-07: 创建新设定文件 [general]
+│    ├── T-CHAP-{N}-01: 目录健全检查 [子 agent 隔离·explore]
+│    ├── T-CHAP-{N}-02: 获取最新章节信息 [子 agent 隔离·explore]
+│    ├── T-CHAP-{N}-03: 检查细纲是否存在 [子 agent 隔离·explore]
+│    ├── [条件] T-CHAP-{N}-04: 创建细纲 [子 agent 隔离·general]
+│    ├── [条件] T-CHAP-{N}-04.5: 对标文件处理 [子 agent 隔离·general]
+│    ├── T-CHAP-{N}-05: 分析细纲确定读取文件 [子 agent 隔离·general]
+│    ├── T-CHAP-{N}-06: 决策是否创建新设定 [子 agent 隔离·general]
+│    └── [条件] T-CHAP-{N}-07: 创建新设定文件 [子 agent 隔离·general]
 │
 ├─── Phase 2: 写作阶段
-│    ├── T-CHAP-{N}-08: 读取上下文并展示 [general]
-│    ├── T-CHAP-{N}-09: 生成约束参数 [general]
-│    └── T-CHAP-{N}-10: 正文写作 [general] ← 只写作，不检查
+│    ├── T-CHAP-{N}-08: 读取上下文并展示 [子 agent 隔离·general]
+│    ├── T-CHAP-{N}-09: 生成约束参数 [子 agent 隔离·general]
+│    └── T-CHAP-{N}-10: 正文写作 [子 agent 隔离·general] ← 只写作，不检查
 │
 ├─── Phase 3: 检测阶段
-│    └── T-CHAP-{N}-11: 综合质量检测 [general]
+│    └── T-CHAP-{N}-11: 综合质量检测 [子 agent 隔离·general]
 │        ├── 字数检测
 │        ├── 禁用词+AI腔检测
 │        ├── 一致性检测
@@ -72,11 +72,237 @@ T-CHAP-{N}: 写第{N}章
 │        └── 跨章节检查
 │
 ├─── Phase 4: 修复阶段（有问题必修）
-│    ├── [条件] T-CHAP-{N}-12: 综合修复 [general]
-│    └── [条件] T-CHAP-{N}-13: 复查 [general]
+│    ├── [条件] T-CHAP-{N}-12: 综合修复 [子 agent 隔离·general]
+│    └── [条件] T-CHAP-{N}-13: 复查 [子 agent 隔离·general]
 │
 └─── Phase 5: 收尾阶段
-     └── T-CHAP-{N}-14: 追踪+设定更新 [general]
+     └── T-CHAP-{N}-14: 追踪+设定更新 [子 agent 隔离·general]
+```
+
+---
+
+## 子 Agent 调用规范
+
+每步必须用 `actor` 工具 spawn 子 agent 执行，不可在主会话中直接完成。
+
+### 通用 prompt 前缀
+
+所有子 agent 的 prompt 必须包含防偷懒铁律：
+
+```
+你是单章写作流程的一个步骤执行器。
+
+【防偷懒铁律】
+- 读文件，写文件，跑脚本，给用户看
+- 不凭记忆，不跳步骤，不偷懒
+- 所有输出必须写入 .workflow/ 目录
+- 项目目录：{project_dir}
+- 章节号：{N}
+```
+
+### Step 01-03: explore 类（只读检查）
+
+```javascript
+// Step 01: 目录健全检查
+actor({
+  "operation": {
+    "action": "run",
+    "subagent_type": "explore",
+    "description": "目录健全检查 - 第{N}章",
+    "prompt": "你是单章写作流程的目录检查器。\n\n【防偷懒铁律】读文件，写文件，跑脚本，给用户看。不凭记忆，不跳步骤。\n\n【任务】检查项目目录 {project_dir} 的结构完整性。\n\n【检查项】\n1. 正文/ 目录是否存在\n2. 追踪/ 目录是否存在\n3. 大纲/ 目录是否存在\n4. 设定/ 目录是否存在\n5. 以下追踪文件是否存在：伏笔.md、时间线.md、角色状态.md、物品.md、环境.md\n\n【输出】将结果写入 {project_dir}/.workflow/step01-health-check.json，格式：\n{\"project_dir\": \"...\", \"missing_dirs\": [...], \"missing_files\": [...], \"created\": [...]}\n\n缺失的目录必须创建，缺失的追踪文件必须创建空模板。",
+    "context": "none"
+  }
+})
+```
+
+```javascript
+// Step 02: 获取最新章节信息
+actor({
+  "operation": {
+    "action": "run",
+    "subagent_type": "explore",
+    "description": "获取最新章节信息 - 第{N}章",
+    "prompt": "你是单章写作流程的章节扫描器。\n\n【防偷懒铁律】不凭记忆，必须扫描目录。\n\n【任务】扫描 {project_dir}/正文/ 目录，找出最新章节。\n\n【执行】\n1. 列出正文/ 目录下所有 .md 文件\n2. 提取最大章节编号\n3. 对最新章节运行字数统计：node skills/_shared/scripts/wordcount.js <最新章节文件> --json\n\n【输出】写入 {project_dir}/.workflow/step02-chapter-info.json，格式：\n{\"latest_chapter\": 5, \"latest_file\": \"正文/第005章.md\", \"word_count\": 3200, \"next_chapter\": 6}",
+    "context": "none"
+  }
+})
+```
+
+```javascript
+// Step 03: 检查细纲
+actor({
+  "operation": {
+    "action": "run",
+    "subagent_type": "explore",
+    "description": "检查细纲 - 第{N}章",
+    "prompt": "你是单章写作流程的细纲检查器。\n\n【防偷懒铁律】必须实际检查文件，不能推断。\n\n【任务】检查 {project_dir}/大纲/细纲_第{N}章.md 是否存在且格式完整。\n\n【执行】\n1. 检查文件是否存在\n2. 如存在，验证是否包含：核心事件、情节点序列、目标情绪、章首钩子、章尾钩子、字数目标\n3. 统计情节点数量\n\n【输出】写入 {project_dir}/.workflow/step03-outline-check.json，格式：\n{\"exists\": true, \"need_create\": false, \"chapter\": {N}, \"plot_points\": 12, \"has_hook\": true, \"word_target\": 3000}",
+    "context": "none"
+  }
+})
+```
+
+### Step 04-07: general 类（准备阶段）
+
+```javascript
+// Step 04: 创建细纲 [条件]
+actor({
+  "operation": {
+    "action": "run",
+    "subagent_type": "general",
+    "description": "创建细纲 - 第{N}章",
+    "prompt": "你是单章写作流程的细纲创建器。\n\n【防偷懒铁律】读文件，写文件，给用户看。不凭记忆。\n\n【任务】为第{N}章创建细纲。\n\n【必读文件】\n1. {project_dir}/大纲/大纲.md — 全书结构\n2. {project_dir}/大纲/卷纲_第X卷.md — 当前卷大纲\n3. {project_dir}/追踪/伏笔.md — 待回收伏笔\n4. {project_dir}/追踪/角色状态.md — 角色当前状态\n5. {project_dir}/正文/第{N-1}章.md — 上一章（首章跳过）\n\n【输出】写入 {project_dir}/大纲/细纲_第{N}章.md\n\n【要求】\n- 情节点 >= 10 个\n- 必须有章首钩子和章尾钩子\n- 必须有爽点标注\n- 必须有字数目标",
+    "context": "none"
+  }
+})
+```
+
+```javascript
+// Step 04.5: 对标文件处理 [条件]
+actor({
+  "operation": {
+    "action": "run",
+    "subagent_type": "general",
+    "description": "对标文件处理 - 第{N}章",
+    "prompt": "你是单章写作流程的对标文件处理器。\n\n【防偷懒铁律】必须实际读取文件，不能凭记忆。\n\n【任务】处理对标书的文风和拆文报告，为写作提供参考。\n\n【执行】\n1. 读取 {project_dir}/设定/题材定位.md 的「主对标书」字段\n2. 确定对标书路径（优先 对标/{书名}/，回退 拆文库/{书名}/）\n3. 读取对标文风.md，提取原文锚点片段（300-500字）\n4. 读取拆文报告.md，提取可借鉴套路\n5. 读取本章涉及角色的角色档案\n\n【输出】写入 {project_dir}/.workflow/step04-benchmark.json，格式：\n{\"benchmark_book\": \"书名\", \"benchmark_path\": \"...\", \"anchor_excerpts\": [...], \"techniques\": [...], \"characters\": [...]}",
+    "context": "none"
+  }
+})
+```
+
+```javascript
+// Step 05: 分析细纲确定读取文件
+actor({
+  "operation": {
+    "action": "run",
+    "subagent_type": "general",
+    "description": "文件分析 - 第{N}章",
+    "prompt": "你是单章写作流程的文件分析器。\n\n【防偷懒铁律】必须从细纲实际解析，不能硬编码。\n\n【任务】从细纲解析本章需要读取的所有文件。\n\n【必读】{project_dir}/大纲/细纲_第{N}章.md\n\n【解析内容】\n1. 提取本章涉及的角色名\n2. 提取本章涉及的场景\n3. 提取本章涉及的伏笔\n4. 列出需要加载的设定文件\n5. 列出需要加载的跨卷追踪文件（如存在）\n6. 列出需要加载的故事线文件（如存在）\n\n【输出】写入 {project_dir}/.workflow/step05-required-files.json，格式：\n{\"characters\": [...], \"scenes\": [...], \"foreshadows\": [...], \"setting_files\": [...], \"cross_volume_files\": [...], \"storyline_files\": [...]}",
+    "context": "none"
+  }
+})
+```
+
+```javascript
+// Step 06: 设定决策
+actor({
+  "operation": {
+    "action": "run",
+    "subagent_type": "general",
+    "description": "设定决策 - 第{N}章",
+    "prompt": "你是单章写作流程的设定决策器。\n\n【防偷懒铁律】必须实际比对，不能推断。\n\n【任务】比对细纲中的元素与现有设定，发现新元素。\n\n【执行】\n1. 读取 {project_dir}/.workflow/step05-required-files.json\n2. 读取 {project_dir}/追踪/角色状态.md\n3. 检查细纲中提到的角色是否已有设定文件\n4. 检查细纲中提到的势力/地点是否已有设定文件\n\n【输出】写入 {project_dir}/.workflow/step06-new-settings.json，格式：\n{\"need_new_settings\": true, \"new_characters\": [...], \"new_forces\": [...], \"new_locations\": [...]}",
+    "context": "none"
+  }
+})
+```
+
+```javascript
+// Step 07: 创建新设定 [条件]
+actor({
+  "operation": {
+    "action": "run",
+    "subagent_type": "general",
+    "description": "创建新设定 - 第{N}章",
+    "prompt": "你是单章写作流程的设定创建器。\n\n【防偷懒铁律】必须完整，不能只有骨架。\n\n【任务】为新出现的元素创建设定文件。\n\n【输入】读取 {project_dir}/.workflow/step06-new-settings.json\n\n【执行】\n1. 为每个新角色创建 {project_dir}/设定/角色/{角色名}.md\n2. 为每个新势力创建 {project_dir}/设定/势力/{势力名}.md\n3. 在 {project_dir}/追踪/角色状态.md 中登记新角色初始状态\n4. 运行 character-sync.js 验证同步\n\n【输出】设定文件 + 更新后的角色状态.md",
+    "context": "none"
+  }
+})
+```
+
+### Step 08-10: general 类（写作阶段）
+
+```javascript
+// Step 08: 读取上下文
+actor({
+  "operation": {
+    "action": "run",
+    "subagent_type": "general",
+    "description": "读取上下文 - 第{N}章",
+    "prompt": "你是单章写作流程的上下文加载器。\n\n【防偷懒铁律】设定文件必须全部读取，不能跳过。\n\n【任务】读取 step05 列出的所有文件，组装写作上下文。\n\n【必读】\n1. {project_dir}/.workflow/step05-required-files.json — 需要读取的文件列表\n2. 按列表逐一读取所有文件\n3. 上一章结尾必须是最后500字原文\n4. 跨卷追踪和故事线文件存在时必须加载\n5. 如有对标，读取 {project_dir}/.workflow/step04-benchmark.json\n\n【输出】写入 {project_dir}/.workflow/step08-context.json，格式：\n{\"chapter\": {N}, \"previous_ending\": \"...\", \"characters\": {...}, \"settings\": {...}, \"foreshadows\": [...], \"benchmark\": {...}}",
+    "context": "none"
+  }
+})
+```
+
+```javascript
+// Step 09: 生成约束
+actor({
+  "operation": {
+    "action": "run",
+    "subagent_type": "general",
+    "description": "生成约束 - 第{N}章",
+    "prompt": "你是单章写作流程的约束生成器。\n\n【防偷懒铁律】禁用词必须从文件加载，字数限制必须明确。\n\n【任务】生成本章写作的质量约束参数。\n\n【执行】\n1. 读取 {project_dir}/.workflow/step08-context.json 获取上下文\n2. 从细纲读取字数目标\n3. 加载禁用词清单（读取 skills/_shared/scripts/banned-words.js）\n4. 加载 AI 腔禁令（读取 skills/_shared/references/anti-ai-writing.md）\n5. 如有对标，从 step04-benchmark.json 读取锚点片段和技法\n\n【输出】写入 {project_dir}/.workflow/step09-constraints.json，格式：\n{\"word_count_target\": 3000, \"banned_words\": [...], \"ai_patterns\": [...], \"benchmark_excerpts\": [...], \"techniques\": [...]}",
+    "context": "none"
+  }
+})
+```
+
+```javascript
+// Step 10: 正文写作
+actor({
+  "operation": {
+    "action": "run",
+    "subagent_type": "general",
+    "description": "正文写作 - 第{N}章",
+    "prompt": "你是 narrative-writer，负责正文写作。只写作，不检查质量。\n\n【防偷懒铁律】必须写入文件，不在对话中输出。必须包含所有场景。\n\n【输入文件】\n1. {project_dir}/大纲/细纲_第{N}章.md — 细纲\n2. {project_dir}/.workflow/step08-context.json — 上下文\n3. {project_dir}/.workflow/step09-constraints.json — 约束\n\n【写作要求】\n1. 严格按细纲的事件序列写作\n2. 遵守约束参数（禁用词、文风、字数目标）\n3. 字数必须达到 {word_count_target}\n4. 写入文件，不在对话中输出\n\n【质量红线】（写作时直接避开，不要写完再改）\n- 禁用词清单中的词绝对不能出现\n- AI腔句式禁止\n- 禁止排比\n- 心理描写≤2句\n- 比喻≤1个/千字\n- 段落≤4行\n- 单句≤45字\n\n【输出】\n- 正文：{project_dir}/正文/第{N}章.md\n\n写完后运行字数验证：\nnode skills/_shared/scripts/wordcount.js {project_dir}/正文/第{N}章.md --json\n字数未达标禁止结束。",
+    "context": "none"
+  }
+})
+```
+
+### Step 11-13: general 类（检测修复阶段）
+
+```javascript
+// Step 11: 综合质量检测
+actor({
+  "operation": {
+    "action": "run",
+    "subagent_type": "general",
+    "description": "综合质量检测 - 第{N}章",
+    "prompt": "你是 quality-checker，负责综合质量检测。有问题必修。\n\n【防偷懒铁律】必须运行所有检测脚本，不能跳过。\n\n【输入文件】\n- 正文：{project_dir}/正文/第{N}章.md\n- 约束：{project_dir}/.workflow/step09-constraints.json\n- 上下文：{project_dir}/.workflow/step08-context.json\n\n【检测项】（必须全部运行）\n1. 字数达标 — node skills/_shared/scripts/wordcount.js {chapter_file} --json — BLOCK\n2. 禁用词+AI腔 — node skills/_shared/scripts/style-lint.js --json {chapter_file} — BLOCK\n3. AI标点符号 — node skills/_shared/scripts/punctuation-normalize.js --json {chapter_file} — BLOCK\n4. 一致性 — node skills/_shared/scripts/consistency-check.js --json {chapter_file} {project_dir} — BLOCK\n5. 设定校验 — LLM分析（世界观/金手指/文风/题材/关系）— BLOCK\n6. 章内逻辑性 — LLM分析 — WARN\n7. 跨章节检查 — node skills/_shared/scripts/cross-chapter-check.js --json {chapter_file} {project_dir} — WARN\n8. 跨卷一致性 — LLM分析（跨卷伏笔/角色弧线/故事线）— WARN\n\n【输出】写入 {project_dir}/.workflow/step11-quality-report.json，格式：\n{\"status\": \"pass|warn|fail\", \"blockers\": [...], \"warnings\": [...], \"checks\": [...]}\n\n【关键规则】只要有任何 WARN 或 BLOCK，status 必须为 fail。",
+    "context": "none"
+  }
+})
+```
+
+```javascript
+// Step 12: 综合修复 [条件]
+actor({
+  "operation": {
+    "action": "run",
+    "subagent_type": "general",
+    "description": "综合修复 - 第{N}章",
+    "prompt": "你是 quality-fixer，负责修复所有问题。\n\n【防偷懒铁律】每个问题必须修复，不能跳过 WARN。\n\n【输入文件】\n- 检测报告：{project_dir}/.workflow/step11-quality-report.json\n- 正文：{project_dir}/正文/第{N}章.md\n- 约束：{project_dir}/.workflow/step09-constraints.json\n\n【修复规则】\n1. 读取检测报告中的 blockers 和 warnings\n2. 逐一修复每个问题\n3. 字数不足 → 补充内容\n4. 禁用词 → 替换\n5. 一致性错误 → 修正\n6. 修复后重新运行字数验证：node skills/_shared/scripts/wordcount.js {chapter_file} --json\n\n【输出】\n- 更新：{project_dir}/正文/第{N}章.md（修复后）\n- 日志：{project_dir}/.workflow/step12-fix-log.json，格式：\n{\"fixed_count\": 5, \"fixed_items\": [...], \"final_word_count\": 3200}",
+    "context": "none"
+  }
+})
+```
+
+```javascript
+// Step 13: 复查 [条件]
+actor({
+  "operation": {
+    "action": "run",
+    "subagent_type": "general",
+    "description": "复查 - 第{N}章",
+    "prompt": "你是 quality-rechecker，负责复查修复结果。最多3轮。\n\n【防偷懒铁律】不能假设修复成功，必须重新检测。\n\n【任务】重新运行 Step 11 的全部检测项，验证修复是否成功。\n\n【执行】\n1. 重新运行所有检测脚本\n2. 如仍有问题 → 回到 Step 12（上限3轮）\n3. 如全部通过 → 输出通过报告\n\n【输出】写入 {project_dir}/.workflow/step13-recheck-report.json，格式：\n{\"status\": \"pass|fail\", \"round\": 1, \"remaining_blockers\": [], \"remaining_warnings\": []}",
+    "context": "none"
+  }
+})
+```
+
+### Step 14: general 类（收尾阶段）
+
+```javascript
+// Step 14: 追踪+设定更新
+actor({
+  "operation": {
+    "action": "run",
+    "subagent_type": "general",
+    "description": "追踪+设定更新 - 第{N}章",
+    "prompt": "你是单章写作流程的追踪更新器。\n\n【防偷懒铁律】必须从正文实际提取，不能凭记忆。\n\n【任务】从正文提取信息，更新所有追踪文件和设定文件。\n\n【输入】\n1. {project_dir}/正文/第{N}章.md — 本章正文\n2. {project_dir}/.workflow/step08-context.json — 上下文\n\n【更新文件】（必须全部更新）\n1. {project_dir}/追踪/伏笔.md — 新增/回收伏笔\n2. {project_dir}/追踪/时间线.md — 记录事件时序\n3. {project_dir}/追踪/角色状态.md — 更新角色状态+性格锚点\n4. {project_dir}/追踪/物品.md — 物品位置/状态变化\n5. {project_dir}/追踪/环境.md — 季节/天气/场景\n6. {project_dir}/追踪/重复语句.md — 记录重复表达\n7. {project_dir}/追踪/上下文.md — 进度摘要\n8. {project_dir}/故事线/故事线_索引.md — 更新故事线状态\n9. {project_dir}/故事线/故事线_主线_*.md — 更新主线进展\n10. {project_dir}/故事线/故事线_交叉点.md — 更新交叉点\n\n【角色同步】更新完角色状态后，运行：\nnode skills/_shared/scripts/character-sync.js {project_dir} --json\n\n【输出】更新后的追踪文件列表",
+    "context": "none"
+  }
+})
 ```
 
 ---
@@ -84,31 +310,31 @@ T-CHAP-{N}: 写第{N}章
 ## 各步骤说明
 
 ### Step 01: 目录健全检查
-- **Agent**: explore（隔离执行）
+- **Agent**: 子 agent 隔离（explore）
 - **检查**：正文/、追踪/、大纲/、设定/、5个追踪文件模板
 - **输出**：`.workflow/step01-health-check.json`
 - **防偷懒**：必须实际检查每个路径，缺失必须创建
 
 ### Step 02: 获取最新章节
-- **Agent**: explore（隔离执行）
+- **Agent**: 子 agent 隔离（explore）
 - **检查**：扫描正文目录，找最大编号，统计字数
 - **输出**：`.workflow/step02-chapter-info.json`
 - **防偷懒**：必须扫描目录，不能从上下文推断
 
 ### Step 03: 检查细纲
-- **Agent**: explore（隔离执行）
+- **Agent**: 子 agent 隔离（explore）
 - **检查**：细纲文件是否存在，格式是否完整
 - **输出**：`.workflow/step03-outline-check.json`
 - **防偷懒**：存在时必须验证格式
 
 ### Step 04: 创建细纲 [条件：need_create=true]
-- **Agent**: general（隔离执行）
+- **Agent**: 子 agent 隔离（general）
 - **输入**：大纲、卷纲、上下文、伏笔、角色状态
 - **输出**：`大纲/细纲_{N}章.md`
 - **防偷懒**：情节点 >= 10，必须有钩子和爽点
 
 ### Step 04.5: 对标文件处理 [条件：存在对标目录或拆文库目录]
-- **Agent**: general（隔离执行）
+- **Agent**: 子 agent 隔离（general）
 - **检查**：是否存在 对标/ 或 拆文库/ 目录
 - **职责**：
   - 读取 设定/题材定位.md 的「主对标书」字段
@@ -120,7 +346,7 @@ T-CHAP-{N}: 写第{N}章
 - **防偷懒**：必须实际读取文件，不能凭记忆
 
 ### Step 05: 文件分析
-- **Agent**: general（隔离执行）
+- **Agent**: 子 agent 隔离（general）
 - **检查**：从细纲解析角色、场景、伏笔
 - **输出**：`.workflow/step05-required-files.json`
 - **必须包含的设定文件**（除角色外，全部加载）：
@@ -140,19 +366,19 @@ T-CHAP-{N}: 写第{N}章
 - **防偷懒**：必须从细纲实际解析，不能硬编码；设定文件必须全部列出
 
 ### Step 06: 设定决策
-- **Agent**: general（隔离执行）
+- **Agent**: 子 agent 隔离（general）
 - **检查**：与角色状态交叉比对，发现新元素
 - **输出**：`.workflow/step06-new-settings.json`
 - **防偷懒**：必须实际比对
 
 ### Step 07: 创建设定 [条件：need_new_settings=true]
-- **Agent**: general（隔离执行）
+- **Agent**: 子 agent 隔离（general）
 - **输入**：新元素列表
 - **输出**：设定文件
 - **防偷懒**：必须完整，不能只有骨架
 
 ### Step 08: 读取上下文
-- **Agent**: general（隔离执行）
+- **Agent**: 子 agent 隔离（general）
 - **检查**：读取 step05 列出的所有文件
 - **强制加载的设定文件**（除角色外）：
   - `设定/世界观/*.md` — 世界观规则（如时代背景、社会规则、技术设定）
@@ -174,7 +400,7 @@ T-CHAP-{N}: 写第{N}章
 - **防偷懒**：上一章结尾必须是最后500字原文；设定文件必须全部读取，不能跳过；跨卷追踪和故事线文件存在时必须加载
 
 ### Step 09: 生成约束
-- **Agent**: general（隔离执行）
+- **Agent**: 子 agent 隔离（general）
 - **检查**：加载禁用词、文风规则、字数限制
 - **对标约束**（如 benchmark 存在）：
   - 原文锚点片段 → 作为 few-shot 示范
@@ -184,14 +410,14 @@ T-CHAP-{N}: 写第{N}章
 - **防偷懒**：禁用词必须从文件加载，字数限制必须明确
 
 ### Step 10: 正文写作
-- **Agent**: general（隔离执行）
+- **Agent**: 子 agent 隔离（general）
 - **职责**：只写作，不检查质量
 - **输入**：细纲、上下文、约束
 - **输出**：`正文/第{N}章.md`
 - **防偷懒**：必须包含所有场景，必须写入文件
 
 ### Step 11: 综合质量检测
-- **Agent**: general（隔离执行）
+- **Agent**: 子 agent 隔离（general）
 - **检测项**：
   - 字数达标（BLOCK）
   - 禁用词+AI腔（BLOCK）
@@ -215,20 +441,20 @@ T-CHAP-{N}: 写第{N}章
 - **关键规则**：只要有任何 WARN 或 BLOCK，必须进入修复流程
 
 ### Step 12: 综合修复 [条件：有任何问题]
-- **Agent**: general（隔离执行）
+- **Agent**: 子 agent 隔离（general）
 - **职责**：修复所有问题（字数扩充+禁用词替换+逻辑修正）
 - **输入**：检测报告、正文、约束
 - **输出**：修复后正文 + `.workflow/step12-fix-log.json`
 - **防偷懒**：每个问题必须修复，不能跳过 WARN
 
 ### Step 13: 复查 [条件：执行了修复]
-- **Agent**: general（隔离执行）
+- **Agent**: 子 agent 隔离（general）
 - **职责**：重新运行完整检测
 - **输出**：`.workflow/step13-recheck-report.json`
 - **防偷懒**：不能假设修复成功，最多3轮
 
 ### Step 14: 追踪+设定更新
-- **Agent**: general（隔离执行）
+- **Agent**: 子 agent 隔离（general）
 - **检查**：从正文提取信息，更新追踪文件和设定文件
 - **输出**：
   - 追踪文件（7个）：伏笔、时间线、角色状态、物品、环境、重复语句、上下文
