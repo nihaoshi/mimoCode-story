@@ -29,6 +29,7 @@ description: |
 | 导出 | 导出、导出TXT、导出EPUB、导出校对稿 | `story-export-mimo` |
 | 质量检查 | 检查质量、质量检查 | `quality-mimo` |
 | 项目审计 | 审计项目、全量检查 | `audit-mimo` |
+| 进度管理 | 进度、存档、归档、下一弧、维护大纲 | `story-progress-mimo` |
 
 ## 路由流程
 
