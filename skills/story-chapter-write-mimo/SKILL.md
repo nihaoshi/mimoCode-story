@@ -109,7 +109,7 @@ actor({
     "action": "run",
     "subagent_type": "explore",
     "description": "目录健全检查 - 第{N}章",
-    "prompt": "你是单章写作流程的目录检查器。\n\n【防偷懒铁律】读文件，写文件，跑脚本，给用户看。不凭记忆，不跳步骤。\n\n【任务】检查项目目录 {project_dir} 的结构完整性。\n\n【检查项】\n1. 正文/ 目录是否存在\n2. 追踪/ 目录是否存在\n3. 大纲/ 目录是否存在\n4. 设定/ 目录是否存在\n5. 以下追踪文件是否存在：伏笔.md、时间线.md、角色状态.md、物品.md、环境.md\n\n【输出】将结果写入 {project_dir}/.workflow/step01-health-check.json，格式：\n{\"project_dir\": \"...\", \"missing_dirs\": [...], \"missing_files\": [...], \"created\": [...]}\n\n缺失的目录必须创建，缺失的追踪文件必须创建空模板。",
+    "prompt": "你是单章写作流程的目录检查器。\n\n【防偷懒铁律】读文件，写文件，跑脚本，给用户看。不凭记忆，不跳步骤。\n\n【任务】检查项目目录 {project_dir} 的结构完整性。\n\n【检查项】\n1. 正文/ 目录是否存在\n2. 追踪/ 目录是否存在\n3. 大纲/ 目录是否存在\n4. 设定/ 目录是否存在\n5. 故事线/ 目录是否存在\n6. 跨卷追踪/ 目录是否存在\n7. 对标/ 目录是否存在（可选）\n8. 参考资料/ 目录是否存在（可选）\n9. 以下追踪文件是否存在：伏笔.md、时间线.md、角色状态.md、物品.md、环境.md、物资.md、重复语句.md、上下文.md\n\n【输出】将结果写入 {project_dir}/.workflow/step01-health-check.json，格式：\n{\"project_dir\": \"...\", \"missing_dirs\": [...], \"missing_files\": [...], \"created\": [...]}\n\n缺失的目录必须创建，缺失的追踪文件必须创建空模板。",
     "context": "none"
   }
 })
@@ -150,7 +150,7 @@ actor({
     "action": "run",
     "subagent_type": "general",
     "description": "创建细纲 - 第{N}章",
-    "prompt": "你是单章写作流程的细纲创建器。\n\n【防偷懒铁律】读文件，写文件，给用户看。不凭记忆。\n\n【任务】为第{N}章创建细纲。\n\n【必读文件】\n1. {project_dir}/大纲/大纲.md — 全书结构\n2. {project_dir}/大纲/卷纲_第X卷.md — 当前卷大纲\n3. {project_dir}/追踪/伏笔.md — 待回收伏笔\n4. {project_dir}/追踪/角色状态.md — 角色当前状态\n5. {project_dir}/正文/第{N-1}章.md — 上一章（首章跳过）\n\n【输出】写入 {project_dir}/大纲/细纲_第{N}章.md\n\n【要求】\n- 情节点 >= 10 个\n- 必须有章首钩子和章尾钩子\n- 必须有爽点标注\n- 必须有字数目标",
+    "prompt": "你是单章写作流程的细纲创建器。\n\n【防偷懒铁律】读文件，写文件，给用户看。不凭记忆。\n\n【任务】为第{N}章创建细纲。\n\n【必读文件】（参考 skills/_shared/references/context-checklist.md 场景1：创建细纲，14项）\n1. {project_dir}/大纲/大纲.md — 全书结构（O1）\n2. {project_dir}/大纲/卷纲_第X卷.md — 当前卷大纲（O2）\n3. {project_dir}/追踪/伏笔.md — 待回收伏笔（T1）\n4. {project_dir}/追踪/角色状态.md — 角色当前状态（T3）\n5. {project_dir}/正文/第{N-1}章.md — 上一章（首章跳过）\n6. {project_dir}/设定/世界观/*.md — 世界观规则（S1）\n7. {project_dir}/设定/世界观/金手指.md — 金手指规则（S2）\n8. {project_dir}/设定/角色/{相关角色}.md — 角色设定（S3）\n9. {project_dir}/设定/关系.md — 角色关系（S5）\n10. {project_dir}/设定/题材定位.md — 题材核心梗（S6）\n11. {project_dir}/设定/文风.md — 文风约束（S7）\n12. {project_dir}/跨卷追踪/跨卷伏笔.md — 跨卷伏笔（C1，如存在）\n13. {project_dir}/跨卷追踪/跨卷角色弧线.md — 角色弧线（C2，如存在）\n14. {project_dir}/故事线/故事线_索引.md — 故事线索引（L1，如存在）\n15. {project_dir}/故事线/故事线_主线_*.md — 主线故事线（L2，如存在）\n\n【输出】写入 {project_dir}/大纲/细纲_第{N}章.md\n\n【要求】\n- 情节点 >= 10 个\n- 必须有章首钩子和章尾钩子\n- 必须有爽点标注\n- 必须有字数目标\n- 细纲内容不得违反世界观规则和金手指规则\n- 角色行为必须符合角色设定和性格锚点\n- 如有跨卷伏笔需要在本章回收，必须在细纲中标注",
     "context": "none"
   }
 })
@@ -176,7 +176,7 @@ actor({
     "action": "run",
     "subagent_type": "general",
     "description": "文件分析 - 第{N}章",
-    "prompt": "你是单章写作流程的文件分析器。\n\n【防偷懒铁律】必须从细纲实际解析，不能硬编码。\n\n【任务】从细纲解析本章需要读取的所有文件。\n\n【必读】{project_dir}/大纲/细纲_第{N}章.md\n\n【解析内容】\n1. 提取本章涉及的角色名\n2. 提取本章涉及的场景\n3. 提取本章涉及的伏笔\n4. 列出需要加载的设定文件\n5. 列出需要加载的跨卷追踪文件（如存在）\n6. 列出需要加载的故事线文件（如存在）\n\n【输出】写入 {project_dir}/.workflow/step05-required-files.json，格式：\n{\"characters\": [...], \"scenes\": [...], \"foreshadows\": [...], \"setting_files\": [...], \"cross_volume_files\": [...], \"storyline_files\": [...]}",
+    "prompt": "你是单章写作流程的文件分析器。\n\n【防偷懒铁律】必须从细纲实际解析，不能硬编码。\n\n【任务】从细纲解析本章需要读取的所有文件。参考 skills/_shared/references/context-checklist.md 场景2：正文写作（22项）。\n\n【必读】{project_dir}/大纲/细纲_第{N}章.md\n\n【必须列出的文件】\n1. 设定文件（S1-S7）：世界观/*.md、金手指.md、角色/{相关角色}.md、势力/*.md、关系.md、题材定位.md、文风.md\n2. 追踪文件（T1-T8）：伏笔.md、时间线.md、角色状态.md、物品.md、环境.md、物资.md、重复语句.md、上下文.md\n3. 跨卷追踪（C1-C3）：跨卷伏笔.md、跨卷角色弧线.md、卷间过渡.md（如存在）\n4. 故事线（L1-L3）：故事线索引.md、主线_*.md、交叉点.md（如存在）\n5. 对标文件（B1-B4）：拆文报告.md、文风.md、剧情/*.md、设定/*.md（如存在）\n\n【解析内容】\n1. 提取本章涉及的角色名 → 映射到 设定/角色/{角色名}.md\n2. 提取本章涉及的场景\n3. 提取本章涉及的伏笔\n4. 列出所有需要加载的文件路径\n\n【输出】写入 {project_dir}/.workflow/step05-required-files.json，格式：\n{\"characters\": [...], \"scenes\": [...], \"foreshadows\": [...], \"setting_files\": [...], \"tracking_files\": [...], \"cross_volume_files\": [...], \"storyline_files\": [...], \"benchmark_files\": [...]}",
     "context": "none"
   }
 })
@@ -217,7 +217,7 @@ actor({
     "action": "run",
     "subagent_type": "general",
     "description": "读取上下文 - 第{N}章",
-    "prompt": "你是单章写作流程的上下文加载器。\n\n【防偷懒铁律】设定文件必须全部读取，不能跳过。\n\n【任务】读取 step05 列出的所有文件，组装写作上下文。\n\n【必读】\n1. {project_dir}/.workflow/step05-required-files.json — 需要读取的文件列表\n2. 按列表逐一读取所有文件\n3. 上一章结尾必须是最后500字原文\n4. 跨卷追踪和故事线文件存在时必须加载\n5. 如有对标，读取 {project_dir}/.workflow/step04-benchmark.json\n\n【输出】写入 {project_dir}/.workflow/step08-context.json，格式：\n{\"chapter\": {N}, \"previous_ending\": \"...\", \"characters\": {...}, \"settings\": {...}, \"foreshadows\": [...], \"benchmark\": {...}}",
+    "prompt": "你是单章写作流程的上下文加载器。\n\n【防偷懒铁律】设定文件必须全部读取，不能跳过。\n\n【任务】读取 step05 列出的所有文件，组装写作上下文。参考 skills/_shared/references/context-checklist.md 场景2：正文写作（22项）。\n\n【必读】\n1. {project_dir}/.workflow/step05-required-files.json — 需要读取的文件列表\n2. 按列表逐一读取所有文件，每读一个输出状态（✅已加载 / ⚠️缺失 / 🚫阻断）\n3. 上一章结尾必须是最后500字原文\n4. 设定文件（S1-S7）必须全部读取：世界观/*.md、金手指.md、角色/{角色}.md、势力/*.md、关系.md、题材定位.md、文风.md\n5. 追踪文件（T1-T8）必须全部读取：伏笔.md、时间线.md、角色状态.md、物品.md、环境.md、物资.md、重复语句.md、上下文.md\n6. 跨卷追踪（C1-C3）存在时必须加载：跨卷伏笔.md、跨卷角色弧线.md、卷间过渡.md\n7. 故事线（L1-L3）存在时必须加载：故事线索引.md、主线_*.md、交叉点.md\n8. 如有对标，读取 {project_dir}/.workflow/step04-benchmark.json\n\n【输出】写入 {project_dir}/.workflow/step08-context.json，格式：\n{\"chapter\": {N}, \"previous_ending\": \"...\", \"characters\": {...}, \"settings\": {...}, \"tracking\": {...}, \"cross_volume\": {...}, \"storylines\": {...}, \"foreshadows\": [...], \"benchmark\": {...}}",
     "context": "none"
   }
 })
@@ -258,7 +258,7 @@ actor({
     "action": "run",
     "subagent_type": "general",
     "description": "综合质量检测 - 第{N}章",
-    "prompt": "你是 quality-checker，负责综合质量检测。有问题必修。\n\n【防偷懒铁律】必须运行所有检测脚本，不能跳过。\n\n【输入文件】\n- 正文：{project_dir}/正文/第{N}章.md\n- 约束：{project_dir}/.workflow/step09-constraints.json\n- 上下文：{project_dir}/.workflow/step08-context.json\n\n【检测项】（必须全部运行）\n1. 字数达标 — node skills/_shared/scripts/wordcount.js {chapter_file} --json — BLOCK\n2. 禁用词+AI腔 — node skills/_shared/scripts/style-lint.js --json {chapter_file} — BLOCK\n3. AI标点符号 — node skills/_shared/scripts/punctuation-normalize.js --json {chapter_file} — BLOCK\n4. 一致性 — node skills/_shared/scripts/consistency-check.js --json {chapter_file} {project_dir} — BLOCK\n5. 设定校验 — LLM分析（世界观/金手指/文风/题材/关系）— BLOCK\n6. 章内逻辑性 — LLM分析 — WARN\n7. 跨章节检查 — node skills/_shared/scripts/cross-chapter-check.js --json {chapter_file} {project_dir} — WARN\n8. 跨卷一致性 — LLM分析（跨卷伏笔/角色弧线/故事线）— WARN\n\n【输出】写入 {project_dir}/.workflow/step11-quality-report.json，格式：\n{\"status\": \"pass|warn|fail\", \"blockers\": [...], \"warnings\": [...], \"checks\": [...]}\n\n【关键规则】只要有任何 WARN 或 BLOCK，status 必须为 fail。",
+    "prompt": "你是 quality-checker，负责综合质量检测。有问题必修。\n\n【防偷懒铁律】必须运行所有检测脚本，不能跳过。\n\n【输入文件】\n- 正文：{project_dir}/正文/第{N}章.md\n- 约束：{project_dir}/.workflow/step09-constraints.json\n- 上下文：{project_dir}/.workflow/step08-context.json\n- 细纲：{project_dir}/大纲/细纲_第{N}章.md\n\n【参考文件】（设定校验和跨卷一致性检测必须读取）\n- 设定：{project_dir}/设定/世界观/*.md、设定/世界观/金手指.md\n- 角色：{project_dir}/设定/角色/{相关角色}.md\n- 关系：{project_dir}/设定/关系.md\n- 题材：{project_dir}/设定/题材定位.md\n- 文风：{project_dir}/设定/文风.md\n- 跨卷伏笔：{project_dir}/跨卷追踪/跨卷伏笔.md（如存在）\n- 角色弧线：{project_dir}/跨卷追踪/跨卷角色弧线.md（如存在）\n- 故事线：{project_dir}/故事线/故事线_索引.md、故事线_主线_*.md（如存在）\n\n【检测项】（必须全部运行）\n1. 字数达标 — node skills/_shared/scripts/wordcount.js {chapter_file} --json — BLOCK\n2. 禁用词+AI腔 — node skills/_shared/scripts/style-lint.js --json {chapter_file} — BLOCK\n3. AI标点符号 — node skills/_shared/scripts/punctuation-normalize.js --json {chapter_file} — BLOCK\n4. 一致性 — node skills/_shared/scripts/consistency-check.js --json {chapter_file} {project_dir} — BLOCK\n5. 设定校验 — LLM分析（对比设定文件，检查世界观/金手指/文风/题材/关系是否符合）— BLOCK\n6. 章内逻辑性 — LLM分析 — WARN\n7. 跨章节检查 — node skills/_shared/scripts/cross-chapter-check.js --json {chapter_file} {project_dir} — WARN\n8. 跨卷一致性 — LLM分析（对比跨卷追踪和故事线文件，检查伏笔逾期/弧线断裂/故事线断裂）— WARN\n\n【输出】写入 {project_dir}/.workflow/step11-quality-report.json，格式：\n{\"status\": \"pass|warn|fail\", \"blockers\": [...], \"warnings\": [...], \"checks\": [...]}\n\n【关键规则】只要有任何 WARN 或 BLOCK，status 必须为 fail。",
     "context": "none"
   }
 })
@@ -271,7 +271,7 @@ actor({
     "action": "run",
     "subagent_type": "general",
     "description": "综合修复 - 第{N}章",
-    "prompt": "你是 quality-fixer，负责修复所有问题。\n\n【防偷懒铁律】每个问题必须修复，不能跳过 WARN。\n\n【输入文件】\n- 检测报告：{project_dir}/.workflow/step11-quality-report.json\n- 正文：{project_dir}/正文/第{N}章.md\n- 约束：{project_dir}/.workflow/step09-constraints.json\n\n【修复规则】\n1. 读取检测报告中的 blockers 和 warnings\n2. 逐一修复每个问题\n3. 字数不足 → 补充内容\n4. 禁用词 → 替换\n5. 一致性错误 → 修正\n6. 修复后重新运行字数验证：node skills/_shared/scripts/wordcount.js {chapter_file} --json\n\n【输出】\n- 更新：{project_dir}/正文/第{N}章.md（修复后）\n- 日志：{project_dir}/.workflow/step12-fix-log.json，格式：\n{\"fixed_count\": 5, \"fixed_items\": [...], \"final_word_count\": 3200}",
+    "prompt": "你是 quality-fixer，负责修复所有问题。\n\n【防偷懒铁律】每个问题必须修复，不能跳过 WARN。\n\n【输入文件】\n- 检测报告：{project_dir}/.workflow/step11-quality-report.json\n- 正文：{project_dir}/正文/第{N}章.md\n- 约束：{project_dir}/.workflow/step09-constraints.json\n- 细纲：{project_dir}/大纲/细纲_第{N}章.md\n\n【参考文件】（修复一致性错误和设定违反时必须读取）\n- 角色状态：{project_dir}/追踪/角色状态.md\n- 物品：{project_dir}/追踪/物品.md\n- 环境：{project_dir}/追踪/环境.md\n- 世界观：{project_dir}/设定/世界观/*.md\n- 角色设定：{project_dir}/设定/角色/{相关角色}.md\n- 质量规则：读取 skills/_shared/references/quality-rules.md\n\n【修复规则】\n1. 读取检测报告中的 blockers 和 warnings\n2. 逐一修复每个问题\n3. 字数不足 → 补充内容\n4. 禁用词 → 替换\n5. 一致性错误 → 修正（参考追踪文件获取正确状态）\n6. 设定违反 → 修正（参考设定文件获取正确规则）\n7. 修复后重新运行字数验证：node skills/_shared/scripts/wordcount.js {chapter_file} --json\n\n【输出】\n- 更新：{project_dir}/正文/第{N}章.md（修复后）\n- 日志：{project_dir}/.workflow/step12-fix-log.json，格式：\n{\"fixed_count\": 5, \"fixed_items\": [...], \"final_word_count\": 3200}",
     "context": "none"
   }
 })

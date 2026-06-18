@@ -421,6 +421,21 @@ actor({
   - {project_dir}/追踪/物品.md
   - {project_dir}/追踪/环境.md
 
+【参考文件】（一致性审查必须读取，参考 skills/_shared/references/context-checklist.md 场景6：审查/审计，19项）
+- 物资：{project_dir}/追踪/物资.md
+- 世界观：{project_dir}/设定/世界观/*.md
+- 角色：{project_dir}/设定/角色/*.md
+- 势力：{project_dir}/设定/势力/*.md（如存在）
+- 关系：{project_dir}/设定/关系.md
+- 题材：{project_dir}/设定/题材定位.md
+- 文风：{project_dir}/设定/文风.md
+- 跨卷伏笔：{project_dir}/跨卷追踪/跨卷伏笔.md（如存在）
+- 角色弧线：{project_dir}/跨卷追踪/跨卷角色弧线.md（如存在）
+- 卷间过渡：{project_dir}/跨卷追踪/卷间过渡.md（如存在）
+- 故事线索引：{project_dir}/故事线/故事线_索引.md（如存在）
+- 主线：{project_dir}/故事线/故事线_主线_*.md（如存在）
+- 交叉点：{project_dir}/故事线/故事线_交叉点.md（如存在）
+
 【检测脚本】（必须运行）
 - 一致性检测：node {skill_dir}/../_shared/scripts/consistency-check.js {稿件路径}
 - 跨章节检测：node {skill_dir}/../_shared/scripts/cross-chapter-check.js {稿件路径}

@@ -87,7 +87,28 @@ T-AUDIT: 全量审计「{项目名}」
     "物品.md": "content...",
     "环境.md": "content...",
     "时间线.md": "content...",
-    "伏笔.md": "content..."
+    "伏笔.md": "content...",
+    "物资.md": "content...",
+    "重复语句.md": "content...",
+    "上下文.md": "content..."
+  },
+  "setting_files": {
+    "世界观": "content...",
+    "角色": "content...",
+    "势力": "content...",
+    "关系": "content...",
+    "题材定位": "content...",
+    "文风": "content..."
+  },
+  "cross_volume_files": {
+    "跨卷伏笔.md": "content...",
+    "跨卷角色弧线.md": "content...",
+    "卷间过渡.md": "content..."
+  },
+  "storyline_files": {
+    "故事线_索引.md": "content...",
+    "故事线_主线_*.md": "content...",
+    "故事线_交叉点.md": "content..."
   },
   "chapter_list": ["第1章", "第2章", ...]
 }

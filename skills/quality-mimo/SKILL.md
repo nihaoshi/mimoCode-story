@@ -176,6 +176,24 @@ Step 04 复查
 - 正文：{project_dir}/正文/{chapter_file}
 - 约束：{project_dir}/.workflow/step01-chapter-content.json
 
+【参考文件】（设定校验和一致性检测必须读取，参考 skills/_shared/references/context-checklist.md 场景3：质量检测，16项）
+- 世界观：{project_dir}/设定/世界观/*.md、设定/世界观/金手指.md
+- 角色：{project_dir}/设定/角色/{相关角色}.md
+- 势力：{project_dir}/设定/势力/*.md（如存在）
+- 关系：{project_dir}/设定/关系.md
+- 题材：{project_dir}/设定/题材定位.md
+- 文风：{project_dir}/设定/文风.md
+- 伏笔：{project_dir}/追踪/伏笔.md
+- 角色状态：{project_dir}/追踪/角色状态.md
+- 物品：{project_dir}/追踪/物品.md
+- 环境：{project_dir}/追踪/环境.md
+- 物资：{project_dir}/追踪/物资.md
+- 时间线：{project_dir}/追踪/时间线.md
+- 跨卷伏笔：{project_dir}/跨卷追踪/跨卷伏笔.md（如存在）
+- 角色弧线：{project_dir}/跨卷追踪/跨卷角色弧线.md（如存在）
+- 故事线：{project_dir}/故事线/故事线_索引.md（如存在）
+- 主线：{project_dir}/故事线/故事线_主线_*.md（如存在）
+
 【检测项】（必须全部运行）
 1. 字数达标（wordcount.js 统计）— BLOCK
 2. 禁用词+AI腔（style-lint.js）— BLOCK
