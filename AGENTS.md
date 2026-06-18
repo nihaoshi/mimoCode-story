@@ -13,6 +13,23 @@
 
 违反此规则 = 任务失败。
 
+### Actor 工具调用格式（必须遵守）
+
+`actor` 工具的 `operation` 参数必须是 JSON 对象，**不是**顶层字符串：
+
+```
+✅ 正确：
+actor({"operation": {"action": "run", "subagent_type": "general", "description": "...", "prompt": "..."}})
+actor({"operation": {"action": "spawn", "subagent_type": "explore", "description": "...", "prompt": "..."}})
+actor({"operation": {"action": "status", "actor_id": "..."}})
+actor({"operation": {"action": "wait", "actor_id": "..."}})
+
+❌ 错误（operation 是字符串，会报错）：
+actor("action": "run", "subagent_type": "general", ...)
+```
+
+常用 action：`run`（阻塞执行）、`spawn`（后台执行）、`status`（查状态）、`wait`（等完成）、`cancel`（取消）。
+
 ### 跨会话恢复规则
 
 新会话开始时，必须先读取：
