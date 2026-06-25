@@ -8,6 +8,11 @@ atoms:
   - fix-text
   - fix-dialogue
   - fix-style
+inputs:
+  - name: project_dir
+    type: directory
+    required: false
+    description: 写作项目根目录（可选，用于输出文件）
 ---
 
 # story-deslop-mimo v3.0：子 Agent 隔离去 AI 味
@@ -18,6 +23,16 @@ atoms:
 2. **子 agent 隔离执行**：检测+修复在隔离上下文中完成，不受对话历史干扰
 3. **守卫脚本验证**：每个阶段前后运行守卫脚本，确保输入输出合规
 4. **有问题必修**：检测到任何 WARN 或 BLOCK 都必须修复
+
+## 前置检查
+
+执行前必须验证目标文件存在：
+
+```bash
+ls {target_file} 2>/dev/null || echo "ERROR: 目标文件不存在"
+```
+
+缺失时提示用户：「目标文件 {target_file} 不存在，请检查路径。」
 
 **核心信念：AI味的主要问题不是语法，而是过度圆滑、工整、解释充分。改写目标是保留剧情功能，同时增加口语、停顿、跳跃和具体动作。**
 
@@ -140,7 +155,7 @@ Phase 3: 输出结果
 ```
 1. 用户提供文件路径或粘贴文本
 2. 用 Read 工具读取文件内容
-3. 统计原文字数
+3. 统计原文字数：node skills/_shared/scripts/wordcount.js {文件路径} --json
 ```
 
 ### Step 2：创建工作流目录
@@ -157,7 +172,7 @@ mkdir -p {project_dir}/.workflow
 {
   "source_file": "正文/第X章.md",
   "original_text": "{全文}",
-  "char_count": {N},
+  "char_count": {从 wordcount.js --json 输出的 char_count 获取},
   "timestamp": "{ISO时间}"
 }
 ```
@@ -240,9 +255,9 @@ actor({
 【报告格式】
 {
   "source_file": "正文/第X章.md",
-  "original_char_count": {N0},
-  "revised_char_count": {N1},
-  "char_change": {N1-N0},
+  "original_char_count": {从 wordcount.js --json 获取原文 char_count},
+  "revised_char_count": {修复后用 wordcount.js --json 重新统计},
+  "char_change": {revised - original},
   "char_change_pct": "{百分比}%",
   "ai_level": "轻度|中度|重度",
   "density": {禁用词/千字},
@@ -306,15 +321,19 @@ node skills/story-long-write-mimo/scripts/workflow-guard.js post exec {workflow_
 2. 如果是粘贴文本，将修订内容输出给用户
 ```
 
+### 追踪文件处理说明
+
+去AI味仅修改文风和句式，不改变剧情内容、角色行为、物品状态等。因此**不需要更新追踪文件**（伏笔、时间线、角色状态、物品、环境等均不变）。如果修改导致字数显著变化（>10%），建议重新运行质量门禁检查一致性。
+
 ### Step 3：输出润色报告
 
 ```
 ## 去AI味润色报告
 
 ### 字数协议
-- 原文字符数：{N0}
-- 修订后字符数：{N1}
-- 净变化：{N1 - N0}（{百分比}）
+- 原文字符数：{从 wordcount.js --json 获取}
+- 修订后字符数：{修复后用 wordcount.js --json 重新统计}
+- 净变化：{revised - original}（{百分比}）
 
 ### AI味等级
 - 等级：{轻度/中度/重度}

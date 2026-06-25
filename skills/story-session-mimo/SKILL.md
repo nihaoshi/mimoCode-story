@@ -7,6 +7,11 @@ description: |
 metadata:
   openclaw:
     source: https://github.com/nihaoshi/mimoCode-story
+inputs:
+  - name: project_dir
+    type: directory
+    required: true
+    description: 写作项目根目录
 ---
 
 # story-session-mimo：Session 生命周期管理
@@ -21,22 +26,15 @@ metadata:
 
 ### Step 1：恢复上次进度
 
-读取 `追踪/上下文.md`，获取：
-- 当前写到第几章
-- 上次会话的关键决策
-- 待处理的问题
+动态扫描 `追踪/` 目录获取文件列表：
+```bash
+ls {project_dir}/追踪/*.md 2>/dev/null
+```
 
-### Step 2：恢复角色状态
-
-读取 `追踪/角色状态.md`，获取：
-- 主要角色的当前状态
-- 性格锚点（写对话前必查）
-
-### Step 3：恢复伏笔状态
-
-读取 `追踪/伏笔.md`，获取：
-- 待回收伏笔列表
-- 逾期伏笔警告
+按扫描结果读取：
+- `追踪/上下文.md` — 当前写到第几章、上次关键决策、待处理问题
+- `追踪/角色状态.md` — 主要角色当前状态、性格锚点
+- `追踪/伏笔.md` — 待回收伏笔列表、逾期伏笔警告
 
 ### Step 4：检测设定缺口
 
@@ -88,10 +86,8 @@ metadata:
 
 MiMo Code 的 memory 系统在 checkpoint rebuild 时自动注入上下文。此时：
 
-1. 确认 `追踪/上下文.md` 已被读取
-2. 确认 `追踪/角色状态.md` 已被读取
-3. 确认 `追踪/伏笔.md` 已被读取
-4. 如有缺失，提示用户手动加载
+1. 动态扫描 `追踪/` 目录确认文件存在
+2. 如有缺失，提示用户手动加载
 
 ---
 

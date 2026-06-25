@@ -1,4 +1,4 @@
-﻿---
+---
 name: story-chapter-write-mimo
 version: 2.0.0
 description: 单章写作流程，14步子agent隔离执行，有问题必修
@@ -144,13 +144,13 @@ actor({
 ### Step 04-07: general 类（准备阶段）
 
 ```javascript
-// Step 04: 创建细纲 [条件]
+// Step 04: 创建细纲 [条件]（动态扫描）
 actor({
   "operation": {
     "action": "run",
     "subagent_type": "general",
     "description": "创建细纲 - 第{N}章",
-    "prompt": "你是单章写作流程的细纲创建器。\n\n【防偷懒铁律】读文件，写文件，给用户看。不凭记忆。\n\n【任务】为第{N}章创建细纲。\n\n【必读文件】（参考 skills/_shared/references/context-checklist.md 场景1：创建细纲，14项）\n1. {project_dir}/大纲/大纲.md — 全书结构（O1）\n2. {project_dir}/大纲/卷纲_第X卷.md — 当前卷大纲（O2）\n3. {project_dir}/追踪/伏笔.md — 待回收伏笔（T1）\n4. {project_dir}/追踪/角色状态.md — 角色当前状态（T3）\n5. {project_dir}/正文/第{N-1}章.md — 上一章（首章跳过）\n6. {project_dir}/设定/世界观/*.md — 世界观规则（S1）\n7. {project_dir}/设定/世界观/金手指.md — 金手指规则（S2）\n8. {project_dir}/设定/角色/{相关角色}.md — 角色设定（S3）\n9. {project_dir}/设定/关系.md — 角色关系（S5）\n10. {project_dir}/设定/题材定位.md — 题材核心梗（S6）\n11. {project_dir}/设定/文风.md — 文风约束（S7）\n12. {project_dir}/跨卷追踪/跨卷伏笔.md — 跨卷伏笔（C1，如存在）\n13. {project_dir}/跨卷追踪/跨卷角色弧线.md — 角色弧线（C2，如存在）\n14. {project_dir}/故事线/故事线_索引.md — 故事线索引（L1，如存在）\n15. {project_dir}/故事线/故事线_主线_*.md — 主线故事线（L2，如存在）\n\n【输出】写入 {project_dir}/大纲/细纲_第{N}章.md\n\n【要求】\n- 情节点 >= 10 个\n- 必须有章首钩子和章尾钩子\n- 必须有爽点标注\n- 必须有字数目标\n- 细纲内容不得违反世界观规则和金手指规则\n- 角色行为必须符合角色设定和性格锚点\n- 如有跨卷伏笔需要在本章回收，必须在细纲中标注",
+    "prompt": "你是单章写作流程的细纲创建器。\n\n【防偷懒铁律】必须动态扫描项目目录获取文件列表，不能硬编码。\n\n【任务】为第{N}章创建细纲。\n\n【Step A：读取项目结构定义】\n读取 skills/_shared/references/project-structure.md，获取目录结构和文件清单。\n\n【Step B：动态扫描项目目录】\n```bash\nls {project_dir}/大纲/大纲.md 2>/dev/null\nls {project_dir}/大纲/卷纲_*.md 2>/dev/null\nls {project_dir}/追踪/*.md 2>/dev/null\nls {project_dir}/正文/第{N-1}章*.md 2>/dev/null\nls {project_dir}/设定/世界观/*.md 2>/dev/null\nls {project_dir}/设定/角色/*.md 2>/dev/null\nls {project_dir}/设定/势力/*.md 2>/dev/null\nls {project_dir}/设定/关系.md 2>/dev/null\nls {project_dir}/设定/题材定位.md 2>/dev/null\nls {project_dir}/设定/文风.md 2>/dev/null\nls {project_dir}/跨卷追踪/*.md 2>/dev/null\nls {project_dir}/故事线/*.md 2>/dev/null\n```\n\n【细纲内容去重（必须执行）】生成新细纲前，扫描前 5 章细纲的核心事件和情节点序列，避免以下重复：\n1. 核心事件重复：新章核心事件不得与前 5 章中任意一章高度相似\n2. 情节点重复：新章情节点序列不得与前 3 章有 >50% 重合\n3. 情绪重复：连续 3 章不得交付同一情绪目标\n4. 爽点重复：新章爽点类型不得与前 3 章完全相同\n去重方法：读取前 5 章细纲的「核心事件」字段对比，如重复则调整事件方向或增加新冲突。\n\n【输出】写入 {project_dir}/大纲/细纲_第{N}章.md\n\n【要求】\n- 情节点 >= 10 个\n- 必须有章首钩子和章尾钩子\n- 必须有爽点标注\n- 必须有字数目标\n- 细纲内容不得违反世界观规则和金手指规则\n- 角色行为必须符合角色设定和性格锚点\n- 如有跨卷伏笔需要在本章回收，必须在细纲中标注",
     "context": "none"
   }
 })
@@ -170,13 +170,13 @@ actor({
 ```
 
 ```javascript
-// Step 05: 分析细纲确定读取文件
+// Step 05: 分析细纲确定读取文件（动态扫描）
 actor({
   "operation": {
     "action": "run",
     "subagent_type": "general",
     "description": "文件分析 - 第{N}章",
-    "prompt": "你是单章写作流程的文件分析器。\n\n【防偷懒铁律】必须从细纲实际解析，不能硬编码。\n\n【任务】从细纲解析本章需要读取的所有文件。参考 skills/_shared/references/context-checklist.md 场景2：正文写作（22项）。\n\n【必读】{project_dir}/大纲/细纲_第{N}章.md\n\n【必须列出的文件】\n1. 设定文件（S1-S7）：世界观/*.md、金手指.md、角色/{相关角色}.md、势力/*.md、关系.md、题材定位.md、文风.md\n2. 追踪文件（T1-T8）：伏笔.md、时间线.md、角色状态.md、物品.md、环境.md、物资.md、重复语句.md、上下文.md\n3. 跨卷追踪（C1-C3）：跨卷伏笔.md、跨卷角色弧线.md、卷间过渡.md（如存在）\n4. 故事线（L1-L3）：故事线索引.md、主线_*.md、交叉点.md（如存在）\n5. 对标文件（B1-B4）：拆文报告.md、文风.md、剧情/*.md、设定/*.md（如存在）\n\n【解析内容】\n1. 提取本章涉及的角色名 → 映射到 设定/角色/{角色名}.md\n2. 提取本章涉及的场景\n3. 提取本章涉及的伏笔\n4. 列出所有需要加载的文件路径\n\n【输出】写入 {project_dir}/.workflow/step05-required-files.json，格式：\n{\"characters\": [...], \"scenes\": [...], \"foreshadows\": [...], \"setting_files\": [...], \"tracking_files\": [...], \"cross_volume_files\": [...], \"storyline_files\": [...], \"benchmark_files\": [...]}",
+    "prompt": "你是单章写作流程的文件分析器。\n\n【防偷懒铁律】必须动态扫描项目目录获取文件列表，不能硬编码。\n\n【任务】动态扫描项目结构，确定本章需要读取的所有文件。\n\n【Step A：读取项目结构定义】\n读取 skills/_shared/references/project-structure.md，获取目录结构和文件清单。\n\n【Step B：动态扫描项目目录】\n执行以下扫描命令获取实际文件列表：\n```bash\n# 设定目录\nls {project_dir}/设定/世界观/*.md 2>/dev/null\nls {project_dir}/设定/角色/*.md 2>/dev/null\nls {project_dir}/设定/势力/*.md 2>/dev/null\nls {project_dir}/设定/关系.md 2>/dev/null\nls {project_dir}/设定/题材定位.md 2>/dev/null\nls {project_dir}/设定/文风.md 2>/dev/null\n# 追踪目录\nls {project_dir}/追踪/*.md 2>/dev/null\n# 跨卷追踪（可选）\nls {project_dir}/跨卷追踪/*.md 2>/dev/null\n# 故事线（可选）\nls {project_dir}/故事线/*.md 2>/dev/null\n# 对标文件（可选）\nls {project_dir}/对标/*/拆文报告.md 2>/dev/null\nls {project_dir}/对标/*/文风.md 2>/dev/null\n```\n\n【Step C：从细纲提取本章涉及的角色和场景】\n读取 {project_dir}/大纲/细纲_第{N}章.md，提取：\n1. 本章涉及的角色名 → 映射到扫描到的 设定/角色/{角色名}.md\n2. 本章涉及的场景\n3. 本章涉及的伏笔\n\n【Step D：组装文件清单】\n将扫描结果 + 细纲解析结果合并，输出最终需要加载的文件列表。\n\n【输出】写入 {project_dir}/.workflow/step05-required-files.json，格式：\n{\"scanned_files\": {\"setting\": [...], \"tracking\": [...], \"cross_volume\": [...], \"storyline\": [...], \"benchmark\": [...]}, \"characters\": [...], \"scenes\": [...], \"foreshadows\": [...], \"files_to_load\": [...]}",
     "context": "none"
   }
 })
@@ -293,13 +293,13 @@ actor({
 ### Step 14: general 类（收尾阶段）
 
 ```javascript
-// Step 14: 追踪+设定更新
+// Step 14: 追踪+设定更新（三步流程）
 actor({
   "operation": {
     "action": "run",
     "subagent_type": "general",
     "description": "追踪+设定更新 - 第{N}章",
-    "prompt": "你是单章写作流程的追踪更新器。\n\n【防偷懒铁律】必须从正文实际提取，不能凭记忆。\n\n【任务】从正文提取信息，更新所有追踪文件和设定文件。\n\n【输入】\n1. {project_dir}/正文/第{N}章.md — 本章正文\n2. {project_dir}/.workflow/step08-context.json — 上下文\n\n【更新文件】（必须全部更新）\n1. {project_dir}/追踪/伏笔.md — 新增/回收伏笔\n2. {project_dir}/追踪/时间线.md — 记录事件时序\n3. {project_dir}/追踪/角色状态.md — 更新角色状态+性格锚点\n4. {project_dir}/追踪/物品.md — 物品位置/状态变化\n5. {project_dir}/追踪/环境.md — 季节/天气/场景\n6. {project_dir}/追踪/重复语句.md — 记录重复表达\n7. {project_dir}/追踪/上下文.md — 进度摘要\n8. {project_dir}/故事线/故事线_索引.md — 更新故事线状态\n9. {project_dir}/故事线/故事线_主线_*.md — 更新主线进展\n10. {project_dir}/故事线/故事线_交叉点.md — 更新交叉点\n\n【角色同步】更新完角色状态后，运行：\nnode skills/_shared/scripts/character-sync.js {project_dir} --json\n\n【输出】更新后的追踪文件列表",
+    "prompt": "你是单章写作流程的追踪更新器。\n\n【防偷懒铁律】必须从正文实际提取，不能凭记忆。\n\n【任务】按三步流程更新所有相关文件。\n\n【Step A：扫描项目结构】获取所有可更新文件清单\n- 扫描设定/角色/*.md、设定/势力/*.md、设定/世界观/*.md\n- 扫描追踪/*.md、故事线/*.md、跨卷追踪/*.md\n- 只列文件名，不读内容\n\n【Step B：分析正文提取变更清单】从本章正文识别变化点\n- 新角色出现？→ 需要建档/更新设定/角色/{名}.md\n- 角色状态变化？→ 需要更新追踪/角色状态.md + 设定/角色/{名}.md\n- 新伏笔/回收伏笔？→ 需要更新追踪/伏笔.md + 跨卷追踪/跨卷伏笔.md（如有）\n- 新物品/物品变化？→ 需要更新追踪/物品.md\n- 环境变化？→ 需要更新追踪/环境.md\n- 经济活动？→ 需要更新追踪/物资.md\n- 故事线推进？→ 需要更新故事线/故事线_*.md\n- 角色弧线阶段变化？→ 需要更新跨卷追踪/跨卷角色弧线.md\n- 接近卷末？→ 需要检查跨卷追踪/卷间过渡.md\n\n【Step C：按清单更新文件】只更新变更涉及的文件\n- 始终更新：追踪/时间线.md（记录事件时序）、追踪/上下文.md（进度摘要）、追踪/重复语句.md（记录重复表达）\n- 按变更清单更新其余文件（对照 Step A 文件清单 + Step B 变更清单）\n- 设定文件回写：正文揭示新信息影响设定时，同步更新对应设定/文件\n- 跨卷追踪更新：涉及跨卷伏笔回收/推进或角色弧线变化时，更新跨卷追踪/下对应文件\n- 故事线更新：故事线推进时更新故事线/故事线_*.md\n\n【角色同步】更新完角色状态后，运行：\nnode skills/_shared/scripts/character-sync.js {project_dir} --json\n\n【输出】更新后的文件列表",
     "context": "none"
   }
 })
@@ -453,18 +453,19 @@ actor({
 - **输出**：`.workflow/step13-recheck-report.json`
 - **防偷懒**：不能假设修复成功，最多3轮
 
-### Step 14: 追踪+设定更新
+### Step 14: 追踪+设定更新（三步流程）
 - **Agent**: 子 agent 隔离（general）
-- **检查**：从正文提取信息，更新追踪文件和设定文件
+- **检查**：从正文提取信息，按三步流程更新所有相关文件
+- **Step A**：扫描项目结构，获取文件清单
+- **Step B**：分析正文，提取变更清单
+- **Step C**：按清单更新文件（追踪+设定+故事线+跨卷追踪）
 - **输出**：
-  - 追踪文件（7个）：伏笔、时间线、角色状态、物品、环境、重复语句、上下文
-   - 设定文件：角色设定、世界观、势力等（如有变化）
-   - **角色同步**：运行 `node skills/_shared/scripts/character-sync.js <项目目录> --json` 验证设定与追踪一致
-  - 故事线文件（如有变化）：
-    - `故事线/故事线_索引.md` — 更新故事线状态
-    - `故事线/故事线_主线_*.md` — 更新主线推进节点
-    - `故事线/故事线_交叉点.md` — 更新交叉点标记
-- **防偷懒**：必须从正文实际提取，不能凭记忆；设定有变化必须更新；故事线推进必须同步更新
+  - 追踪文件（按需）：伏笔、时间线、角色状态、物品、环境、重复语句、上下文
+  - 设定文件（按需）：角色设定、世界观、势力等（正文揭示新信息时回写）
+  - 跨卷追踪（按需）：跨卷伏笔、跨卷角色弧线、卷间过渡
+  - 故事线文件（按需）：故事线索引、主线、交叉点
+  - **角色同步**：运行 `node skills/_shared/scripts/character-sync.js <项目目录> --json` 验证设定与追踪一致
+- **防偷懒**：必须从正文实际提取，不能凭记忆；变更涉及的文件必须更新
 
 ---
 

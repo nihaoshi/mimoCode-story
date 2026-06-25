@@ -4,6 +4,11 @@ version: 2.0.0
 description: |
   项目健康检查与修复。检测写作项目文件是否齐全，自动修复缺失文件。
   触发方式：/project-health-mimo、/检查项目、「项目检查」「修复项目」「检查文件」
+inputs:
+  - name: project_dir
+    type: directory
+    required: true
+    description: 写作项目根目录
 ---
 
 # project-health-mimo：项目健康检查与修复

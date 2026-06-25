@@ -3,6 +3,11 @@ name: story-mimo
 description: |
   网文工具箱主入口。根据用户需求自动路由到对应 skill。
   触发方式：/story-mimo、/网文、「我想写小说」「帮我写书」「写网文」
+inputs:
+  - name: project_dir
+    type: directory
+    required: false
+    description: 写作项目根目录（可选，用于路由到具体skill）
 ---
 
 # story-mimo：网文工具箱路由

@@ -7,6 +7,11 @@ description: |
 metadata:
   openclaw:
     source: https://github.com/nihaoshi/mimoCode-story
+inputs:
+  - name: project_dir
+    type: directory
+    required: false
+    description: 写作项目根目录（可选，用于将选题决策写入项目目录）
 ---
 
 # story-long-scan-mimo：长篇网文扫榜
@@ -273,7 +278,13 @@ URL 参数：`/rank/{channel}_{type}_{cat_id}`，channel 0=女频/1=男频，typ
 
 **如信息不足，向用户补齐项目条件：**「目标平台、已有素材、擅长题材/写作约束、计划篇幅是什么？」
 
-按 `topic-decision.md` 的选题四步产出 2-3 个推荐选题（能爆的原因 → 市场验证 → 差异化定位 → 可行性+失败风险+验证动作），写入**本次扫榜输出目录** `{outdir}/选题决策.md`，并告知用户路径与下一步：「开书时把 `选题决策.md` 放到小说项目根目录，写作会自动读取；想确认"能爆的原因"先 `/story-long-analyze-mimo` 拆对标书。」
+按 `topic-decision.md` 的选题四步产出 2-3 个推荐选题（能爆的原因 → 市场验证 → 差异化定位 → 可行性+失败风险+验证动作），写入选题决策文件：
+
+**输出路径规则**：
+- 如提供了 `{project_dir}`（项目已存在）→ 写入 `{project_dir}/选题决策.md`
+- 如未提供 `project_dir`（扫榜常在没有项目时进行）→ 写入当前目录 `选题决策.md`
+
+告知用户：「选题决策已生成。开书时用 `/story-long-write-mimo`，Phase 1 会自动读取；想确认"能爆的原因"先 `/story-long-analyze-mimo` 拆对标书。」
 
 **硬规则：**
 - 可行性上限：背靠榜单标了 `[数据稀疏]` 或同方向样本 <15（小平台<10）⇒ 不许给"高"，强制降到"中" + 写明先验证；内置知识模式一律给"中"。
@@ -305,7 +316,7 @@ URL 参数：`/rank/{channel}_{type}_{cat_id}`，channel 0=女频/1=男频，typ
 | 直接开写 | story-long-write-mimo | `/story-long-write-mimo` |
 | 更适合短篇 | story-short-scan-mimo | `/story-short-scan-mimo` |
 
-> **选题决策.md 交接**：Phase 4 产出的 `选题决策.md` 写在扫榜输出目录（扫榜常在没有小说项目时进行）。开书时把它搬到小说项目根目录，story-long-write-mimo Phase 1 会自动读取；拆文（story-long-analyze-mimo）会在汇总报告产出后回填对应选题的"能爆的原因"。
+> **选题决策.md 交接**：如提供了 `project_dir`，选题决策直接写入项目目录，后续流程自动读取。如未提供，选题决策写在当前目录，开书时搬到项目根目录即可。
 
 ## 参考资料
 

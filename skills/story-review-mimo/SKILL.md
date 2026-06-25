@@ -10,6 +10,11 @@ atoms:
   - review-writing
   - review-commercial
   - review-consistency
+inputs:
+  - name: project_dir
+    type: directory
+    required: true
+    description: 写作项目根目录
 ---
 
 # story-review-mimo v3.0：子 Agent 隔离审稿
@@ -26,6 +31,16 @@ atoms:
 读文件，跑脚本，给用户看
 不凭记忆，不跳步骤，不偷懒
 ```
+
+## 前置检查
+
+执行前必须验证项目目录存在且结构完整：
+
+```bash
+ls {project_dir}/正文/ {project_dir}/设定/ 2>/dev/null || echo "ERROR: 项目目录缺失"
+```
+
+缺失时提示用户：「项目目录 {project_dir} 不存在或结构不完整，请先用 /story-setup-mimo 部署项目。」
 
 ---
 
@@ -414,24 +429,13 @@ actor({
 【输入文件】（必须用 Read 工具读取）
 - 稿件全文：{project_dir}/.workflow/review-input.md
 - 审查配置：{project_dir}/.workflow/review-config.json
-- 追踪文件（如存在）：
-  - {project_dir}/追踪/伏笔.md
-  - {project_dir}/追踪/时间线.md
-  - {project_dir}/追踪/角色状态.md
-  - {project_dir}/追踪/物品.md
-  - {project_dir}/追踪/环境.md
 
-【参考文件】（一致性审查必须读取，参考 skills/_shared/references/context-checklist.md 场景6：审查/审计，19项）
-- 物资：{project_dir}/追踪/物资.md
-- 世界观：{project_dir}/设定/世界观/*.md
-- 角色：{project_dir}/设定/角色/*.md
-- 势力：{project_dir}/设定/势力/*.md（如存在）
-- 关系：{project_dir}/设定/关系.md
-- 题材：{project_dir}/设定/题材定位.md
-- 文风：{project_dir}/设定/文风.md
-- 跨卷伏笔：{project_dir}/跨卷追踪/跨卷伏笔.md（如存在）
-- 角色弧线：{project_dir}/跨卷追踪/跨卷角色弧线.md（如存在）
-- 卷间过渡：{project_dir}/跨卷追踪/卷间过渡.md（如存在）
+【参考文件】（动态扫描获取，一致性审查必须读取）
+- 扫描追踪/目录：`ls {project_dir}/追踪/*.md 2>/dev/null`
+- 扫描设定/目录：`ls {project_dir}/设定/**/*.md 2>/dev/null`
+- 扫描跨卷追踪/目录：`ls {project_dir}/跨卷追踪/*.md 2>/dev/null`（可选）
+- 扫描故事线/目录：`ls {project_dir}/故事线/*.md 2>/dev/null`（可选）
+- 按扫描结果加载对应文件
 - 故事线索引：{project_dir}/故事线/故事线_索引.md（如存在）
 - 主线：{project_dir}/故事线/故事线_主线_*.md（如存在）
 - 交叉点：{project_dir}/故事线/故事线_交叉点.md（如存在）

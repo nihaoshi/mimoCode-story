@@ -117,6 +117,16 @@ inputs:
 不凭记忆，不跳步骤，不偷懒
 ```
 
+## 前置检查
+
+执行前必须验证项目目录存在且结构完整：
+
+```bash
+ls {project_dir}/大纲/ {project_dir}/正文/ {project_dir}/追踪/ 2>/dev/null || echo "ERROR: 项目目录缺失"
+```
+
+缺失时提示用户：「项目目录 {project_dir} 不存在或结构不完整，请先用 /story-setup-mimo 部署项目。」
+
 **每个步骤执行前后必须运行守卫脚本：**
 ```bash
 node skills/story-progress-mimo/scripts/workflow-guard.js pre  <步骤号> {workflow_dir} {project_dir}
@@ -144,6 +154,11 @@ T-PROGRESS: 进度管理「{项目名}」
 │    ├── [条件] T-PROG-07: 确认下一阶段就绪 [子 agent 隔离·general]
 │    └── [条件] T-PROG-08: 输出切换指南 [主 agent]
 │
+├─── Phase 5: 批量细纲生成（条件）
+│    ├── [条件] T-PROG-12: 批量细纲生成 [子 agent 隔离·general]
+│    ├── [条件] T-PROG-13: 细纲质量检查 [子 agent 隔离·general]
+│    └── [条件] T-PROG-14: 输出生成报告 [主 agent]
+│
 └─── Phase 4: 文件维护
      ├── T-PROG-09: 大纲一致性检查 [子 agent 隔离·general]
      ├── T-PROG-10: 追踪文件健康度检查 [子 agent 隔离·general]
@@ -168,13 +183,13 @@ actor({
   }
 })
 
-// Step 02: 读取大纲和追踪文件
+// Step 02: 读取大纲和追踪文件（动态扫描）
 actor({
   "operation": {
     "action": "run",
     "subagent_type": "general",
     "description": "读取大纲和追踪文件",
-    "prompt": "你是大纲进度管理器的上下文加载器。\n\n参考 skills/_shared/references/context-checklist.md 场景5：进度管理（16项）。\n\n【防偷懒铁律】必须实际读取每个文件，不能跳过。\n\n【任务】读取所有大纲和追踪文件，组装进度上下文。\n\n【必读文件】\n1. {project_dir}/大纲/大纲.md — 全书卷级结构\n2. {project_dir}/大纲/卷纲_第X卷.md — 当前卷大纲（按当前卷号读取）\n3. {project_dir}/追踪/上下文.md — 上次进度摘要\n4. {project_dir}/追踪/伏笔.md — 活跃伏笔\n5. {project_dir}/追踪/角色状态.md — 角色状态\n6. {project_dir}/追踪/时间线.md — 事件时序\n7. 跨卷追踪/跨卷伏笔.md — 跨卷伏笔（如存在）\n8. 跨卷追踪/跨卷角色弧线.md — 角色弧线（如存在）\n9. 跨卷追踪/卷间过渡.md — 卷间过渡（如存在）\n10. {project_dir}/追踪/物品.md — 物品位置（T4）\n11. {project_dir}/追踪/环境.md — 环境状态（T5）\n12. {project_dir}/追踪/物资.md — 经济状态（T6）\n13. {project_dir}/追踪/重复语句.md — 重复语句（T7）\n14. {project_dir}/故事线/故事线_索引.md — 故事线索引（L1，如存在）\n15. {project_dir}/故事线/故事线_主线_*.md — 主线故事线（L2，如存在）\n16. {project_dir}/故事线/故事线_交叉点.md — 交叉点（L3，如存在）\n\n【输出】写入 {project_dir}/.workflow/prog-02-context.json，格式：\n{\"current_volume\": 2, \"current_arc\": \"弧名\", \"latest_chapter\": 42, \"outline_structure\": {...}, \"foreshadows\": [...], \"characters\": [...], \"cross_volume\": {...}, \"items\": [...], \"environment\": {...}, \"supply\": {...}, \"repeated_phrases\": [...], \"story_lines\": {...}}",
+    "prompt": "你是大纲进度管理器的上下文加载器。\n\n【防偷懒铁律】必须动态扫描项目目录获取文件列表，不能硬编码。\n\n【Step A：读取项目结构定义】\n读取 skills/_shared/references/project-structure.md，获取目录结构和文件清单。\n\n【Step B：动态扫描项目目录】\n```bash\nls {project_dir}/大纲/*.md 2>/dev/null\nls {project_dir}/追踪/*.md 2>/dev/null\nls {project_dir}/跨卷追踪/*.md 2>/dev/null\nls {project_dir}/故事线/*.md 2>/dev/null\nls {project_dir}/正文/*.md 2>/dev/null | tail -1\n```\n\n【Step C：从扫描结果加载文件】\n按扫描结果逐个读取：\n1. 大纲文件（大纲.md、卷纲、细纲）\n2. 追踪文件（伏笔、角色状态、时间线、物品、环境、物资、重复语句、上下文）\n3. 跨卷追踪文件（如存在）\n4. 故事线文件（如存在）\n\n【输出】写入 {project_dir}/.workflow/prog-02-context.json，格式：\n{\"current_volume\": 2, \"current_arc\": \"弧名\", \"latest_chapter\": 42, \"outline_structure\": {...}, \"foreshadows\": [...], \"characters\": [...], \"cross_volume\": {...}, \"items\": [...], \"environment\": {...}, \"supply\": {...}, \"repeated_phrases\": [...], \"story_lines\": {...}}",
     "context": "none"
   }
 })
@@ -229,6 +244,38 @@ actor({
 
 // Step 08: 输出切换指南（主 agent）
 // 读取 prog-07-next-phase.json，生成用户可读的切换指南
+```
+
+### Phase 5: 批量细纲生成（条件）
+
+当 Step 07 发现下一弧细纲缺失时，批量生成。用户也可单独触发：「/progress 补建细纲」。
+
+```javascript
+// Step 09: 批量细纲生成
+actor({
+  "operation": {
+    "action": "run",
+    "subagent_type": "general",
+    "description": "批量细纲生成",
+    "prompt": "你是细纲批量生成器。\n\n【防偷懒铁律】必须动态扫描项目目录获取文件列表，不能硬编码。\n\n【任务】为下一弧/卷批量生成所有缺失的细纲。\n\n【Step A：读取项目结构定义】\n读取 skills/_shared/references/project-structure.md，获取目录结构和文件清单。\n\n【Step B：动态扫描项目目录】\n执行以下扫描命令获取实际文件列表：\n```bash\n# 必须扫描的目录\nls {project_dir}/设定/世界观/*.md 2>/dev/null\nls {project_dir}/设定/角色/*.md 2>/dev/null\nls {project_dir}/设定/势力/*.md 2>/dev/null\nls {project_dir}/追踪/*.md 2>/dev/null\nls {project_dir}/大纲/细纲_*.md 2>/dev/null\n# 可选扫描的目录\nls {project_dir}/跨卷追踪/*.md 2>/dev/null\nls {project_dir}/故事线/*.md 2>/dev/null\nls {project_dir}/正文/*.md 2>/dev/null | tail -1  # 最新正文\n```\n\n【Step C：从卷纲提取章节规划】\n读取 {project_dir}/大纲/卷纲_第X卷.md，获取下一弧/卷的章节范围和核心事件规划。\n\n【生成流程（逐章）】\n对每个缺失章节号 N：\n1. 去重检查：读取前5章细纲的「核心事件」字段，检查新章核心事件是否重复\n2. 从卷纲中提取本章的事件规划\n3. 结合扫描到的追踪文件（伏笔、角色状态、时间线、物品、环境、物资）设计情节点\n4. 按细纲模板生成：核心事件、情节点序列(>=10个)、目标情绪、章首钩子、章尾钩子、爽点、字数目标\n5. 每章生成后立即写入文件\n\n【输出】写入 {project_dir}/大纲/细纲_第XXX章.md（每章一个文件）\n\n【质量要求】\n- 情节点 >= 10 个\n- 必须有章首钩子和章尾钩子\n- 必须有爽点标注\n- 细纲内容不得违反世界观规则和金手指规则\n- 角色行为必须符合性格锚点\n- 物品/环境/经济状态要与追踪文件一致\n- 跨卷伏笔如需在本章回收，必须标注",
+    "context": "none"
+  }
+})
+
+// Step 10: 细纲质量检查
+actor({
+  "operation": {
+    "action": "run",
+    "subagent_type": "general",
+    "description": "细纲质量检查",
+    "prompt": "你是细纲质量检查器。\n\n【防偷懒铁律】必须逐章检查，不能跳过。\n\n【任务】检查批量生成的细纲质量和重复度。\n\n【检查项】\n1. 格式完整性：每章是否包含核心事件、情节点、情绪、钩子、爽点、字数目标\n2. 情节点数量：是否 >= 10 个\n3. 去重检查：相邻3章核心事件是否高度相似\n4. 情绪节奏：连续3章是否交付同一情绪\n5. 爽点类型：连续3章爽点类型是否完全相同\n6. 伏笔衔接：跨卷伏笔是否按计划埋设/回收\n7. 角色弧线：角色行为是否符合弧线阶段\n\n【输出】写入 {project_dir}/.workflow/prog-outline-quality.json，格式：\n{\"total_checked\": 10, \"pass\": 8, \"warn\": 1, \"fail\": 1, \"issues\": [{\"chapter\": 25, \"type\": \"dedup\", \"detail\": \"核心事件与第23章高度相似\"}], \"all_passed\": false}",
+    "context": "none"
+  }
+})
+
+// Step 11: 输出生成报告（主 agent）
+// 读取 prog-outline-quality.json，生成用户可读报告
+// 如有质量问题，列出需修改的章节
 ```
 
 ### Phase 4: 文件维护
@@ -311,6 +358,28 @@ actor({
 - **Agent**: 主 agent
 - **职责**: 生成下一阶段的创作指南
 - **触发条件**: Step 07 完成
+
+### Step 09: 批量细纲生成 [条件]
+- **Agent**: 子 agent 隔离（general）
+- **职责**: 为下一弧/卷批量生成所有缺失的细纲
+- **必读文件**: 参考 story-chapter-write-mimo Step 05（16项）
+- **去重检查**: 生成前扫描前5章细纲，避免核心事件/情绪/爽点重复
+- **输出**: `大纲/细纲_第XXX章.md`（每章一个文件）+ `.workflow/prog-outline-batch.json`
+- **触发条件**: Step 07 发现细纲缺失或用户说"补建细纲"
+- **防偷懒**: 必须逐章生成，每章必须去重检查
+
+### Step 10: 细纲质量检查 [条件]
+- **Agent**: 子 agent 隔离（general）
+- **职责**: 检查批量生成的细纲质量和重复度
+- **检查项**: 格式完整性、情节点数量、去重、情绪节奏、爽点类型、伏笔衔接、角色弧线
+- **输出**: `.workflow/prog-outline-quality.json`
+- **触发条件**: Step 09 完成细纲生成
+- **防偷懒**: 必须逐章检查，不能跳过
+
+### Step 11: 输出生成报告 [条件]
+- **Agent**: 主 agent
+- **职责**: 读取质量检查结果，生成用户可读报告
+- **触发条件**: Step 10 完成
 
 ### Step 09: 大纲一致性检查
 - **Agent**: 子 agent 隔离（general）
@@ -425,6 +494,9 @@ actor({
 | T-PROG-06 | Step 05 完成存档 | abandoned |
 | T-PROG-07 | 用户说"下一弧"或存档完成 | abandoned |
 | T-PROG-08 | Step 07 完成 | abandoned |
+| T-PROG-12 | Step 07 发现细纲缺失或用户说"补建细纲" | abandoned |
+| T-PROG-13 | Step 12 完成细纲生成 | abandoned |
+| T-PROG-14 | Step 13 完成质量检查 | abandoned |
 
 ---
 
@@ -438,6 +510,8 @@ actor({
 ├── prog-02-context.json           # Step 02: 大纲和追踪上下文
 ├── prog-04-completion.json        # Step 04: 弧/卷完成度（条件）
 ├── prog-07-next-phase.json        # Step 07: 下一阶段就绪度（条件）
+├── prog-outline-batch.json        # Step 12: 批量细纲生成结果（条件）
+├── prog-outline-quality.json      # Step 13: 细纲质量检查（条件）
 ├── prog-09-outline-check.json     # Step 09: 大纲一致性
 └── prog-10-health.json            # Step 10: 追踪健康度
 ```
@@ -463,6 +537,8 @@ node skills/story-progress-mimo/scripts/workflow-guard.js post <步骤号> {work
 | 04 | 验证完成度 |
 | 05 | 整合存档 |
 | 07 | 确认下一阶段 |
+| 12 | 批量细纲生成 |
+| 13 | 细纲质量检查 |
 | 09 | 大纲一致性 |
 | 10 | 追踪健康度 |
 

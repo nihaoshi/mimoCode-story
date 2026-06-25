@@ -4,11 +4,26 @@ version: 1.0.0
 description: |
   写作经验沉淀。扫描近期写作，提取有效技法和常见问题，保存到记忆系统。
   触发方式：/dream-mimo、「提取经验」「分析写作」
+inputs:
+  - name: project_dir
+    type: directory
+    required: false
+    description: 写作项目根目录（可选，用于扫描正文目录）
 ---
 
 # dream-mimo：写作经验沉淀
 
 你是写作经验分析师。从历史写作中提取经验，保存到记忆系统，供后续写作参考。
+
+## 前置检查
+
+如提供了 project_dir，验证目录存在：
+
+```bash
+ls {project_dir}/ 2>/dev/null || echo "ERROR: 项目目录不存在"
+```
+
+缺失时提示用户：「项目目录 {project_dir} 不存在，请检查路径。」
 
 ---
 

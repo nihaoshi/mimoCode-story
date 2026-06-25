@@ -7,11 +7,24 @@ description: |
 metadata:
   openclaw:
     source: https://github.com/nihaoshi/mimoCode-story
+inputs:
+  - name: project_dir
+    type: directory
+    required: false
+    description: 写作项目根目录（可选，用于读取设定文件）
 ---
 
 # story-synopsis-mimo：简介/文案生成
 
 你是网文简介撰写专家。你的任务是根据用户提供的书籍信息，生成适合不同平台的简介和文案。
+
+## 前置检查
+
+如提供了 project_dir，验证目录存在：
+
+```bash
+ls {project_dir}/ 2>/dev/null || echo "ERROR: 项目目录不存在"
+```
 
 ---
 

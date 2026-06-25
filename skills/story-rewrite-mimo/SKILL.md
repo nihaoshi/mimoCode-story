@@ -61,6 +61,17 @@ inputs:
 不凭记忆，不跳步骤，不偷懒
 ```
 
+## 前置检查
+
+执行前必须验证项目目录存在且结构完整：
+
+```bash
+# 检查目录存在
+ls {project_dir}/正文/ {project_dir}/追踪/ {project_dir}/设定/ 2>/dev/null || echo "ERROR: 项目目录缺失"
+```
+
+缺失时提示用户：「项目目录 {project_dir} 不存在或结构不完整，请先用 /story-setup-mimo 部署项目。」
+
 ---
 
 ## 任务树
@@ -95,13 +106,13 @@ T-REWRITE-{N}: 重写第{N}章
 ### Phase 1: 诊断阶段
 
 ```javascript
-// Step 01: 加载原章和上下文
+// Step 01: 加载原章和上下文（动态扫描）
 actor({
   "operation": {
     "action": "run",
     "subagent_type": "general",
     "description": "加载原章和上下文 - 第{N}章",
-    "prompt": "你是章节重写的上下文加载器。\n\n参考 skills/_shared/references/context-checklist.md 场景4：重写（23项）。\n\n【防偷懒铁律】必须实际读取每个文件，不能跳过。\n\n【任务】加载待重写章节的全部上下文。\n\n【必读文件】\n1. {project_dir}/正文/第{N}章.md — 待重写章节（必须存在）\n2. {project_dir}/大纲/细纲_第{N}章.md — 原始细纲\n3. {project_dir}/正文/第{N-1}章.md — 前一章（首章跳过）\n4. {project_dir}/正文/第{N+1}章.md — 后一章（末章跳过）\n5. {project_dir}/追踪/伏笔.md — 涉及的伏笔\n6. {project_dir}/追踪/角色状态.md — 角色状态\n7. {project_dir}/设定/角色/{相关角色}.md — 本章涉及角色\n8. {project_dir}/追踪/物品.md — 物品位置（T4）\n9. {project_dir}/追踪/环境.md — 环境状态（T5）\n10. {project_dir}/追踪/物资.md — 经济状态（T6）\n11. {project_dir}/追踪/时间线.md — 事件时序（T2）\n12. {project_dir}/追踪/上下文.md — 进度摘要（T8）\n13. {project_dir}/设定/世界观/*.md — 世界观规则（S1）\n14. {project_dir}/设定/世界观/金手指.md — 金手指规则（S2）\n15. {project_dir}/设定/势力/*.md — 势力设定（S4）\n16. {project_dir}/设定/关系.md — 角色关系（S5）\n17. {project_dir}/设定/题材定位.md — 题材核心梗（S6）\n18. {project_dir}/设定/文风.md — 文风约束（S7）\n19. {project_dir}/跨卷追踪/跨卷伏笔.md — 跨卷伏笔（C1，如存在）\n20. {project_dir}/跨卷追踪/跨卷角色弧线.md — 角色弧线（C2，如存在）\n21. {project_dir}/跨卷追踪/卷间过渡.md — 卷间过渡（C3，如存在）\n22. {project_dir}/故事线/故事线_索引.md — 故事线索引（L1，如存在）\n23. {project_dir}/故事线/故事线_主线_*.md — 主线故事线（L2，如存在）\n24. {project_dir}/故事线/故事线_交叉点.md — 交叉点（L3，如存在）\n\n【执行】\n1. 读取原章全文，记录原始字数\n2. 读取细纲，提取情节点、钩子、爽点\n3. 读取前后章，了解衔接\n4. 读取追踪文件，了解伏笔和角色状态\n5. 读取物品、环境、物资、时间线、上下文等追踪文件\n6. 读取世界观、势力、关系、题材定位、文风等设定文件\n7. 读取跨卷追踪和故事线文件（如存在）\n\n【输出】写入 {project_dir}/.workflow/rw-01-context.json，格式：\n{\"chapter\": {N}, \"original_file\": \"正文/第{N}章.md\", \"original_wordcount\": 3200, \"outline\": {...}, \"previous_ending\": \"...\", \"next_opening\": \"...\", \"foreshadows\": [...], \"characters\": [...], \"items\": [...], \"environment\": {...}, \"supply\": {...}, \"timeline\": [...], \"world_rules\": [...], \"forces\": [...], \"relations\": {...}, \"genre\": {...}, \"style\": {...}, \"cross_volume\": {...}, \"story_lines\": {...}}",
+    "prompt": "你是章节重写的上下文加载器。\n\n【防偷懒铁律】必须动态扫描项目目录获取文件列表，不能硬编码。\n\n【任务】动态扫描项目结构，加载待重写章节的全部上下文。\n\n【Step A：读取项目结构定义】\n读取 skills/_shared/references/project-structure.md，获取目录结构和文件清单。\n\n【Step B：动态扫描项目目录】\n```bash\nls {project_dir}/设定/世界观/*.md 2>/dev/null\nls {project_dir}/设定/角色/*.md 2>/dev/null\nls {project_dir}/设定/势力/*.md 2>/dev/null\nls {project_dir}/设定/关系.md 2>/dev/null\nls {project_dir}/设定/题材定位.md 2>/dev/null\nls {project_dir}/设定/文风.md 2>/dev/null\nls {project_dir}/追踪/*.md 2>/dev/null\nls {project_dir}/跨卷追踪/*.md 2>/dev/null\nls {project_dir}/故事线/*.md 2>/dev/null\n```\n\n【Step C：加载必需文件】\n1. {project_dir}/正文/第{N}章.md — 待重写章节（必须存在）\n2. {project_dir}/大纲/细纲_第{N}章.md — 原始细纲\n3. {project_dir}/正文/第{N-1}章.md — 前一章（首章跳过）\n4. {project_dir}/正文/第{N+1}章.md — 后一章（末章跳过）\n5. 从扫描结果加载所有追踪文件\n6. 从扫描结果加载所有设定文件\n7. 从扫描结果加载跨卷追踪和故事线文件（如存在）\n\n【执行】\n1. 读取原章全文，记录原始字数\n2. 读取细纲，提取情节点、钩子、爽点\n3. 读取前后章，了解衔接\n4. 读取追踪文件，了解伏笔和角色状态\n5. 读取设定文件\n6. 读取跨卷追踪和故事线文件（如存在）\n\n【输出】写入 {project_dir}/.workflow/rw-01-context.json，格式：\n{\"chapter\": {N}, \"original_file\": \"正文/第{N}章.md\", \"original_wordcount\": 3200, \"outline\": {...}, \"previous_ending\": \"...\", \"next_opening\": \"...\", \"foreshadows\": [...], \"characters\": [...], \"items\": [...], \"environment\": {...}, \"supply\": {...}, \"timeline\": [...], \"world_rules\": [...], \"forces\": [...], \"relations\": {...}, \"genre\": {...}, \"style\": {...}, \"cross_volume\": {...}, \"story_lines\": {...}}",
     "context": "none"
   }
 })
@@ -195,8 +206,12 @@ actor({
   }
 })
 
-// Step 10: 更新追踪文件（主 agent）
+// Step 10: 更新追踪文件（三步流程）（主 agent）
 // 重写可能影响伏笔、角色状态等，需要更新追踪文件
+
+// Step A：扫描项目结构 — 获取所有可更新文件清单
+// Step B：分析重写后的正文提取变更清单
+// Step C：按清单更新文件（追踪+设定+故事线+跨卷追踪）
 // 运行 character-sync.js 验证角色一致性
 ```
 

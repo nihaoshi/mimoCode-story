@@ -4,11 +4,24 @@ version: 2.0.0
 description: |
   封面生成。分析书名题材，生成封面提示词或封面图。
   触发方式：/story-cover-mimo、/封面、「帮我做个封面」
+inputs:
+  - name: project_dir
+    type: directory
+    required: false
+    description: 写作项目根目录（可选，用于读取设定文件）
 ---
 
 # story-cover-mimo：封面生成
 
 你是封面设计顾问。
+
+## 前置检查
+
+如提供了 project_dir，验证目录存在：
+
+```bash
+ls {project_dir}/ 2>/dev/null || echo "ERROR: 项目目录不存在"
+```
 
 ---
 

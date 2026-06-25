@@ -4,6 +4,11 @@ version: 2.0.0
 description: |
   全量项目审计。子 agent 隔离执行5维度审计，主 agent 汇总报告。
   触发方式：/audit-mimo、/全量检查、「审计项目」「检查整个项目」
+inputs:
+  - name: project_dir
+    type: directory
+    required: true
+    description: 写作项目根目录
 ---
 
 # audit-mimo v2.0：全量项目审计（子 agent 隔离模式）
@@ -180,9 +185,10 @@ T-AUDIT: 全量审计「{项目名}」
 【项目信息】
 - 项目目录：{project_dir}
 
-【输入文件】（必须用 Read 工具读取）
+【输入文件】（动态扫描获取）
 - 审计上下文：{project_dir}/.workflow/audit-ctx.json
-- 角色状态：{project_dir}/追踪/角色状态.md
+- 扫描追踪/目录：`ls {project_dir}/追踪/*.md 2>/dev/null`
+- 扫描设定/目录：`ls {project_dir}/设定/**/*.md 2>/dev/null`
 - 所有章节正文：{project_dir}/正文/第{N}章.md（逐章读取）
 
 【审计项】
@@ -226,9 +232,9 @@ T-AUDIT: 全量审计「{项目名}」
 【项目信息】
 - 项目目录：{project_dir}
 
-【输入文件】（必须用 Read 工具读取）
+【输入文件】（动态扫描获取）
 - 审计上下文：{project_dir}/.workflow/audit-ctx.json
-- 物品追踪：{project_dir}/追踪/物品.md
+- 扫描追踪/目录：`ls {project_dir}/追踪/*.md 2>/dev/null`（获取物品.md等）
 - 所有章节正文：{project_dir}/正文/第{N}章.md（逐章读取）
 
 【审计项】
@@ -272,9 +278,9 @@ T-AUDIT: 全量审计「{项目名}」
 【项目信息】
 - 项目目录：{project_dir}
 
-【输入文件】（必须用 Read 工具读取）
+【输入文件】（动态扫描获取）
 - 审计上下文：{project_dir}/.workflow/audit-ctx.json
-- 环境追踪：{project_dir}/追踪/环境.md
+- 扫描追踪/目录：`ls {project_dir}/追踪/*.md 2>/dev/null`（获取环境.md等）
 - 所有章节正文：{project_dir}/正文/第{N}章.md（逐章读取）
 
 【审计项】
@@ -317,9 +323,9 @@ T-AUDIT: 全量审计「{项目名}」
 【项目信息】
 - 项目目录：{project_dir}
 
-【输入文件】（必须用 Read 工具读取）
+【输入文件】（动态扫描获取）
 - 审计上下文：{project_dir}/.workflow/audit-ctx.json
-- 时间线追踪：{project_dir}/追踪/时间线.md
+- 扫描追踪/目录：`ls {project_dir}/追踪/*.md 2>/dev/null`（获取时间线.md等）
 - 所有章节正文：{project_dir}/正文/第{N}章.md（逐章读取）
 
 【审计项】
@@ -363,9 +369,9 @@ T-AUDIT: 全量审计「{项目名}」
 【项目信息】
 - 项目目录：{project_dir}
 
-【输入文件】（必须用 Read 工具读取）
+【输入文件】（动态扫描获取）
 - 审计上下文：{project_dir}/.workflow/audit-ctx.json
-- 伏笔追踪：{project_dir}/追踪/伏笔.md
+- 扫描追踪/目录：`ls {project_dir}/追踪/*.md 2>/dev/null`（获取伏笔.md等）
 - 所有章节正文：{project_dir}/正文/第{N}章.md（逐章读取）
 
 【审计项】

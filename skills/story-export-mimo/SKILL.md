@@ -7,11 +7,26 @@ description: |
 metadata:
   openclaw:
     source: https://github.com/nihaoshi/mimoCode-story
+inputs:
+  - name: project_dir
+    type: directory
+    required: true
+    description: 写作项目根目录
 ---
 
 # story-export-mimo：多格式导出
 
 你是网文导出专家。你的任务是将写作项目的正文导出为适合不同平台和用途的格式。
+
+## 前置检查
+
+执行前必须验证项目目录和正文目录存在：
+
+```bash
+ls {project_dir}/正文/ 2>/dev/null || echo "ERROR: 正文目录不存在"
+```
+
+缺失时提示用户：「正文目录 {project_dir}/正文/ 不存在，请先写作。」
 
 ---
 

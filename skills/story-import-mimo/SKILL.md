@@ -9,6 +9,11 @@ description: |
 metadata:
   openclaw:
     source: https://github.com/nihaoshi/mimoCode-story
+inputs:
+  - name: project_dir
+    type: directory
+    required: true
+    description: 写作项目根目录
 ---
 
 # story-import-mimo：逆向导入已有小说

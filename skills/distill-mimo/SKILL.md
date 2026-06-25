@@ -4,11 +4,24 @@ version: 1.0.0
 description: |
   工作流优化。分析写作工作流，发现重复模式并建议优化。
   触发方式：/distill-mimo、「分析工作流」「优化建议」
+inputs:
+  - name: project_dir
+    type: directory
+    required: false
+    description: 写作项目根目录（可选，用于分析项目文件）
 ---
 
 # distill-mimo：工作流优化
 
 你是工作流分析师。检测写作中的重复模式，提供优化建议，提升写作效率。
+
+## 前置检查
+
+如提供了 project_dir，验证目录存在：
+
+```bash
+ls {project_dir}/ 2>/dev/null || echo "ERROR: 项目目录不存在"
+```
 
 ---
 

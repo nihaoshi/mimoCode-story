@@ -31,6 +31,16 @@ inputs:
 不凭记忆，不跳步骤，不偷懒
 ```
 
+## 前置检查
+
+执行前必须验证项目目录存在且设定目录完整：
+
+```bash
+ls {project_dir}/设定/ 2>/dev/null || echo "ERROR: 设定目录缺失"
+```
+
+缺失时提示用户：「项目目录 {project_dir}/设定/ 不存在，请先创建设定文件或用 /story-setup-mimo 部署项目。」
+
 **每个 Agent 执行前后必须运行守卫脚本：**
 ```bash
 node {skill_dir}/scripts/workflow-guard.js pre  <step> {workflow_dir} {project_dir}
@@ -45,13 +55,9 @@ node {skill_dir}/scripts/workflow-guard.js post <step> {workflow_dir}
 T-OUTLINE: 全书大纲生成
 │
 ├─── Step 1: 读取设定 [主 agent]
-│    └── T-OUTLINE-01: 读取设定文件
-│        ├── 读设定/世界观/*.md
-│        ├── 读设定/角色/*.md
-│        ├── 读设定/势力/*.md
-│        ├── 读设定/关系.md
-│        ├── 读设定/题材定位.md
-│        └── 读选题决策.md（如存在）
+│    └── T-OUTLINE-01: 读取设定文件（动态扫描）
+│        ├── 扫描设定/目录：ls {project_dir}/设定/**/*.md
+│        └── 按扫描结果加载
 │
 ├─── Step 2: 生成全书大纲 [子 agent 隔离]
 │    └── T-OUTLINE-02: 生成大纲.md
@@ -82,16 +88,19 @@ T-OUTLINE: 全书大纲生成
 ### Step 1: 读取设定
 
 - **执行方式**：主 agent
-- **职责**：读取项目中所有已有的设定文件，组装为大纲生成的输入上下文
-- **必须读取的文件**：
-  - `设定/世界观/*.md` — 世界观规则、力量体系、金手指等
-  - `设定/角色/*.md` — 角色设定
-  - `设定/势力/*.md` — 势力设定
-  - `设定/关系.md` — 角色关系网络
-  - `设定/题材定位.md` — 题材核心梗、卖点、对标分析
-  - `选题决策.md`（可选，项目根目录）
+- **职责**：动态扫描项目中所有已有的设定文件，组装为大纲生成的输入上下文
+- **执行**：
+  ```bash
+  ls {project_dir}/设定/世界观/*.md 2>/dev/null
+  ls {project_dir}/设定/角色/*.md 2>/dev/null
+  ls {project_dir}/设定/势力/*.md 2>/dev/null
+  ls {project_dir}/设定/关系.md 2>/dev/null
+  ls {project_dir}/设定/题材定位.md 2>/dev/null
+  ls {project_dir}/选题决策.md 2>/dev/null
+  ```
+  按扫描结果逐个加载
 - **输出**：`.workflow/step01-settings.json`
-- **防偷懒**：必须实际读取每个文件，不能从记忆推断；缺失的文件记录到输出但不阻断
+- **防偷懒**：必须实际扫描并读取每个文件，不能从记忆推断；缺失的文件记录到输出但不阻断
 
 ### Step 2: 生成全书大纲
 

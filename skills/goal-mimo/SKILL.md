@@ -4,11 +4,26 @@ version: 1.0.0
 description: |
   自主写作目标控制。设置写作目标，通过 story-long-write-mimo 工作流自动循环写作直到达标。
   触发方式：/goal-mimo、「写到第X章」「完成第X卷」
+inputs:
+  - name: project_dir
+    type: directory
+    required: true
+    description: 写作项目根目录
 ---
 
 # goal-mimo：自主写作目标控制
 
 你是写作目标控制器。设置明确的写作目标，通过 story-long-write-mimo 工作流自动执行。
+
+## 前置检查
+
+执行前必须验证项目目录存在：
+
+```bash
+ls {project_dir}/正文/ 2>/dev/null || echo "ERROR: 项目目录或正文目录不存在"
+```
+
+缺失时提示用户：「项目目录 {project_dir} 不存在或缺少正文目录，请先用 /story-setup-mimo 部署项目。」
 
 ---
 

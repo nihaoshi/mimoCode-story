@@ -5,8 +5,6 @@
 
 专业的网文写作全流程技能包，覆盖长篇与短篇网络小说的**扫榜选题 → 拆文学习 → 大纲设计 → 正文写作 → 质量控制 → 去AI味 → 审稿发布**完整链路。
 
-基于 [oh-story-claudecode](https://github.com/nihaoshi/oh-story-claudecode) 深度适配，专为 [MiMo Code](https://github.com/XiaomiMiMo/MiMo-Code) 平台设计。
-
 ---
 
 ## 目录
@@ -14,18 +12,11 @@
 - [核心特性](#核心特性)
 - [前置依赖](#前置依赖)
 - [安装方式](#安装方式)
-- [更新技能包](#更新技能包)
 - [快速开始](#快速开始)
 - [技能一览](#技能一览)
+- [架构设计](#架构设计)
 - [自动化脚本](#自动化脚本)
 - [质量门禁体系](#质量门禁体系)
-- [Task 跟踪体系](#task-跟踪体系)
-- [知识库体系](#知识库体系)
-- [项目结构](#项目结构)
-- [Writing Project Rules](#writing-project-rules)
-- [MiMo Code 深度适配](#mimocode-深度适配)
-- [使用示例](#使用示例)
-- [与原版的区别](#与原版的区别)
 - [更新日志](#更新日志)
 - [License](#license)
 
@@ -35,20 +26,18 @@
 
 | 特性 | 说明 |
 |------|------|
-| **全流程覆盖** | 从选题到发布，23 个技能 + 45 个原子技能覆盖网文创作全生命周期 |
+| **全流程覆盖** | 27 个技能覆盖网文创作全生命周期 |
 | **长篇 + 短篇** | 同时支持长篇连载和短篇创作，按篇幅自动分流 |
 | **智能路由** | `/story-mimo` 主入口自动识别用户意图，分发到对应技能 |
-| **原子技能** | 45 个原子技能可独立调用（`/atom:detect-banned-words`）或编排组合 |
+| **动态文件发现** | 所有技能动态扫描项目目录获取文件列表，新增文件夹自动适配 |
+| **统一 frontmatter** | 所有技能声明 `inputs.project_dir`，编排层可统一验证 |
+| **前置检查** | 所有技能执行前验证目录存在，缺失时友好提示 |
 | **9 重质量门禁** | 禁用词、一致性、伏笔、字数、角色声音、情绪曲线、爽点密度、跨章重复、项目缺口 |
-| **写前预防** | 质量约束注入到写作上下文，AI 写之前就知道红线，不是写完再改 |
-| **Writing Project Rules** | 自动部署写作强制规则到项目，AI 每次会话自动读取 |
-| **跨会话连续** | 基于 MiMo Code 持久化记忆，写作进度自动保存/恢复 |
+| **写前预防** | 质量约束注入到写作上下文，AI 写之前就知道红线 |
 | **去AI味** | 专业检测并清除 AI 写作痕迹，让文字更自然 |
-| **实时市场数据** | 通过浏览器 CDP 采集起点/番茄/七猫/晋江等平台榜单数据 |
-| **简介生成** | 按平台规范生成简介文案，支持 A/B 测试版 |
-| **多格式导出** | 支持 TXT、平台专用格式、校对稿导出 |
-| **Agent角色系统** | 6个专业子智能体各司其职，支持并行/串行执行 |
-| **Task 跟踪** | 每个 skill 执行时自动创建任务树，强制按步骤执行，不跳步不偷懒 |
+| **跨会话连续** | 基于 MiMo Code 持久化记忆，写作进度自动保存/恢复 |
+| **批量细纲生成** | 进度管理后自动补建当前弧/卷细纲，含去重检查 |
+| **追踪三步流程** | 写完章节后：扫描项目→分析变更→按清单更新，不遗漏任何文件 |
 
 ---
 
@@ -57,10 +46,8 @@
 | 依赖 | 版本 | 用途 | 必需性 |
 |------|------|------|--------|
 | [MiMo Code](https://github.com/XiaomiMiMo/MiMo-Code) | 最新 | 运行平台 | **必需** |
-| [Node.js](https://nodejs.org/) | 14+ | 质量检查脚本（10 个） | **必需**（长篇写作） |
-| [Python 3](https://www.python.org/) | 3.6+ | 字数统计（跨平台） | 可选 |
+| [Node.js](https://nodejs.org/) | 14+ | 质量检查脚本 | **必需**（长篇写作） |
 | [Git](https://git-scm.com/) | 任意 | 版本控制 | 可选 |
-| [agent-browser](https://www.npmjs.com/package/agent-browser) | 最新 | 浏览器操控（CDP 协议） | 可选（仅扫榜采集） |
 
 ---
 
@@ -80,12 +67,6 @@ curl -fsSL https://raw.githubusercontent.com/nihaoshi/mimoCode-story/main/instal
 irm https://raw.githubusercontent.com/nihaoshi/mimoCode-story/main/install.ps1 | iex
 ```
 
-安装脚本自动完成：
-1. 克隆仓库到 `~/mimoCode-story`
-2. 复制所有技能到 `~/.config/mimocode/skills/`
-3. 安装 agent-browser 依赖（可选）
-4. 验证安装完整性
-
 ### 方式二：手动安装
 
 ```bash
@@ -94,70 +75,15 @@ git clone https://github.com/nihaoshi/mimoCode-story.git ~/mimoCode-story
 
 # 2. 复制 skills 到 MiMo Code 用户技能目录
 # macOS / Linux:
-mkdir -p ~/.config/mimocode/skills
 cp -r ~/mimoCode-story/skills/* ~/.config/mimocode/skills/
 
 # Windows (PowerShell):
-New-Item -ItemType Directory -Force -Path "$HOME\.config\mimocode\skills"
 Copy-Item -Path "$HOME\mimoCode-story\skills\*" -Destination "$HOME\.config\mimocode\skills\" -Recurse -Force
-```
-
-### 方式三：通过 MiMo Code 会话安装
-
-在 MiMo Code 中直接告诉它：
-
-```
-帮我把 ~/mimoCode-story/skills 目录复制到 ~/.config/mimocode/skills/
 ```
 
 ### 验证安装
 
-重启 MiMo Code，运行：
-
-```
-/mimo debug skill
-```
-
-应在列表中看到 `story-mimo`、`story-long-write-mimo`、`story-short-write-mimo` 等 16 个技能。
-
----
-
-## 更新技能包
-
-### 一键更新
-
-**macOS / Linux：**
-
-```bash
-cd ~/mimoCode-story && git pull && cp -r skills/* ~/.config/mimocode/skills/
-```
-
-**Windows PowerShell：**
-
-```powershell
-cd ~/mimoCode-story; git pull; Copy-Item -Path "skills\*" -Destination "$HOME\.config\mimocode\skills\" -Recurse -Force
-```
-
-### 更新后验证
-
-重启 MiMo Code，运行 `/mimo debug skill` 确认技能列表完整。
-
-### 更新内容说明
-
-| 更新类型 | 说明 |
-|---------|------|
-| 脚本更新 | `skills/_shared/scripts/` 下的自动化脚本 |
-| 技能更新 | `skills/*/SKILL.md` 下的技能定义 |
-| 知识库更新 | `skills/_shared/references/` 下的参考文档 |
-| 模板更新 | `skills/_shared/templates/` 下的写作模板 |
-
-### 已有项目更新
-
-如果已有写作项目需要使用新版本的技能包：
-
-1. 更新技能包（按上述步骤）
-2. 重新运行质量门禁：`node skills/_shared/scripts/quality-gate.js <章节文件>`
-3. 如需更新 AGENTS.md 中的规则，手动复制新规则到项目的 AGENTS.md
+重启 MiMo Code，运行 `/mimo debug skill`，应在列表中看到 `story-mimo`、`story-long-write-mimo` 等技能。
 
 ---
 
@@ -169,207 +95,182 @@ cd ~/mimoCode-story; git pull; Copy-Item -Path "skills\*" -Destination "$HOME\.c
 /story-setup
 ```
 
-交互式部署，选择项目类型（长篇/短篇）、是否启用 Git 版本控制。自动创建：
-
-- 完整目录结构（设定/大纲/正文/追踪/故事线/跨卷追踪）
-- **AGENTS.md**（Writing Project Rules，AI 自动读取）
-- `.story-deployed`（部署标记）
-- `.active-book`（当前书目标记）
-- Git hooks（可选）
-
-### 2. 开始写作
+### 2. 扫榜选题
 
 ```
-# 长篇小说
-/story-long-write
-
-# 短篇小说
-/story-short-write
+/story-long-scan    # 长篇扫榜（起点/番茄/七猫/晋江）
+/story-short-scan   # 短篇扫榜（知乎盐言/点众/黑岩）
 ```
 
-### 3. 扫榜选题
+### 3. 开始写作
 
 ```
-# 长篇扫榜（起点/番茄/七猫/晋江）
-/story-long-scan
-
-# 短篇扫榜（知乎盐言/点众/黑岩）
-/story-short-scan
+/story-long-write    # 长篇小说
+/story-short-write   # 短篇小说
 ```
 
-### 4. 拆文学习
+### 4. 日更续写
 
 ```
-# 长篇拆文
-/story-long-analyze
-
-# 短篇拆文
-/story-short-analyze
+/续写
+/日更
 ```
 
 ### 5. 质量检查
 
 ```
-# 统一质量门禁（7 重检查）
-node skills/_shared/scripts/quality-gate.js <章节文件>
-
-# 快速模式（仅阻断项检查）
-node skills/_shared/scripts/quality-gate.js --fast <章节文件>
+/quality-mimo
 ```
 
 ---
 
 ## 技能一览
 
+### 核心写作（7个）
+
 | 技能 | 触发方式 | 功能 |
 |------|---------|------|
-| `story-mimo` | `/story-mimo`、`/网文` | 路由入口，自动分发到对应技能 |
-| `story-setup-mimo` | `/story-setup-mimo`、`准备写书` | 初始化写作项目 |
-| `story-long-write-mimo` | `/story-long-write-mimo`、`写长篇` | 长篇写作（核心技能，5 阶段流程） |
-| `story-short-write-mimo` | `/story-short-write-mimo`、`写短篇` | 短篇写作（4 阶段流程） |
-| `story-long-analyze-mimo` | `/story-long-analyze-mimo`、`长篇拆文` | 长篇小说拆解分析 |
-| `story-short-analyze-mimo` | `/story-short-analyze-mimo`、`短篇拆文` | 短篇小说拆解分析 |
-| `story-long-scan-mimo` | `/story-long-scan-mimo`、`长篇扫榜` | 长篇市场数据采集与分析 |
-| `story-short-scan-mimo` | `/story-short-scan-mimo`、`短篇扫榜` | 短篇市场数据采集与分析 |
-| `story-scan-mimo` | `/story-scan-mimo`、`扫榜` | 通用扫榜路由 |
-| `story-import-mimo` | `/story-import-mimo`、`导入小说` | 逆向导入已有小说为项目结构 |
-| `story-deslop-mimo` | `/story-deslop-mimo`、`去AI味` | 检测并清除 AI 写作痕迹 |
-| `story-review-mimo` | `/story-review-mimo`、`审稿` | 多维度质量审查 |
-| `story-cover-mimo` | `/story-cover-mimo`、`封面` | 封面提示词生成 |
-| `story-synopsis-mimo` | `/story-synopsis-mimo`、`简介` | 简介/文案生成（4 平台） |
-| `story-export-mimo` | `/story-export-mimo`、`导出` | 多格式导出 |
-| `browser-cdp-mimo` | `浏览器操作`、`CDP` | Chrome 浏览器控制 |
-| `goal-mimo` | `/goal-mimo`、`写到第X章` | 自主写作目标控制 |
-| `story-session-mimo` | 自动触发 | Session 生命周期管理 |
-| `dream-mimo` | `/dream-mimo`、`提取经验` | 写作经验沉淀 |
-| `distill-mimo` | `/distill-mimo`、`分析工作流` | 工作流优化 |
-| `quality-mimo` | `/quality-mimo`、`检查质量` | 统一质量检查入口 |
-| `audit-mimo` | `/audit-mimo`、`审计项目` | 全量项目审计 |
-| `project-health-mimo` | `/project-health-mimo`、`检查项目` | 项目健康检查与修复 |
+| `story-mimo` | `/story-mimo`、`/网文` | 路由入口，自动分发 |
+| `story-setup-mimo` | `/story-setup-mimo` | 初始化写作项目 |
+| `story-long-write-mimo` | `/story-long-write-mimo` | 长篇写作（5阶段） |
+| `story-chapter-write-mimo` | `/chapter-write` | 单章写作（14步） |
+| `story-short-write-mimo` | `/story-short-write-mimo` | 短篇写作（4阶段） |
+| `story-outline-mimo` | `/outline` | 大纲生成 |
+| `story-progress-mimo` | `/progress` | 进度管理+批量细纲 |
 
-### 原子技能（45 个）
+### 拆文分析（3个）
 
-原子技能可独立调用（`/atom:{id}`）或在编排 SKILL.md 中组合使用。
+| 技能 | 触发方式 | 功能 |
+|------|---------|------|
+| `story-long-analyze-mimo` | `/story-long-analyze-mimo` | 长篇拆文 |
+| `story-short-analyze-mimo` | `/story-short-analyze-mimo` | 短篇拆文 |
+| `story-import-mimo` | `/story-import-mimo` | 导入已有小说 |
 
-| 类别 | 数量 | 原子 ID | 功能 |
-|------|------|---------|------|
-| **检测** | 11 | `detect-banned-words` | 禁用词扫描 |
-| | | `detect-ai-sentence` | AI腔句式检测 |
-| | | `detect-consistency` | 一致性检查 |
-| | | `detect-foreshadow` | 伏笔检测 |
-| | | `detect-wordcount` | 字数检测 |
-| | | `detect-voice` | 角色声音检测 |
-| | | `detect-emotion-curve` | 情绪曲线检测 |
-| | | `detect-cross-chapter` | 跨章重复检测 |
-| | | `detect-satisfaction` | 爽点密度检测 |
-| | | `detect-story-gaps` | 设定缺口检测 |
-| | | `full-consistency-audit` | 全量一致性审计 |
-| **修正** | 7 | `fix-banned-words` | 禁用词替换 |
-| | | `fix-ai-sentence` | 句式去套路化 |
-| | | `fix-psychology-externalize` | 心理外化 |
-| | | `fix-rhythm-break` | 节奏打散 |
-| | | `fix-dialogue-naturalize` | 对话去腔调 |
-| | | `fix-ending-desublimate` | 结尾去升华 |
-| | | `fix-punctuation` | 标点规范化 |
-| **评审** | 5 | `review-structure` | 结构评审 |
-| | | `review-character` | 角色评审 |
-| | | `review-writing` | 文笔评审 |
-| | | `review-commercial` | 商业评审 |
-| | | `review-consistency` | 一致性评审 |
-| **写前预防** | 6 | `rules-engine` | 规则引擎 |
-| | | `pre-write-checklist` | 写前检查清单 |
-| | | `prompt-template-inject` | Prompt模板注入 |
-| | | `banned-words-preload` | 禁用词预加载 |
-| | | `style-constraint-gen` | 风格约束生成 |
-| | | `character-anchor-load` | 角色锚点加载 |
-| **扫榜** | 4 | `scrape-platform` | 平台数据采集 |
-| | | `analyze-trend` | 题材趋势分析 |
-| | | `generate-topic-decision` | 选题决策生成 |
-| | | `analyze-reader-profile` | 读者画像分析 |
-| **拆文** | 7 | `extract-summary` | 概要提取 |
-| | | `analyze-golden-chapters` | 黄金三章拆解 |
-| | | `extract-chapter-summary` | 逐章摘要提取 |
-| | | `analyze-aggregate` | 聚合分析 |
-| | | `extract-settings` | 设定提取 |
-| | | `extract-characters` | 角色提取 |
-| | | `extract-style` | 文风提取 |
-| **写作** | 5 | `design-volume-outline` | 卷纲设计 |
-| | | `design-chapter-outline` | 细纲设计 |
-| | | `design-character` | 角色设计 |
-| | | `design-worldbuilding` | 世界观设计 |
-| | | `generate-chapter` | 正文生成 |
+### 扫榜选题（3个）
+
+| 技能 | 触发方式 | 功能 |
+|------|---------|------|
+| `story-long-scan-mimo` | `/story-long-scan-mimo` | 长篇扫榜 |
+| `story-short-scan-mimo` | `/story-short-scan-mimo` | 短篇扫榜 |
+| `story-scan-mimo` | `/story-scan-mimo` | 通用扫榜 |
+
+### 质量控制（5个）
+
+| 技能 | 触发方式 | 功能 |
+|------|---------|------|
+| `quality-mimo` | `/quality-mimo` | 统一质量检查 |
+| `story-deslop-mimo` | `/story-deslop-mimo` | 去AI味 |
+| `story-review-mimo` | `/story-review-mimo` | 多视角审稿 |
+| `audit-mimo` | `/audit-mimo` | 全量审计 |
+| `project-health-mimo` | `/project-health-mimo` | 项目健康检查 |
+
+### 辅助工具（9个）
+
+| 技能 | 触发方式 | 功能 |
+|------|---------|------|
+| `story-rewrite-mimo` | `/rewrite` | 章节重写 |
+| `story-synopsis-mimo` | `/synopsis` | 简介生成 |
+| `story-cover-mimo` | `/cover` | 封面生成 |
+| `story-export-mimo` | `/export` | 多格式导出 |
+| `goal-mimo` | `/goal` | 自主写作目标 |
+| `dream-mimo` | `/dream` | 经验沉淀 |
+| `distill-mimo` | `/distill` | 工作流优化 |
+| `story-session-mimo` | 自动触发 | 会话管理 |
+| `browser-cdp-mimo` | 浏览器操作 | CDP控制 |
+
+---
+
+## 架构设计
+
+### 统一文件发现机制
+
+所有技能使用动态扫描获取项目文件，不再硬编码路径：
+
+```
+技能执行时：
+1. 读取 _shared/references/project-structure.md → 获取目录结构定义
+2. 运行 ls 命令扫描项目目录 → 动态获取文件列表
+3. 按需加载 → 只读取本次需要的文件
+```
+
+**新增文件夹时**，运行 `node skills/_shared/scripts/scan-project-structure.js <项目目录>` 即可自动更新结构定义，所有技能自动适配。
+
+### 前置检查机制
+
+所有技能执行前验证目录存在：
+
+```bash
+ls {project_dir}/正文/ {project_dir}/设定/ {project_dir}/追踪/ 2>/dev/null || echo "ERROR: 项目目录缺失"
+```
+
+缺失时提示用户：「项目目录不存在，请先用 /story-setup-mimo 部署项目。」
+
+### 追踪更新三步流程
+
+写完章节后，按三步更新追踪文件：
+
+```
+Step A：扫描项目结构 → 获取所有可更新文件清单
+Step B：分析正文 → 提取变更清单（新角色？状态变化？伏笔？物品？）
+Step C：按清单更新 → 只更新涉及的文件（追踪+设定+故事线+跨卷追踪）
+```
+
+### 细纲去重机制
+
+生成新细纲前，扫描前 5 章细纲检查重复：
+
+| 检查项 | 规则 |
+|--------|------|
+| 核心事件 | 不得与前 5 章高度相似 |
+| 情节点 | 不得与前 3 章 >50% 重合 |
+| 情绪 | 连续 3 章不得同一情绪目标 |
+| 爽点 | 连续 3 章不得同一爽点类型 |
+
+### project_dir 声明
+
+所有 27 个技能的 frontmatter 均声明 `inputs.project_dir`，编排层可统一验证输入参数。
 
 ---
 
 ## 自动化脚本
 
-### 长篇写作脚本（skills/_shared/scripts/）
+### 质量检查脚本（skills/_shared/scripts/）
 
-> 原 `story-long-write-mimo/scripts/` 已全部提升到 `_shared/scripts/`
+| 脚本 | 功能 | 退出码 |
+|------|------|--------|
+| `quality-gate.js` | 统一质量门禁（9重检查） | 0=通过, 1=警告, 2=阻断 |
+| `style-lint.js` | 禁用词+AI腔检测 | 0=通过, 1=有问题 |
+| `consistency-check.js` | 一致性检查 | 0=通过, 1=警告, 2=错误 |
+| `cross-chapter-check.js` | 跨章重复检测 | 0=通过, 1=重复 |
+| `voice-check.js` | 角色声音一致性 | 0=通过, 1=不一致 |
+| `emotion-analyzer.js` | 情绪曲线分析 | 0=正常, 1=平坦警告 |
+| `satisfaction-meter.js` | 爽点密度度量 | 0=达标, 1=不足 |
+| `detect-story-gaps.js` | 项目缺口检测 | 0=通过, 1=警告, 2=阻断 |
+| `wordcount.js` | 字数统计 | - |
 
-| 脚本 | 功能 | `--json` | 退出码 |
-|------|------|---------|--------|
-| `quality-gate.js` | 统一质量门禁（9 重检查） | ✅ | 0=通过, 1=警告, 2=阻断 |
-| `style-lint.js` | 禁用词 + AI 腔检测 + 格式/专业术语检查 | ✅ | 0=通过, 1=有问题 |
-| `consistency-check.js` | 一致性检查（物品/环境/角色/时间线/身份） | ✅ | 0=通过, 1=警告, 2=错误 |
-| `foreshadow-check.js` | 伏笔逾期 + 格式 + 重叠检查 | ✅ | 0=通过, 1=逾期 |
-| `voice-check.js` | 角色声音一致性 | ✅ | 0=通过, 1=不一致 |
-| `emotion-analyzer.js` | 情绪曲线分析 | ✅ | 0=正常, 1=平坦警告 |
-| `satisfaction-meter.js` | 爽点密度度量 | ✅ | 0=达标, 1=不足 |
-| `detect-story-gaps.js` | 项目缺口检测 | ✅ | 0=通过, 1=警告, 2=阻断 |
-| `full-consistency-audit.js` | 全量一致性审计 | ✅ | 0=通过, 1=警告, 2=错误 |
-| `cross-chapter-check.js` | 跨章重复检测（n-gram 指纹） | ✅ | 0=通过, 1=重复 |
-| `repair-scripts.js` | 脚本修复器 | ✅ | 0=成功, 1=需修复, 2=错误 |
-| `wordcount-pacer.js` | 字数节奏指导 | - | - |
-| `detect-python.js` | Python 检测 | - | - |
+### 项目结构扫描脚本
 
-### 共享脚本（skills/_shared/scripts/）
-
-| 脚本 | 功能 | 说明 |
-|------|------|------|
-| `goal.js` | /goal 命令 | 设置写作目标，监控进度 |
-| `dream.js` | /dream 命令 | 扫描章节，提取写作经验 |
-| `distill.js` | /distill 命令 | 分析工作流，发现重复模式 |
-| `punctuation-normalize.js` | 标点规范化（合并版） | 检查/修复 AI 标点，支持 `--quote-mode` 引号切换 |
-| `banned-words.js` | 禁用词列表 | Level1（31词）+ Level2（18词） |
-| `cdp-utils.js` | CDP 工具函数 | 浏览器自动化辅助 |
-| `cross-chapter-check.js` | 跨章重复检测 | n-gram 指纹 + Jaccard 相似度 |
-| `detect-story-gaps.js` | 设定缺口检测 | 设定/大纲/追踪完整性 |
-
-### 短篇写作脚本（skills/story-short-write-mimo/scripts/）
-
-| 脚本 | 功能 | 说明 |
-|------|------|------|
-| `quality-gate.js` | 短篇质量门禁 | 字数/钩子/情绪/反转/AI腔检查 |
+| 脚本 | 功能 |
+|------|------|
+| `scan-project-structure.js` | 扫描项目目录，输出文件结构JSON |
+| `character-sync.js` | 验证设定与追踪文件一致性 |
 
 ### 使用示例
 
 ```bash
-# 运行统一质量门禁
-node skills/_shared/scripts/quality-gate.js 正文/第001章_XXX.md
+# 运行质量门禁
+node skills/_shared/scripts/quality-gate.js 正文/第001章.md
 
-# JSON 格式输出（供自动化流水线使用）
-node skills/_shared/scripts/quality-gate.js --json 正文/第001章_XXX.md
+# 扫描项目结构
+node skills/_shared/scripts/scan-project-structure.js 项目目录
 
-# 快速模式（跳过警告项检查）
-node skills/_shared/scripts/quality-gate.js --fast 正文/第001章_XXX.md
-
-# 单独运行某个检查
-node skills/_shared/scripts/style-lint.js --json 正文/第001章_XXX.md
-node skills/_shared/scripts/consistency-check.js --json 正文/第001章_XXX.md
-
-# 情绪曲线可视化
-node skills/_shared/scripts/emotion-analyzer.js 正文/第001章_XXX.md
-
-# 字数节奏指导
-node skills/_shared/scripts/wordcount-pacer.js 大纲/细纲_第001章.md
+# 验证角色一致性
+node skills/_shared/scripts/character-sync.js 项目目录
 ```
 
 ---
 
 ## 质量门禁体系
-
-`quality-gate.js` 是统一质量门禁，串联 9 重检查：
 
 ```
 写正文 → quality-gate.js（自动阻断）
@@ -380,9 +281,7 @@ node skills/_shared/scripts/wordcount-pacer.js 大纲/细纲_第001章.md
   ├── cross-chapter     跨章重复检测 → 警告
   ├── voice-check       角色声音不一致 → 警告
   ├── emotion-analyzer  情绪曲线平坦 → 警告
-  └── satisfaction      爽点密度不足 → 警告
-
-  (full mode only)
+  ├── satisfaction      爽点密度不足 → 警告
   └── detect-gaps       设定缺口/大纲缺失 → 警告
 
 退出码：
@@ -391,129 +290,12 @@ node skills/_shared/scripts/wordcount-pacer.js 大纲/细纲_第001章.md
   2 = 有阻断项（必须修复）
 ```
 
-**AGENTS.md 中的强制规则**：退出码 2 时不得标记任务完成，必须修复后重新运行。
-
----
-
-## Task 跟踪体系
-
-所有编排 skill 执行时自动创建任务树，强制 AI 按步骤执行，不跳步不偷懒。
-
-### 核心原则
-
-1. **先建任务骨架，再逐个执行** — skill 触发时第一步是创建完整任务树
-2. **不跳步** — 每个任务必须 `done` 后才能进入下一个
-3. **条件创建** — 循环/分支步骤只在条件满足时创建，不预建空壳
-4. **完成标准明确** — 每个任务的 `done` 条件写在 summary 中
-
-### 单章写作任务树示例
-
-```
-写第1章「重回考场」
-├── 读取上下文（15项，逐项创建）
-│   ├── CTX-01: 读上一章正文 [首章跳过]
-│   ├── CTX-02: 读本章细纲
-│   ├── CTX-03: 读伏笔.md
-│   ├── ...（共15项）
-├── 准备层
-│   ├── 状态筛选
-│   ├── 文风召回
-│   ├── 指令确认
-│   ├── 性格锚点检查
-│   └── 质量约束注入（禁用词/AI腔/段落/对话/心理/比喻/节奏/留白/标点）
-├── 正文写作
-├── 字数验证
-├── 质量门禁
-│   ├── detect-banned-words
-│   ├── detect-ai-sentence
-│   ├── [条件] 修正 → 回到字数验证 → 重新检测（上限3轮）
-├── 追踪文件更新（伏笔/时间线/角色状态/上下文）
-```
-
-### 已集成 Task 跟踪的 Skill
-
-| Skill | 说明 |
-|-------|------|
-| `story-long-write-mimo` | 长篇写作5阶段，含单章完整任务树 |
-| `story-short-write-mimo` | 短篇写作4阶段，含逐场景任务树 |
-| `story-deslop-mimo` | 去AI味4阶段，含Gate A~F条件创建 |
-| `story-review-mimo` | 审稿5维度，含综合报告 |
-| `quality-mimo` | 质量门禁，含标准/增强模式 |
-| `audit-mimo` | 全量审计3维度 |
-| `story-session-mimo` | 会话生命周期3阶段 |
-| `story-mimo` | 路由入口，含任务状态感知 |
-| `story-long-analyze-mimo` | 长篇拆文6阶段，含Stage 1停靠点 |
-| `story-import-mimo` | 导入4阶段，含篇幅分流 |
-
-规范详见 `skills/_shared/references/task-tracking-conventions.md`。
-
----
-
-## 知识库体系
-
-`skills/_shared/` 目录下包含 70+ 个共享参考文档：
-
-### 参考文档（references/）
-
-| 类别 | 文档 | 说明 |
-|------|------|------|
-| 写作技法 | `dialogue-mastery.md` | 对话技巧精通 |
-| | `character-basics.md` | 角色设计基础 |
-| | `outline-methods.md` | 大纲核心方法 |
-| | `opening-design.md` | 开篇设计 |
-| | `hooks-chapter.md` | 章节钩子设计 |
-| | `reversal-toolkit.md` | 反转设计工具 |
-| | `emotional-arc-design.md` | 情感弧线设计 |
-| | `emotion-curve-design.md` | 情绪曲线设计 |
-| | `pacing-mastery.md` | 节奏控制精通 |
-| 去AI味 | `anti-ai-writing.md` | 去AI味完整指南 |
-| | `banned-words.md` | 分级禁用词表 |
-| 题材公式 | `genre-writing-formulas.md` | 21 种题材公式 |
-| | `genre-catalog.md` | 题材框架速查 |
-| | `genre-core-mechanics.md` | 核心钩子分析 |
-| 市场分析 | `publishing-guide.md` | 平台运营指南 |
-| | `reader-profiling.md` | 读者画像系统 |
-| | `scan-output-format.md` | 扫榜数据格式 |
-| 质量监控 | `consistency-tracking.md` | 一致性追踪系统 |
-| | `quality-monitoring.md` | 质量监控系统 |
-| | `data-analytics.md` | 数据分析系统 |
-
-### 模板（templates/）
-
-| 模板 | 说明 |
-|------|------|
-| `dialogue-scene.md` | 5 种对话场景模板 |
-| `emotional-arc.md` | 5 种情感弧线模板 |
-| `villain-introduction.md` | 5 种反派登场模板 |
-| `worldbuilding-intro.md` | 5 种世界观引入模板 |
-
-### 示例（examples/）
-
-| 示例 | 说明 |
-|------|------|
-| `dialogue-examples.md` | 5 个经典对话范例 |
-| `emotion-examples.md` | 5 个情感弧线范例 |
-| `villain-examples.md` | 5 个反派设计范例 |
-
-### 检查清单（checklists/）
-
-| 清单 | 说明 |
-|------|------|
-| `dialogue-checklist.md` | 对话质量检查（30 项） |
-| `emotion-checklist.md` | 情感弧线检查（25 项） |
-| `villain-checklist.md` | 反派设计检查（25 项） |
-| `world-checklist.md` | 世界观检查（25 项） |
-
 ---
 
 ## 项目结构
 
 ```
 {书名}/
-├── AGENTS.md              # Writing Project Rules（自动部署）
-├── .story-deployed        # 部署标记
-├── .active-book           # 当前书目标记
-│
 ├── 设定/                  # 世界观与角色设定
 │   ├── 世界观/            # 背景设定、金手指、力量体系
 │   ├── 角色/              # 每个角色一个文件
@@ -525,363 +307,85 @@ node skills/_shared/scripts/wordcount-pacer.js 大纲/细纲_第001章.md
 ├── 大纲/                  # 分层大纲
 │   ├── 大纲.md            # 全书卷级大纲
 │   ├── 卷纲_第X卷.md      # 每卷详细大纲
-│   └── 细纲_第XXX章.md    # 每章细纲（含字数目标）
+│   └── 细纲_第XXX章.md    # 每章细纲
 │
 ├── 正文/                  # 章节文件
-│   └── 第XXX章_章名.md    # 每章一个文件
+│   └── 第XXX章_章名.md
 │
-├── 追踪/                  # 状态追踪（每章更新）
-│   ├── 上下文.md          # 进度摘要（跨会话恢复）
+├── 追踪/                  # 状态追踪
+│   ├── 上下文.md          # 进度摘要
 │   ├── 伏笔.md            # 伏笔追踪
-│   ├── 角色状态.md        # 角色状态 + 性格锚点
+│   ├── 角色状态.md        # 角色状态+性格锚点
 │   ├── 时间线.md          # 事件时间线
 │   ├── 物品.md            # 物品追踪
 │   ├── 环境.md            # 环境追踪
-│   └── 物资.md            # 物资追踪
+│   ├── 物资.md            # 物资追踪
+│   └── 重复语句.md        # 重复表达黑名单
 │
 ├── 故事线/                # 多线并行管理
-│   ├── 故事线_索引.md
-│   └── 故事线_主线_XXX.md
-│
 ├── 跨卷追踪/              # 跨卷伏笔与角色弧线
-│   ├── 跨卷伏笔.md
-│   ├── 跨卷角色弧线.md
-│   └── 卷间过渡.md
-│
 ├── 对标/                  # 拆文引用视图
-├── 参考资料/              # story-researcher 输出
-└── 导出/                  # story-export-mimo 输出
+└── .workflow/             # 工作流中间文件
 ```
-
----
-
-## Writing Project Rules
-
-`story-setup-mimo` 自动部署的 AGENTS.md 包含以下强制规则：
-
-### 写完每章必须执行
-
-1. 更新 `追踪/伏笔.md` — 新增/回收伏笔
-2. 更新 `追踪/时间线.md` — 记录事件时序
-3. 更新 `追踪/角色状态.md` — 更新角色状态 + 性格锚点
-4. 更新 `追踪/物品.md` — 物品位置/状态变化
-5. 更新 `追踪/环境.md` — 季节/天气/场景
-6. 更新 `追踪/上下文.md` — 进度摘要
-7. 运行质量门禁：`node skills/_shared/scripts/quality-gate.js <章节文件>`
-
-### 质量门禁规则
-
-退出码 2（阻断）时**不得标记任务完成**，必须修复后重新运行。
-
-### 写作铁律
-
-1. 写正文前必须读细纲，不得凭记忆写
-2. 续写前必须读上一章正文，不得凭记忆接
-3. 写对话前必须查角色性格锚点
-4. 参考文档标记"必读"的必须实际加载
-5. 字数未达标（< 目标 90%）不得结束本章
-
-### 一级禁用词（33 个）
-
-不禁、竟然、居然、事实上、实际上、显而易见、毫无疑问、可想而知、不言而喻、与此同时、值得注意的是、需要指出的是、不可否认、嘴角勾起、嘴角上扬、嘴角微扬、眼中闪过、眼底闪过、目光中闪过、深吸一口气、长舒一口气、吐出一口浊气、缓缓开口、淡淡说道、轻声说道、仿佛、宛如、恰似、犹如、值得一提、不得不说、总而言之
-
----
-
-## MiMo Code 深度适配
-
-本技能包充分利用 MiMo Code 平台的独特能力：
-
-| 能力 | 写作场景 | 实现方式 |
-|------|---------|---------|
-| **持久化记忆** | 跨会话状态连续 | `MEMORY.md` 自动保存/恢复写作进度 |
-| **智能上下文** | 长篇写作不丢失上下文 | 自动检查点 + 预算化注入 |
-| **任务追踪** | 进度管理 | 树状任务系统追踪每章状态 |
-| **子智能体** | 并行处理 | 拆文/审稿/研究可并行执行 |
-| **Goal** | 自主写作 | `/goal-mimo` 设置写作目标，通过 story-long-write-mimo 工作流自动循环 |
-| **Dream** | 经验沉淀 | `/dream-mimo` 提取写作经验到记忆，保存禁用词/有效技法/重复模式 |
-| **Distill** | 工作流优化 | `/distill-mimo` 分析写作模式，发现重复句式并建议优化 |
-
-#### Agent角色系统
-- **6个专业子智能体**：story-architect（题材定位·大纲结构）、character-designer（角色设计）、narrative-writer（正文写作）、consistency-checker（一致性检查）、story-explorer（只读查询）、chapter-extractor（拆文分析）
-- **调用规范**：轻量任务主会话完成，复杂任务 spawn 子智能体；拆文/审稿/研究可并行，追踪文件更新串行
-
-### 能力详解
-
-#### 持久化记忆（Memory）
-- **写入时机**：每章写完后、用户做出重要决策时、发现问题并解决时
-- **读取时机**：新会话开始时自动加载
-- **存储位置**：`MEMORY.md` 的 `## 写作进度` 和 `## 重要决策` 部分
-
-#### 智能上下文
-- **工作原理**：只加载当前章节需要的信息，避免上下文溢出
-- **必加载**：上一章正文、本章细纲、角色状态、伏笔
-- **按需加载**：物品、环境、其他角色详情
-
-#### Goal 自主写作
-- **触发**：用户说"写到第X章"
-- **执行**：AI 读取 SKILL.md 中的 Goal 模式，按 8 步循环执行
-- **辅助脚本**：`goal.js` 设置目标配置，`quality-gate.js` 检查质量
-
-#### Dream 经验沉淀
-- **触发**：用户说"提取经验"
-- **执行**：扫描章节，分析禁用词/AI腔/有效技法/重复模式
-- **输出**：写入 MEMORY.md，供后续写作参考
-
-#### Distill 工作流优化
-- **触发**：用户说"分析工作流"
-- **执行**：检测重复句式、重复用词、字数波动、工作流缺失
-- **输出**：优化建议报告
-
----
-
-## 使用示例
-
-### 完整写作流程
-
-```
-# 1. 初始化项目
-/story-setup
-
-# 2. 扫榜选题
-/story-long-scan
-
-# 3. 拆文学习（可选）
-/story-long-analyze
-
-# 4. 开始写作
-/story-long-write
-
-# 5. 质量检查
-node skills/_shared/scripts/quality-gate.js 正文/第001章_XXX.md
-
-# 6. 去AI味
-/story-deslop
-
-# 7. 审稿
-/story-review
-
-# 8. 生成简介
-/story-synopsis
-
-# 9. 导出
-/story-export
-```
-
-### 日更续写
-
-```
-# 继续写下一章
-/续写
-
-# 或者
-/日更
-```
-
-### 批量写作
-
-```
-# 设置写作目标，自主循环
-/goal 写到第30章，每章不低于3000字
-```
-
----
-
-## 与原版的区别
-
-| 维度 | 原版 (oh-story-claudecode) | MiMo Code 版 |
-|------|---------------------------|-------------|
-| 平台 | Claude Code | MiMo Code |
-| 技能数 | 14 | 23 + 45 原子 |
-| 脚本数 | 3 | 19（共享） |
-| 原子技能 | 无 | 45 个可独立调用/编排组合 |
-| 质量门禁 | 无统一入口 | `quality-gate.js`（9 重检查） |
-| 写前预防 | 无 | 质量约束注入到写作上下文 |
-| 情绪分析 | 无 | `emotion-analyzer.js` |
-| 爽点检测 | 无 | `satisfaction-meter.js` |
-| 角色声音 | 无 | `voice-check.js` |
-| 简介生成 | 无 | `story-synopsis-mimo` |
-| 导出功能 | 无 | `story-export-mimo` |
-| 节奏指导 | 无 | `wordcount-pacer.js` + `pacing-mastery.md` |
-| 情绪曲线 | 无 | `emotion-curve-design.md` |
-| 记忆集成 | 无 | 深度集成 MiMo Code 记忆系统 |
-| Goal/Dream | 无 | 支持自主写作和经验沉淀 |
-| Agent 体系 | 7 Agent + 模型分配 | 6 Agent 角色规范（平台决定模型） |
-| 项目缺口检测 | 无 | `detect-story-gaps.js` |
-| Session 管理 | 6 个 shell hooks | `story-session-mimo` skill |
 
 ---
 
 ## 更新日志
 
+### v5.0.0（2026-06-25）
+
+**架构升级：统一文件发现机制**
+- 新增 `scan-project-structure.js` 自动扫描项目目录结构
+- 新增 `project-structure.md` 动态扫描规范，所有技能引用统一结构定义
+- 10 个核心技能从硬编码文件路径改为动态扫描，新增文件夹自动适配
+
+**frontmatter 统一**
+- 所有 27 个技能声明 `inputs.project_dir`，编排层可统一验证
+- 缺失声明的技能（18个）全部补充
+
+**前置检查统一**
+- 所有技能增加目录存在检查，缺失时友好提示
+- 新增前置检查的技能（15个）
+
+**追踪更新三步流程**
+- 写作技能统一使用：扫描项目→分析变更→按清单更新
+- 覆盖追踪文件+设定文件+故事线+跨卷追踪
+- `story-long-write-mimo`、`story-chapter-write-mimo`、`story-short-write-mimo`、`story-rewrite-mimo` 全部适配
+
+**细纲去重**
+- 生成新细纲前扫描前 5 章，避免核心事件/情节点/情绪/爽点重复
+- `story-long-write-mimo`、`story-chapter-write-mimo`、`story-progress-mimo` 全部适配
+
+**批量细纲生成**
+- `story-progress-mimo` 新增 Phase 5：进度管理后自动补建当前弧/卷细纲
+- 含质量检查（格式/去重/伏笔衔接/角色弧线）
+
+**字数统计统一**
+- `story-deslop-mimo` 从 LLM 自行统计改为 `wordcount.js`
+- `story-short-write-mimo` 补全 `wordcount.js` 调用命令
+
+**扫榜路径统一**
+- 3 个扫榜技能加 `inputs.project_dir` 声明
+- 选题决策输出路径统一：有 project_dir 时写入项目目录，无时写入当前目录
+
+**project-structure.md 更新机制**
+- 运行 `scan-project-structure.js` 可自动扫描项目并更新结构定义
+- 新增文件夹时无需手动修改多个技能
+
 ### v4.0.0（2026-06-16）
 
 **原子化重构**：
-- 新增 45 个原子技能（`skills/atoms/`），分为 7 类：检测 11 + 修正 7 + 评审 5 + 写前预防 6 + 扫榜 4 + 拆文 7 + 写作 5
-- 每个原子独立可用（`/atom:detect-banned-words`），可在编排 SKILL.md 中自由组合
-- 原子注册表：`skills/atoms/ATOMS-REGISTRY.md`
-
-**脚本重组**：
-- 14 个脚本从 `story-long-write-mimo/scripts/` 提升到 `_shared/scripts/`（共 19 个共享脚本）
-- 合并两个标点规范化脚本为 `punctuation-normalize.js`（支持 `--quote-mode keep|ascii|yan`）
-- `story-long-write-mimo/scripts/` 目录已清空
-
-**旧技能内部重构**：
-- `quality-mimo` → 调用 10 个检测原子（行为不变）
-- `story-deslop-mimo` → 调用 7 个修正原子（行为不变）
-- `story-review-mimo` → 调用 5 个评审原子（行为不变）
-- `story-long-write-mimo` Phase 5 → 调用检测+修正原子
-
-**长篇写作工作流升级**：
-- Step 1 合并细纲检查 + 15 项上下文读取（不可偷懒，逐项输出状态）
-- 严重度分级：BLOCK 强制修复 / WARN 询问用户 / 可选静默跳过
-- Step 2.5 新增质量约束注入（从原子技能加载禁用词/AI腔/标点规则到写作上下文）
-- Phase 5 移到 Step 10（更新追踪）之后，三轮流程（检测→处理→复查→追踪同步）
-
-**安装脚本更新**：
-- `install.sh` / `install.ps1` 新增 45 个原子技能验证 + 关键脚本验证
-- 缺失原子/脚本降级为 Warning 不阻断安装
-
-### v3.3.2（2026-06-15）
-
-**全局脚本调用规则**：
-- 新增 AGENTS.md 全局脚本调用规则：所有脚本必须从全局 skill 目录执行，禁止使用项目内的 `skills/` 目录
-- 全局 skill 目录定位优先级：环境变量 `MIMOCODE_SKILLS_DIR` > 工作目录 > 配置文件 > 默认路径 `$HOME\.config\mimocode\skills\`
-- 更新所有 SKILL.md 中的脚本调用说明，标注"需从全局skill目录执行"
-
-**移除自动复制脚本功能**：
-- 移除 `story-long-write-mimo/SKILL.md` Phase 5.1（自动检测缺失脚本、手动触发修复、版本检测）
-
-**`---` 清理功能**：
-- `normalize-punctuation.js`：修复模式下删除 `---` 分隔线，保留 YAML front matter 的 `---`
-- `punctuation-normalize.js`：新增 `---` 检测和清理逻辑
-- 两个脚本均添加运行时间显示
-
-### v3.3.1（2026-06-15）
-
-**代码审查修复**：
-- 修复 `cdp-utils.js` 重复问题：移至 `_shared/scripts/`，消除重复代码
-- 修复禁用词列表重复：提取到 `_shared/scripts/banned-words.js`，统一引用
-- 修复 `detect-story-gaps.js` 变量名遮蔽问题（`fs` → `foreshadow`）
-- 修复 `quality-gate.js` 参数解析边界条件（NaN 校验）
-- 统一脚本退出码语义（style-lint.js、cross-chapter-check.js）
-- 修复 demo 中触发词和路径不一致问题
-
-**文档更新**：
-- 更新 Node.js 版本要求：12+ → 14+
-- 修正质量门禁描述：7 重 → 9 重检查
-- 更新 README 技能数量描述
-
-### v3.3.0（2026-06-15）
-
-**Agent 体系**：
-- `story-long-write-mimo/SKILL.md` 新增 6 个 Agent 角色定义（architect/writer/checker/explorer/extractor/designer）
-- 规范化 Agent spawn 调用流程，轻量任务主会话完成，复杂任务 spawn 子智能体
-- 支持并行拆文/审稿/研究，串行追踪文件更新
-
-**Session 生命周期管理**：
-- 新增 `story-session-mimo` skill，管理会话开始/压缩/结束的上下文生命周期
-- 会话开始自动恢复上下文（读取追踪文件 + 运行 detect-story-gaps）
-- 上下文压缩前自动保存快照，压缩后自动恢复
-- 会话结束自动更新记忆
-
-**项目缺口检测**：
-- 新增 `detect-story-gaps.js` 脚本：检测设定缺口、大纲缺失、伏笔断线、追踪文件完整性
-- `quality-gate.js` 新增第 9 项检查（--full 模式启用）
-- 退出码：0=无缺口，1=警告，2=阻断
-
-**质量门禁升级**：
-- `quality-gate.js` 从 8 重检查升级到 9 重检查
-- 新增 `--full` 模式下的项目缺口检测
-
-### v3.2.1（2026-06-15）
-
-**跨章节重复检测**：
-- 新增 `cross-chapter-check.js` 脚本：使用 n-gram 指纹算法检测跨章句子/段落/动作重复
-- `quality-gate.js` 集成第 8 项检查：跨章重复检测（滑动窗口，默认前 5 章）
-- 自动指纹生成：检查完成后自动生成 `追踪/cross-chapter-fingerprint.md`
-- 长篇/短篇写作 skill 新增自动质量门禁：每章/每节写完后自动运行 quality-gate.js
-
-**去AI味升级（前置约束+事后检查）**：
-- `anti-ai-writing.md` 全面重写（v2.0.0 → v3.0.0）：新增AI味六大特征、去AI味七步法、AI高频套话完整词表、不同文体去AI味侧重点、终极检验法
-- 长篇/短篇写作skill新增**去AI味前置约束**：禁止词汇/句式/副词/比喻/排比等在写作时必须遵守
-- Phase 5 质量检查新增**去AI味七步检查**和**AI标点清理**
-
-**AI特殊标点清理**：
-- `punctuation-normalize.js` 脚本升级：新增AI特殊标点检测（em dash、智能引号、省略号等）和不可见字符清理（零宽空格、NBSP等）
-- `banned-words.md` 新增AI特殊标点检测表
-
-**Bug 修复**：
-- 修复 `distill/dream/goal` 目录名未添加 `-mimo` 后缀
-- 修复 `AGENTS.md` 引用过时路径
-- 修复 `install.sh/install.ps1` 技能列表过时
-- 同步版本号到 3.1.1（package.json/config文件）
-- 同步 `dream.js` 禁用词列表（7 → 33个一级禁用词）
-- 更新 README 技能数量（16 → 22）
-
-### v3.1.1（2026-06-14）
-
-**引用修复**：
-- 修复所有技能文件中的技能名称引用，确保统一使用 `-mimo` 后缀
-- 修复脚本路径引用，确保完整路径正确
-- 修复配置文件（`.skills-plugin-config.json`、`openclaw.plugin.json`）中的技能路径
-
-### v3.1.0（2026-06-14）
-
-**技能重命名**：所有技能名称添加 `-mimo` 后缀，统一命名规范
-
-**新增技能（3 个）**：
-- `goal-mimo` — 自主写作目标控制，通过 story-long-write-mimo 工作流自动循环
-- `dream-mimo` — 写作经验沉淀，扫描章节提取禁用词/AI腔/有效技法
-- `distill-mimo` — 工作流优化，检测重复句式并建议优化
-
-**新增脚本（5 个）**：
-- `_shared/scripts/goal.js` — 目标配置管理
-- `_shared/scripts/dream.js` — 经验提取分析
-- `_shared/scripts/distill.js` — 工作流分析
-- `_shared/scripts/punctuation-normalize.js` — 标点符号规范化
-- `story-short-write-mimo/scripts/quality-gate.js` — 短篇质量门禁
-
-**脚本增强**：
-- `consistency-check.js` — 新增身份一致性、追踪完整性、时间线逻辑检测
-- `style-lint.js` — 新增格式一致性、专业术语检测
-- `foreshadow-check.js` — 新增标记格式、重叠检测
-- `quality-gate.js` — 新增 `--full` 参数支持增强检查
-
-**Bug 修复**：
-- `repair-scripts.js` — 修复参数解析 bug
-- `quality-gate.js` — 修复 `--full` 参数未传递给子脚本
+- 新增 45 个原子技能，分为 7 类：检测 11 + 修正 7 + 评审 5 + 写前预防 6 + 扫榜 4 + 拆文 7 + 写作 5
+- 14 个脚本提升到 `_shared/scripts/`
 
 ### v3.0.0（2026-06-13）
 
-**新增脚本（5 个）**：
-- `quality-gate.js` — 统一质量门禁，串联 9 重检查
-- `voice-check.js` — 角色声音一致性检查
-- `emotion-analyzer.js` — 情绪曲线分析（关键词检测 + 平坦警告 + ASCII 可视化）
-- `satisfaction-meter.js` — 爽点密度度量（信号词检测 + 间距 + 压制释放比）
-- `wordcount-pacer.js` — 字数节奏指导（标准/开篇/高潮/过渡四种模板）
-
-**新增技能（2 个）**：
-- `story-synopsis-mimo` — 简介/文案生成（起点/番茄/晋江/知乎四平台 + A/B 测试）
-- `story-export-mimo` — 多格式导出（TXT/平台TXT/校对稿/章节目录）
-
-**新增参考文档（2 个）**：
-- `emotion-curve-design.md` — 情绪曲线设计（V/W/递进/延迟满足四种模型）
-- `pacing-mastery.md` — 节奏控制精通（段落/章节/卷级节奏 + 常见问题修复）
-
-**脚本改进**：
-- `style-lint.js` — 添加 `--json` 输出，修复"竟然/居然"重复 bug
-- `consistency-check.js` — 添加 `--json` 输出，新增时间线/角色状态/已死角色/名字漂移检查，修复 `\r\n` 兼容
-- `foreshadow-check.js` — 添加 `--json` 输出
-- `quality-gate.js` — 使用 `execFileSync` 替代 `execSync` 防止 shell 注入
-
-**规则升级**：
-- AGENTS.md 质量检查从"建议"升级为"阻断式门禁"
-- Goal/Dream/Distill/并行写作集成指引写入 SKILL.md
+- 新增 `quality-gate.js` 统一质量门禁（9重检查）
+- 新增 `story-synopsis-mimo`、`story-export-mimo`
 
 ### v2.0.0（2026-06-11）
 
 - 初始版本，基于 oh-story-claudecode 适配 MiMo Code
-- 14 个技能，5 个脚本，60+ 参考文档
 
 ---
 

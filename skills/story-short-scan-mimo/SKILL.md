@@ -7,6 +7,11 @@ description: |
 metadata:
   openclaw:
     source: https://github.com/nihaoshi/mimoCode-story
+inputs:
+  - name: project_dir
+    type: directory
+    required: false
+    description: 写作项目根目录（可选，用于将选题决策写入项目目录）
 ---
 
 # story-short-scan-mimo：短篇网文扫榜

@@ -12,6 +12,11 @@ atoms:
   - detect-voice
   - detect-emotion
   - detect-cross-chapter
+inputs:
+  - name: project_dir
+    type: directory
+    required: true
+    description: 写作项目根目录
 ---
 
 # quality-mimo：统一质量检查 v2.0
@@ -29,6 +34,16 @@ atoms:
 读文件，写文件，跑脚本，给用户看
 不凭记忆，不跳步骤，不偷懒
 ```
+
+## 前置检查
+
+执行前必须验证项目目录存在且结构完整：
+
+```bash
+ls {project_dir}/正文/ {project_dir}/设定/ {project_dir}/追踪/ 2>/dev/null || echo "ERROR: 项目目录缺失"
+```
+
+缺失时提示用户：「项目目录 {project_dir} 不存在或结构不完整，请先用 /story-setup-mimo 部署项目。」
 
 **每个 Agent 执行前后必须运行守卫脚本：**
 ```bash
@@ -176,24 +191,12 @@ Step 04 复查
 - 正文：{project_dir}/正文/{chapter_file}
 - 约束：{project_dir}/.workflow/step01-chapter-content.json
 
-【参考文件】（设定校验和一致性检测必须读取，参考 skills/_shared/references/context-checklist.md 场景3：质量检测，16项）
-- 世界观：{project_dir}/设定/世界观/*.md、设定/世界观/金手指.md
-- 角色：{project_dir}/设定/角色/{相关角色}.md
-- 势力：{project_dir}/设定/势力/*.md（如存在）
-- 关系：{project_dir}/设定/关系.md
-- 题材：{project_dir}/设定/题材定位.md
-- 文风：{project_dir}/设定/文风.md
-- 伏笔：{project_dir}/追踪/伏笔.md
-- 角色状态：{project_dir}/追踪/角色状态.md
-- 物品：{project_dir}/追踪/物品.md
-- 环境：{project_dir}/追踪/环境.md
-- 物资：{project_dir}/追踪/物资.md
-- 时间线：{project_dir}/追踪/时间线.md
-- 跨卷伏笔：{project_dir}/跨卷追踪/跨卷伏笔.md（如存在）
-- 角色弧线：{project_dir}/跨卷追踪/跨卷角色弧线.md（如存在）
-- 故事线：{project_dir}/故事线/故事线_索引.md（如存在）
-- 主线：{project_dir}/故事线/故事线_主线_*.md（如存在）
-- 交叉点：{project_dir}/故事线/故事线_交叉点.md（如存在）
+【参考文件】（设定校验和一致性检测必须读取，动态扫描获取）
+- 扫描设定/目录：`ls {project_dir}/设定/**/*.md 2>/dev/null`
+- 扫描追踪/目录：`ls {project_dir}/追踪/*.md 2>/dev/null`
+- 扫描跨卷追踪/目录：`ls {project_dir}/跨卷追踪/*.md 2>/dev/null`（可选）
+- 扫描故事线/目录：`ls {project_dir}/故事线/*.md 2>/dev/null`（可选）
+- 按扫描结果加载对应文件
 
 【检测项】（必须全部运行）
 1. 字数达标（wordcount.js 统计）— BLOCK

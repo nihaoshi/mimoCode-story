@@ -4,6 +4,11 @@ version: 2.0.0
 description: |
   网文扫榜。分析热门榜单，洞察题材趋势、市场方向、读者偏好。
   触发方式：/story-scan-mimo、/扫榜、「什么火」「帮我选题」「排行」
+inputs:
+  - name: project_dir
+    type: directory
+    required: false
+    description: 写作项目根目录（可选，用于将选题决策写入项目目录）
 ---
 
 # story-scan-mimo：网文扫榜
@@ -111,6 +116,10 @@ webfetch("https://www.google.com/search?q=番茄小说热门分类", "text")
 ```
 
 保存到 `选题决策.md`。
+
+**输出路径规则**：
+- 如提供了 `{project_dir}`（项目已存在）→ 写入 `{project_dir}/选题决策.md`
+- 如未提供 `project_dir` → 写入当前目录 `选题决策.md`
 
 ---
 

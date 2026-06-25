@@ -4,6 +4,11 @@ version: 3.0.0
 description: |
   短篇网文写作。从构思到成稿，聚焦情绪拉扯与节奏把控。
   触发方式：/story-short-write-mimo、/写短篇、「帮我写一篇短篇」「写个盐言故事」
+inputs:
+  - name: project_dir
+    type: directory
+    required: true
+    description: 写作项目根目录
 ---
 
 # story-short-write-mimo：短篇网文写作 v3.0
@@ -21,6 +26,16 @@ description: |
 3. **综合检测**：字数、禁用词、一致性、AI腔合并为一次检测
 4. **综合修复**：一个修复 agent 处理所有问题
 5. **主 agent 负责**：上下文读取、准备层、追踪更新
+
+## 前置检查
+
+执行前必须验证项目目录存在：
+
+```bash
+ls {project_dir}/ 2>/dev/null || echo "ERROR: 项目目录不存在"
+```
+
+缺失时提示用户：「项目目录 {project_dir} 不存在，请先创建。」
 
 ## 防偷懒铁律
 
@@ -224,7 +239,7 @@ actor({
   operation: "run",
   subagent_type: "general",
   description: "短篇质量检测+修复",
-  prompt: "你是 quality-checker-fixer，负责检测和修复。\n\n【项目信息】\n- 项目目录：{project_dir}\n\n【输入文件】\n- 正文：{project_dir}/正文.md\n- 约束：{project_dir}/.workflow/step-prep.json\n\n【检测项】（必须全部运行）\n1. 字数达标 — BLOCK\n2. 禁用词+AI腔 — BLOCK\n3. AI标点符号 — BLOCK\n4. 一致性（物品/角色/环境/时间线）— BLOCK\n5. 章内逻辑性 — WARN\n\n【修复规则】\n- 只有问题（WARN或BLOCK）就必须修复\n- 修复后重新检测，直到全部通过\n- 最多3轮修复循环\n- 不能跳过 WARN\n\n【输出】\n- 更新：{project_dir}/正文.md\n- 报告：{project_dir}/.workflow/step-check-report.json\n\n【防偷懒】\n- 必须用 Read 工具读取输入文件\n- 必须运行所有检测脚本\n- 有问题必须修复，不能跳过\n- 必须写入报告文件",
+  prompt: "你是 quality-checker-fixer，负责检测和修复。\n\n【项目信息】\n- 项目目录：{project_dir}\n\n【输入文件】\n- 正文：{project_dir}/正文.md\n- 约束：{project_dir}/.workflow/step-prep.json\n\n【检测项】（必须全部运行）\n1. 字数达标 — node skills/_shared/scripts/wordcount.js {project_dir}/正文.md --json — BLOCK\n2. 禁用词+AI腔 — BLOCK\n3. AI标点符号 — BLOCK\n4. 一致性（物品/角色/环境/时间线）— BLOCK\n5. 章内逻辑性 — WARN\n\n【修复规则】\n- 只有问题（WARN或BLOCK）就必须修复\n- 修复后重新检测，直到全部通过\n- 最多3轮修复循环\n- 不能跳过 WARN\n\n【输出】\n- 更新：{project_dir}/正文.md\n- 报告：{project_dir}/.workflow/step-check-report.json\n\n【防偷懒】\n- 必须用 Read 工具读取输入文件\n- 必须运行所有检测脚本\n- 有问题必须修复，不能跳过\n- 必须写入报告文件",
   context: "none"
 })
 ```
@@ -258,15 +273,19 @@ actor({
 
 **职责**：更新追踪文件，输出完成报告
 
-#### T-SHORT-TRACK-01: 更新追踪文件
+#### T-SHORT-TRACK-01: 更新追踪文件（三步流程）
 
-从正文实际提取信息，更新：
-1. 追踪/伏笔.md — 新增/回收伏笔
-2. 追踪/时间线.md — 新增事件时序
-3. 追踪/角色状态.md — 更新角色状态
-4. 追踪/物品.md — 更新物品位置
-5. 追踪/环境.md — 更新环境描述
-6. 追踪/上下文.md — 更新进度摘要
+**Step A：扫描项目结构** — 获取所有可更新文件清单
+- 扫描设定/*.md、追踪/*.md（只列文件名）
+
+**Step B：分析正文提取变更清单** — 从正文识别变化点
+- 新角色？状态变化？伏笔？物品？环境？
+
+**Step C：按清单更新文件** — 只更新变更涉及的文件
+- 始终更新：追踪/时间线.md、追踪/上下文.md、追踪/重复语句.md
+- 按变更清单更新：追踪/伏笔.md、追踪/角色状态.md、追踪/物品.md、追踪/环境.md
+- 设定文件回写：正文揭示新信息影响设定时，同步更新设定/*.md
+- 角色同步：运行 `node skills/_shared/scripts/character-sync.js {project_dir} --json`
 
 #### T-SHORT-TRACK-02: 输出完成报告
 

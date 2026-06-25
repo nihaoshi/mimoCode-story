@@ -4,6 +4,11 @@ version: 3.0.0
 description: |
   网文写作工具集基础设施部署。一键部署写作项目结构。
   触发方式：/story-setup-mimo、「准备写书」「帮我搭一下环境」
+inputs:
+  - name: project_dir
+    type: directory
+    required: true
+    description: 写作项目根目录
 ---
 
 # story-setup-mimo：网文写作基础设施部署
