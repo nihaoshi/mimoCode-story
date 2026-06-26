@@ -38,6 +38,7 @@
 | **跨会话连续** | 基于 MiMo Code 持久化记忆，写作进度自动保存/恢复 |
 | **批量细纲生成** | 进度管理后自动补建当前弧/卷细纲，含去重检查 |
 | **追踪三步流程** | 写完章节后：扫描项目→分析变更→按清单更新，不遗漏任何文件 |
+| **设定回写验证** | 写完章节后自动验证设定文件是否已正确更新，防止遗漏 |
 
 ---
 
@@ -133,7 +134,7 @@ Copy-Item -Path "$HOME\mimoCode-story\skills\*" -Destination "$HOME\.config\mimo
 | `story-mimo` | `/story-mimo`、`/网文` | 路由入口，自动分发 |
 | `story-setup-mimo` | `/story-setup-mimo` | 初始化写作项目 |
 | `story-long-write-mimo` | `/story-long-write-mimo` | 长篇写作（5阶段） |
-| `story-chapter-write-mimo` | `/chapter-write` | 单章写作（14步） |
+| `story-chapter-write-mimo` | `/chapter-write` | 单章写作（15步，含设定回写验证） |
 | `story-short-write-mimo` | `/story-short-write-mimo` | 短篇写作（4阶段） |
 | `story-outline-mimo` | `/outline` | 大纲生成 |
 | `story-progress-mimo` | `/progress` | 进度管理+批量细纲 |
@@ -214,6 +215,22 @@ Step A：扫描项目结构 → 获取所有可更新文件清单
 Step B：分析正文 → 提取变更清单（新角色？状态变化？伏笔？物品？）
 Step C：按清单更新 → 只更新涉及的文件（追踪+设定+故事线+跨卷追踪）
 ```
+
+### 设定回写验证
+
+追踪更新完成后，自动验证设定文件是否已正确更新：
+
+```
+1. 扫描本章正文中的所有角色名
+2. 检查每个角色的设定文件是否包含本章新增的关键信息
+3. 检查追踪/角色状态.md 中角色状态是否已更新
+4. 输出验证报告（✅已更新 / ⚠️需更新 / ❌缺失）
+5. 如有遗漏，当场补充更新
+```
+
+**两种执行模式**：
+- `story-chapter-write-mimo`：子 agent 隔离执行（explore 类型）
+- `story-long-write-mimo`：主 agent 执行
 
 ### 细纲去重机制
 
@@ -331,6 +348,15 @@ node skills/_shared/scripts/character-sync.js 项目目录
 ---
 
 ## 更新日志
+
+### v5.1.0（2026-06-26）
+
+**设定回写验证**：
+- 新增 Step 14.5（`story-chapter-write-mimo`）：子 agent 隔离执行设定回写验证
+- 新增步骤 10.5（`story-long-write-mimo`）：主 agent 执行设定回写验证
+- 自动扫描正文中的角色，检查设定文件是否包含本章新增信息
+- 输出验证报告，标注遗漏项并当场补充
+- 更新 `step-guard.js`、`validate-step.js`、`workflow-guard.js` 支持新步骤
 
 ### v5.0.0（2026-06-25）
 

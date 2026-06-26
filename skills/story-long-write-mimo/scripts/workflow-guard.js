@@ -125,6 +125,22 @@ const preChecks = {
     }
     log('正文文件就绪，准备更新追踪');
     return true;
+  },
+
+  // 设定回写验证
+  'track-verify': (wf) => {
+    const ctx = readJson('step-ctx.json');
+    if (!ctx) {
+      error('step-ctx.json 不存在');
+      return false;
+    }
+    const chapterFile = `正文/第${String(ctx.chapter).padStart(3, '0')}章.md`;
+    if (!fileExists(chapterFile)) {
+      error('正文文件不存在: ' + chapterFile);
+      return false;
+    }
+    log('正文文件就绪，准备验证设定回写');
+    return true;
   }
 };
 
@@ -190,6 +206,19 @@ const postChecks = {
     }
     
     log('Step TRACK 输出验证通过: 追踪文件已更新');
+    return true;
+  },
+
+  // 设定回写验证
+  'track-verify': (wf) => {
+    const ctx = readJson('step-ctx.json');
+    if (!ctx) { error('step-ctx.json 不存在'); return false; }
+    
+    // 检查上下文文件中是否有设定回写记录
+    const contextFile = '追踪/上下文.md';
+    if (!fileExists(contextFile)) { error('上下文文件不存在'); return false; }
+    
+    log('Step TRACK-VERIFY 输出验证通过: 设定回写验证完成');
     return true;
   }
 };

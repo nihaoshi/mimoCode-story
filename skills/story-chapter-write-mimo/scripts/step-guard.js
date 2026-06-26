@@ -263,6 +263,22 @@ const preChecks = {
     }
     log('质量检测通过，准备更新追踪');
     return true;
+  },
+
+  // Step 14.5: 需要 step14 完成
+  '14.5': (wf) => {
+    const s02 = readJson('step02-chapter-info.json');
+    if (!s02) {
+      error('Step 02 未完成');
+      return false;
+    }
+    const chapterFile = `正文/第${s02.next_chapter_padded}章.md`;
+    if (!fileExists(chapterFile)) {
+      error('正文文件不存在: ' + chapterFile);
+      return false;
+    }
+    log('准备验证设定回写');
+    return true;
   }
 };
 
@@ -481,6 +497,24 @@ const postChecks = {
     }
     
     log('Step 14 输出验证通过: 所有追踪文件已更新');
+    return true;
+  },
+
+  // Step 14.5: 验证设定回写验证报告
+  '14.5': (wf) => {
+    const data = readJson('step14.5-setting-verification.json');
+    if (!data) { error('step14.5-setting-verification.json 不存在'); return false; }
+    if (typeof data.chapter !== 'number') { error('chapter 无效'); return false; }
+    if (!Array.isArray(data.characters_found)) { error('characters_found 无效'); return false; }
+    if (!Array.isArray(data.verification_results)) { error('verification_results 无效'); return false; }
+    if (!Array.isArray(data.missing_updates)) { error('missing_updates 无效'); return false; }
+    if (!['pass', 'warn'].includes(data.status)) { error('status 无效'); return false; }
+    
+    if (data.status === 'warn') {
+      warn(`设定回写验证发现 ${data.missing_updates.length} 个遗漏`);
+    }
+    
+    log(`Step 14.5 输出验证通过: ${data.characters_found.length}个角色, 状态=${data.status}`);
     return true;
   }
 };

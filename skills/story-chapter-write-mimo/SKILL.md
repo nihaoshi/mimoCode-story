@@ -43,7 +43,7 @@ node {skill_dir}/scripts/step-guard.js post <步骤号> {workflow_dir}
 
 ---
 
-## 任务树（14步）
+## 任务树（15步）
 
 ```
 T-CHAP-{N}: 写第{N}章
@@ -76,7 +76,8 @@ T-CHAP-{N}: 写第{N}章
 │    └── [条件] T-CHAP-{N}-13: 复查 [子 agent 隔离·general]
 │
 └─── Phase 5: 收尾阶段
-     └── T-CHAP-{N}-14: 追踪+设定更新 [子 agent 隔离·general]
+     ├── T-CHAP-{N}-14: 追踪+设定更新 [子 agent 隔离·general]
+     └── T-CHAP-{N}-14.5: 设定回写验证 [子 agent 隔离·explore]
 ```
 
 ---
@@ -305,6 +306,19 @@ actor({
 })
 ```
 
+```javascript
+// Step 14.5: 设定回写验证 [子 agent 隔离·explore]
+actor({
+  "operation": {
+    "action": "run",
+    "subagent_type": "explore",
+    "description": "设定回写验证 - 第{N}章",
+    "prompt": "你是单章写作流程的设定回写验证器。\n\n【防偷懒铁律】必须实际扫描文件，不能凭记忆。\n\n【任务】验证 Step 14 的设定回写是否完整。\n\n【Step A：扫描本章正文中的角色】\n1. 读取 {project_dir}/正文/第{N}章.md\n2. 提取所有出现的角色名\n3. 去重并列出角色清单\n\n【Step B：检查每个角色的设定文件】\n对每个角色：\n1. 检查 {project_dir}/设定/角色/{角色名}.md 是否存在\n2. 如存在，检查是否包含本章新增的关键信息：\n   - 性格锚点是否更新\n   - 关键关系是否更新\n   - 能力/状态是否更新\n3. 检查 {project_dir}/追踪/角色状态.md 中该角色的状态是否已更新\n\n【Step C：输出验证报告】\n1. 列出所有本章出现的角色\n2. 标注每个角色的设定文件状态：\n   - ✅ 已更新：设定文件包含本章新增信息\n   - ⚠️ 需更新：设定文件存在但缺少本章新增信息\n   - ❌ 缺失：设定文件不存在\n3. 如有遗漏，列出需要回写的文件清单\n\n【输出】写入 {project_dir}/.workflow/step14.5-setting-verification.json，格式：\n{\"chapter\": {N}, \"characters_found\": [...], \"verification_results\": [...], \"missing_updates\": [...], \"status\": \"pass|warn\"}\n\n【关键规则】\n- 只要发现任何角色的设定文件需要更新，status 必须为 warn\n- 缺失的设定文件不阻断（可能是新角色未建档）\n- 但已有设定文件缺少本章新增信息时必须标记为 warn",
+    "context": "none"
+  }
+})
+```
+
 ---
 
 ## 各步骤说明
@@ -467,6 +481,15 @@ actor({
   - **角色同步**：运行 `node skills/_shared/scripts/character-sync.js <项目目录> --json` 验证设定与追踪一致
 - **防偷懒**：必须从正文实际提取，不能凭记忆；变更涉及的文件必须更新
 
+### Step 14.5: 设定回写验证
+- **Agent**: 子 agent 隔离（explore）
+- **职责**：验证 Step 14 的设定回写是否完整
+- **Step A**：扫描本章正文中的所有角色名
+- **Step B**：检查每个角色的设定文件是否包含本章新增的关键信息
+- **Step C**：输出验证报告，标注哪些角色的设定文件需要更新
+- **输出**：`.workflow/step14.5-setting-verification.json`
+- **防偷懒**：必须实际扫描文件，不能凭记忆；遗漏的设定文件必须标记为 warn
+
 ---
 
 ## 条件任务
@@ -478,6 +501,7 @@ actor({
 | Step 07 | step06.need_new_settings=true | abandoned |
 | Step 12 | step11有任何WARN或BLOCK | abandoned |
 | Step 13 | step12存在 | abandoned |
+| Step 14.5 | step14完成 | abandoned |
 
 ---
 
@@ -493,6 +517,8 @@ Step 13 复查
 仍有问题 → 再回 Step 12（上限3轮）
   ↓
 全部通过 → Step 14
+  ↓
+Step 14.5 设定回写验证
 ```
 
 ---
@@ -513,7 +539,8 @@ Step 13 复查
 ├── step09-constraints.json
 ├── step11-quality-report.json    # 综合检测报告
 ├── step12-fix-log.json           # 修复日志
-└── step13-recheck-report.json    # 复查报告
+├── step13-recheck-report.json    # 复查报告
+└── step14.5-setting-verification.json  # 设定回写验证
 ```
 
 ---

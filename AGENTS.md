@@ -73,8 +73,9 @@ skill-name/
 
 | Skill | 说明 |
 |-------|------|
-| `story-long-write-mimo` | 长篇写作5阶段，含单章完整任务树 |
+| `story-long-write-mimo` | 长篇写作5阶段，含单章完整任务树和设定回写验证 |
 | `story-short-write-mimo` | 短篇写作4阶段，含逐场景任务树 |
+| `story-chapter-write-mimo` | 单章写作15步，含设定回写验证 |
 | `story-deslop-mimo` | 去AI味4阶段，含Gate A~F条件创建 |
 | `story-review-mimo` | 审稿5维度，含综合报告 |
 | `quality-mimo` | 质量门禁，含标准/增强模式 |

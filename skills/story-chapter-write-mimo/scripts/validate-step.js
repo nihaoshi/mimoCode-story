@@ -295,6 +295,41 @@ const validators = {
       errors.push('overall 必须是 "BLOCK"、"WARN" 或 "PASS"');
     }
     return errors;
+  },
+
+  // Step 14.5: 设定回写验证报告
+  '14.5': (data) => {
+    const errors = [];
+    if (typeof data.chapter !== 'number') {
+      errors.push('chapter 必须是数字');
+    }
+    if (!Array.isArray(data.characters_found)) {
+      errors.push('characters_found 必须是数组');
+    }
+    if (!Array.isArray(data.verification_results)) {
+      errors.push('verification_results 必须是数组');
+    } else {
+      data.verification_results.forEach((result, i) => {
+        if (!result.character) errors.push(`verification_results[${i}].character 缺失`);
+        if (typeof result.setting_file_exists !== 'boolean') errors.push(`verification_results[${i}].setting_file_exists 必须是布尔值`);
+        if (typeof result.setting_file_updated !== 'boolean') errors.push(`verification_results[${i}].setting_file_updated 必须是布尔值`);
+        if (typeof result.tracking_updated !== 'boolean') errors.push(`verification_results[${i}].tracking_updated 必须是布尔值`);
+        if (!['pass', 'warn', 'missing'].includes(result.status)) errors.push(`verification_results[${i}].status 必须是 "pass"、"warn" 或 "missing"`);
+      });
+    }
+    if (!Array.isArray(data.missing_updates)) {
+      errors.push('missing_updates 必须是数组');
+    } else {
+      data.missing_updates.forEach((update, i) => {
+        if (!update.character) errors.push(`missing_updates[${i}].character 缺失`);
+        if (!update.file) errors.push(`missing_updates[${i}].file 缺失`);
+        if (!update.reason) errors.push(`missing_updates[${i}].reason 缺失`);
+      });
+    }
+    if (!['pass', 'warn'].includes(data.status)) {
+      errors.push('status 必须是 "pass" 或 "warn"');
+    }
+    return errors;
   }
 };
 

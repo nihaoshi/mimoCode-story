@@ -267,6 +267,28 @@
 
 ---
 
+### Agent 14.5: setting-verifier（设定回写验证）
+
+**职责**：验证 Step 14 的设定回写是否完整
+
+**输入**：本章正文、设定文件、追踪文件
+
+**验证项**：
+1. 扫描本章正文中的所有角色名
+2. 检查每个角色的设定文件是否包含本章新增的关键信息
+3. 检查追踪/角色状态.md 中角色状态是否已更新
+4. 输出验证报告
+
+**输出**：`.workflow/step14.5-setting-verification.json`
+
+**验证**：
+- characters_found 数组包含本章所有角色
+- verification_results 数组标注每个角色的验证状态
+- missing_updates 数组列出需要回写的文件
+- status 为 "warn" 时有遗漏的设定更新
+
+---
+
 ## 输出文件清单
 
 ```
@@ -280,5 +302,6 @@
 ├── step09-constraints.json       # 约束参数
 ├── step11-quality-report.json    # 综合检测报告
 ├── step12-fix-log.json           # 修复日志
-└── step13-recheck-report.json    # 复查报告
+├── step13-recheck-report.json    # 复查报告
+└── step14.5-setting-verification.json  # 设定回写验证
 ```
