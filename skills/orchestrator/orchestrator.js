@@ -381,8 +381,8 @@ class Orchestrator {
       console.log('  ✅ 质量检查通过');
     }
 
-    // Step 6: 更新追踪文件
-    console.log('\n📝 Step 6: 更新追踪文件...');
+    // Step 6: 更新所有配置文件
+    console.log('\n📝 Step 6: 更新所有配置文件...');
     TrackingUpdater.updateContext(this.projectDir, chapterNum, `第${chapterNum}章完成`);
     console.log('  ✅ 上下文已更新');
 

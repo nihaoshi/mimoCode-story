@@ -169,7 +169,7 @@ MiMo Code 的 memory 系统在 checkpoint rebuild 时自动注入上下文。此
 | 时机 | 调用方式 | 执行内容 |
 |------|---------|---------|
 | 日更续写开始 | 自动触发 | Step 1-5（会话恢复） |
-| 每章写完后 | 由 story-long-write-mimo 调用 | 更新追踪文件 |
+| 每章写完后 | 由 story-long-write-mimo 调用 | 更新所有配置文件 |
 | 上下文压缩前 | 由 MiMo Code 触发 | 保存快照 |
 | 用户说"结束" | 由用户触发 | Step 1-3（会话结束） |
 

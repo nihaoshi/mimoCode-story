@@ -223,5 +223,5 @@ node {skill_dir}/scripts/workflow-guard.js post {step} {workflow_dir}
 | 01 | 读取当前进度 |
 | 02 | 生成细纲 |
 | 03 | 跨卷追踪整理 |
-| 04 | 更新追踪文件 |
+| 04 | 更新所有配置文件 |
 | 05 | 输出报告 |

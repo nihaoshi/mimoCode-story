@@ -135,7 +135,7 @@ const preChecks = {
     return true;
   },
 
-  // Step 04: 更新追踪文件
+  // Step 04: 更新所有配置文件
   '04': (wf) => {
     const current = readJson('progress-current.json');
     if (!current) {
@@ -236,7 +236,7 @@ const postChecks = {
     return true;
   },
 
-  // Step 04: 更新追踪文件
+  // Step 04: 更新所有配置文件
   '04': (wf) => {
     // 检查追踪/上下文.md 是否存在
     const ctxFile = path.join(projectDir || '.', '追踪', '上下文.md');
