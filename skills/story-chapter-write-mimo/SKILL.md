@@ -110,7 +110,7 @@ actor({
     "action": "run",
     "subagent_type": "explore",
     "description": "目录健全检查 - 第{N}章",
-    "prompt": "你是单章写作流程的目录检查器。\n\n【防偷懒铁律】读文件，写文件，跑脚本，给用户看。不凭记忆，不跳步骤。\n\n【任务】检查项目目录 {project_dir} 的结构完整性。\n\n【检查项】\n1. 正文/ 目录是否存在\n2. 追踪/ 目录是否存在\n3. 大纲/ 目录是否存在\n4. 设定/ 目录是否存在\n5. 故事线/ 目录是否存在\n6. 跨卷追踪/ 目录是否存在\n7. 对标/ 目录是否存在（可选）\n8. 参考资料/ 目录是否存在（可选）\n9. 以下追踪文件是否存在：伏笔.md、时间线.md、角色状态.md、物品.md、环境.md、物资.md、重复语句.md、上下文.md\n\n【输出】将结果写入 {project_dir}/.workflow/step01-health-check.json，格式：\n{\"project_dir\": \"...\", \"missing_dirs\": [...], \"missing_files\": [...], \"created\": [...]}\n\n缺失的目录必须创建，缺失的追踪文件必须创建空模板。",
+    "prompt": "你是单章写作流程的目录检查器。\n\n【防偷懒铁律】读文件，写文件，跑脚本，给用户看。不凭记忆，不跳步骤。\n\n【任务】检查项目目录 {project_dir} 的结构完整性。\n\n【检查项】\n1. 正文/ 目录是否存在\n2. 追踪/ 目录是否存在\n3. 大纲/ 目录是否存在\n4. 设定/ 目录是否存在\n5. 故事线/ 目录是否存在\n6. 跨卷追踪/ 目录是否存在\n7. 对标/ 目录是否存在（可选）\n8. 参考资料/ 目录是否存在（可选）\n9. 以下追踪文件是否存在：伏笔.md、时间线.md、角色状态.md、物品.md、环境.md、物资.md、重复语句.md、上下文.md\n\n【执行规则】\n- 缺失的目录必须创建\n- 缺失的追踪文件必须创建空模板\n- 所有问题必须修复，不能跳过\n\n【输出】将结果写入 {project_dir}/.workflow/step01-health-check.json，格式：\n{\"project_dir\": \"...\", \"status\": \"pass|fail\", \"missing_dirs\": [...], \"missing_files\": [...], \"created\": [...], \"issues\": [...]}\n\n- status: 仅当所有必需目录和文件都存在时为 \"pass\"，否则为 \"fail\"\n- issues: 列出所有发现的问题（即使已修复）\n- created: 列出本次创建的目录和文件\n\n【关键规则】\n- 只要发现任何问题，status 必须为 \"fail\"\n- 即使问题已修复，仍需记录在 issues 中\n- 后续步骤必须检查 status，为 \"fail\" 时停止并报告",
     "context": "none"
   }
 })
@@ -331,6 +331,7 @@ actor({
 
 ### Step 02: 获取最新章节
 - **Agent**: 子 agent 隔离（explore）
+- **前置检查**：读取 `.workflow/step01-health-check.json`，如果 `status` 为 `fail`，停止并报告问题
 - **检查**：扫描正文目录，找最大编号，统计字数
 - **输出**：`.workflow/step02-chapter-info.json`
 - **防偷懒**：必须扫描目录，不能从上下文推断
