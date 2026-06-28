@@ -26,7 +26,7 @@
 
 | 特性 | 说明 |
 |------|------|
-| **全流程覆盖** | 27 个技能覆盖网文创作全生命周期 |
+| **全流程覆盖** | 32 个技能覆盖网文创作全生命周期 |
 | **长篇 + 短篇** | 同时支持长篇连载和短篇创作，按篇幅自动分流 |
 | **智能路由** | `/story-mimo` 主入口自动识别用户意图，分发到对应技能 |
 | **动态文件发现** | 所有技能动态扫描项目目录获取文件列表，新增文件夹自动适配 |
@@ -127,7 +127,7 @@ Copy-Item -Path "$HOME\mimoCode-story\skills\*" -Destination "$HOME\.config\mimo
 
 ## 技能一览
 
-### 核心写作（7个）
+### 核心写作（10个）
 
 | 技能 | 触发方式 | 功能 |
 |------|---------|------|
@@ -135,8 +135,10 @@ Copy-Item -Path "$HOME\mimoCode-story\skills\*" -Destination "$HOME\.config\mimo
 | `story-setup-mimo` | `/story-setup-mimo` | 初始化写作项目 |
 | `story-long-write-mimo` | `/story-long-write-mimo` | 长篇写作（5阶段） |
 | `story-chapter-write-mimo` | `/chapter-write` | 单章写作（15步，含设定回写验证） |
+| `story-chapter-fast-write-mimo` | `/快速写章` | 快速书写（按需加载，token优化60-70%） |
+| `story-chapter-ultra-write-mimo` | `/极致写章` | 极致书写（全量检测，追求最高质量） |
 | `story-short-write-mimo` | `/story-short-write-mimo` | 短篇写作（4阶段） |
-| `story-outline-mimo` | `/outline` | 大纲生成 |
+| `story-outline-mimo` | `/outline` | 大纲生成（含细纲+质量自检） |
 | `story-progress-mimo` | `/progress` | 进度管理+批量细纲 |
 
 ### 拆文分析（3个）
@@ -250,7 +252,7 @@ Step C：按清单更新 → 只更新涉及的文件（追踪+设定+故事线+
 
 ### project_dir 声明
 
-所有 27 个技能的 frontmatter 均声明 `inputs.project_dir`，编排层可统一验证输入参数。
+所有 32 个技能的 frontmatter 均声明 `inputs.project_dir`，编排层可统一验证输入参数。
 
 ---
 
@@ -353,6 +355,22 @@ node skills/_shared/scripts/character-sync.js 项目目录
 ---
 
 ## 更新日志
+
+### v5.6.0（2026-06-28）
+
+**全量修复与新增技能**：
+- 新增 `story-chapter-fast-write-mimo`（快速书写）：融合 long-write 的4个优势 + chapter-write 的15步，按需加载，token 减少 60-70%
+- 新增 `story-chapter-ultra-write-mimo`（极致书写）：融合 long-write 全部深度 + chapter-write 全部隔离，三重检测，追求最高质量
+- 修复 `audit-mimo`：从 5 维度扩展到 10 维度（新增物资/重复语句/跨卷追踪/故事线/设定文件审计）
+- 修复 `goal-mimo`：增加写作 skill 选择参数（long/fast/ultra）
+- 修复 `project-health-mimo`：补充 8 项遗漏检查、增加严重度分级（BLOCK/WARN/OPTIONAL）、修复脚本与文档不一致
+- 修复 `story-review-mimo`：从 5 维度扩展到 7 维度，增加字数/跨章节/声音/毒点检测，集成 detect-* 原子技能
+- 修复 `story-rewrite-mimo`：增加后章一致性检测、影响范围分析、连锁重写机制
+- 修复 `story-outline-mimo` + `story-progress-mimo`：细纲生成职责、Phase 编号修正、守卫脚本全覆盖、任务编号统一
+- 修复拆文目录：统一角色/文风/剧情目录映射规则
+- 统一守卫脚本：全部命名为 `step-guard.js`
+- 补充 4 个 skill 的 Task 跟踪集成章节
+- 更新 AGENTS.md 表格（新增 4 个 skill，更新 audit 维度说明）
 
 ### v5.5.0（2026-06-27）
 
