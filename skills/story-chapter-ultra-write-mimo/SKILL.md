@@ -1,4 +1,4 @@
----
+﻿---
 name: story-chapter-ultra-write-mimo
 version: 1.0.0
 description: |
@@ -541,10 +541,10 @@ Step 14.5 设定回写验证
 | `references/agent-contracts.md` | Agent详细契约，按需读取 |
 | `references/logic-check-rules.md` | 章内逻辑性检查规则 |
 | `references/quality-detection-spec.md` | 综合质量检测规范 |
-| `_shared/references/context-checklist.md` | 上下文加载清单 |
-| `_shared/references/state-tracking.md` | 状态追踪协议（最简记忆包） |
-| `_shared/references/structured-indexing.md` | 结构化索引层（千万字支持） |
-| `_shared/references/quality-rules.md` | 质量规则（禁用词+AI腔+段落规则） |
+| $globalRefPathcontext-checklist.md` | 上下文加载清单 |
+| $globalRefPathstate-tracking.md` | 状态追踪协议（最简记忆包） |
+| $globalRefPathstructured-indexing.md` | 结构化索引层（千万字支持） |
+| $globalRefPathquality-rules.md` | 质量规则（禁用词+AI腔+段落规则） |
 | `_shared/scripts/wordcount.js` | 字数统计 |
 | `_shared/scripts/character-sync.js` | 角色同步验证 |
 

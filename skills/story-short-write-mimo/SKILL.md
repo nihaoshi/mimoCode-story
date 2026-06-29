@@ -162,8 +162,8 @@ T-SHORT-WRITE: 写短篇「{标题}」
 **职责**：加载约束参数，生成子 agent 所需的输入文件
 
 #### T-SHORT-PREP-01: 加载约束
-- 加载禁用词清单（从 `../_shared/references/banned-words.md`）
-- 加载文风规则（从 `../_shared/references/anti-ai-writing.md`）
+- 加载禁用词清单（从 $globalRefPathbanned-words.md`）
+- 加载文风规则（从 $globalRefPathanti-ai-writing.md`）
 - 确定字数目标（从小节大纲）
 
 #### T-SHORT-PREP-02: 生成约束参数
@@ -327,7 +327,7 @@ actor({
 
 ## 去AI味前置约束（写作时必须遵守）
 
-> ⚠️ 去AI味不是写完再改，而是写作时就必须遵循的规则。完整规则见 `_shared/references/quality-rules.md`。
+> ⚠️ 去AI味不是写完再改，而是写作时就必须遵循的规则。完整规则见 $globalRefPathquality-rules.md`。
 
 ---
 
@@ -339,15 +339,15 @@ actor({
 | `references/villain-and-reveal.md` | 反派和揭示设计 |
 | `references/genre-writing-techniques.md` | 题材写作技法 |
 | `references/output-contract.md` | 产出格式规范 |
-| `../_shared/references/anti-ai-writing.md` | 去AI味指南（必读） |
-| `../_shared/references/banned-words.md` | 禁用词清单 |
-| `../_shared/references/format-and-structure.md` | 格式规范 |
-| `../_shared/references/writing-craft.md` | 写作技法 |
-| `../_shared/references/genre-writing-formulas.md` | 题材公式 |
-| `../_shared/references/emotional-methods.md` | 情感设计方法 |
-| `../_shared/references/hooks-chapter.md` | 钩子设计 |
-| `../_shared/references/reversal-toolkit.md` | 反转工具箱 |
-| `../_shared/references/character-basics.md` | 人物基础 |
+| $globalRefPathanti-ai-writing.md` | 去AI味指南（必读） |
+| $globalRefPathbanned-words.md` | 禁用词清单 |
+| $globalRefPathformat-and-structure.md` | 格式规范 |
+| $globalRefPathwriting-craft.md` | 写作技法 |
+| $globalRefPathgenre-writing-formulas.md` | 题材公式 |
+| $globalRefPathemotional-methods.md` | 情感设计方法 |
+| $globalRefPathhooks-chapter.md` | 钩子设计 |
+| $globalRefPathreversal-toolkit.md` | 反转工具箱 |
+| $globalRefPathcharacter-basics.md` | 人物基础 |
 
 ---
 

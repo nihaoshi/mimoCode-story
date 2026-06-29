@@ -1,4 +1,4 @@
----
+﻿---
 name: detect-quality
 version: 2.0.0
 description: 文本质量检测（禁用词+AI腔）
@@ -24,8 +24,8 @@ outputs:
 severity: BLOCK
 script: _shared/scripts/style-lint.js
 references:
-  - _shared/references/banned-words.md
-  - _shared/references/anti-ai-writing.md
+  - $HOME/.config/mimocode/skills/_shared/references/banned-words.md
+  - $HOME/.config/mimocode/skills/_shared/references/anti-ai-writing.md
 triggers:
   - /atom:detect-quality
   - 检测质量

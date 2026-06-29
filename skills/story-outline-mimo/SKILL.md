@@ -1,4 +1,4 @@
----
+﻿---
 name: story-outline-mimo
 version: 1.0.0
 description: |
@@ -379,10 +379,10 @@ T-OUTLINE: 全书大纲生成
 | 文档 | 用途 |
 |------|------|
 | `references/agent-prompt-templates.md` | 子 agent prompt 模板 |
-| `_shared/references/task-tracking-conventions.md` | Task 跟踪规范 |
-| `_shared/references/outline-methods.md` | 大纲方法论 |
-| `_shared/references/emotional-arc-design.md` | 情绪弧线设计 |
-| `_shared/references/reversal-toolkit.md` | 反转设计工具 |
+| $globalRefPathtask-tracking-conventions.md` | Task 跟踪规范 |
+| $globalRefPathoutline-methods.md` | 大纲方法论 |
+| $globalRefPathemotional-arc-design.md` | 情绪弧线设计 |
+| $globalRefPathreversal-toolkit.md` | 反转设计工具 |
 
 ## 与其他 Skill 的协作
 

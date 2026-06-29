@@ -626,7 +626,7 @@ story-architect 属于高层级结构设计。轻量题材定位优先由主会�
 - **设定/题材定位.md**：题材核心梗三分法+对标分析（参考 genre-core-mechanics.md「核心梗解析」）。对标分析表保留 2-3 行摘要，详细数据见 `对标/` 目录
 
 <!-- cross-book-recall:trigger:structure-positioning -->
-> **多对标书时**：参 `_shared/references/cross-book-recall.md`，副对标 anchor 入「对标分析」表附录
+> **多对标书时**：参 $globalRefPathcross-book-recall.md`，副对标 anchor 入「对标分析」表附录
 
 #### 子智能体调用：story-architect + character-designer
 
@@ -659,7 +659,7 @@ story-architect 属于高层级结构设计。轻量题材定位优先由主会�
 ```
 
 <!-- cross-book-recall:trigger:tempo-volume -->
-> **多对标书时**：参 `_shared/references/cross-book-recall.md`，副对标 `章节/*_摘要.md` + `剧情/*.md` 召回卷级节奏
+> **多对标书时**：参 $globalRefPathcross-book-recall.md`，副对标 `章节/*_摘要.md` + `剧情/*.md` 召回卷级节奏
 
 #### 细纲（全书每章）
 
@@ -688,7 +688,7 @@ story-architect 属于高层级结构设计。轻量题材定位优先由主会�
 **细纲质量要求**：每章细纲一视同仁，全部用最高标准打磨——钩子+人设+爽点+悬念+伏笔。
 
 <!-- cross-book-recall:trigger:tempo-chapter -->
-> **多对标书时**：参 `_shared/references/cross-book-recall.md`，副对标同基调 `章节/*_摘要.md` 作细纲钩子
+> **多对标书时**：参 $globalRefPathcross-book-recall.md`，副对标同基调 `章节/*_摘要.md` 作细纲钩子
 
 **章节标题规则**：只做轻量去重；发现同名或明显重复标题时，按本章核心事件改名，并保持细纲标题与正文文件名一致。
 
@@ -956,13 +956,13 @@ node skills/story-long-write-mimo/scripts/step-guard.js post <step> <workflow_di
    - ⚠️ **WARN（警告）**：**列出缺失项，问用户怎么办**——「追踪/伏笔.md 不存在，要现在创建吗？还是跳过继续写？」用户选择：创建 / 跳过
    - ℹ️ **可选**：不问用户，缺失时直接跳过，不影响写作
 2. **准备层**（下面的 3 步是核心方法在单章写作中的落地：筛选状态 → 召回模块 → 确认意图）：
-   - 2.1 **状态筛选**：从 `追踪/角色状态.md` 中筛选本章涉及角色的当前状态，从 `追踪/伏笔.md` 中筛选本章需要回收/推进的伏笔，从 `追踪/物品.md` 筛选相关物品状态，从 `追踪/环境.md` 筛选当前环境。参考 `_shared/references/context-checklist.md`。输出最简记忆包（参考 state-tracking.md）。如果角色状态文件不存在，从角色设定和前文推断
+   - 2.1 **状态筛选**：从 `追踪/角色状态.md` 中筛选本章涉及角色的当前状态，从 `追踪/伏笔.md` 中筛选本章需要回收/推进的伏笔，从 `追踪/物品.md` 筛选相关物品状态，从 `追踪/环境.md` 筛选当前环境。参考 $globalRefPathcontext-checklist.md`。输出最简记忆包（参考 state-tracking.md）。如果角色状态文件不存在，从角色设定和前文推断
    - 2.2 **模块召回与文风召回**：
      - ① 本章目标情绪词？② 借鉴哪个参考文件的哪个技法？③ 用在哪些段落？答不出 → 先回读参考再动笔
       - (a) **文风召回**：按「对标书路径查找」规则读 `{对标书路径}/文风.md`（路径优先 `{项目}/对标/{书名}/`，回退 `拆文库/{书名}/`）；多本对标书时从 `设定/题材定位.md` 读 `主对标书` 字段。文风文件不存在 → **fail-fast 报错**：「对标书 X 缺少 文风.md。请用 `/story-long-analyze-mimo` 跑 Stage 6 生成文风，再 `/story-import-mimo` 同步。」不 inline 生成
      - (b) **匹配章节挑选**：从 `{对标书路径}/章节/*_摘要.md` grep `基调：(紧张|轻松|悲伤|热血|爽|甜|温馨|恐怖|压抑|其他)`（全角冒号），按本章目标情绪挑章 K——多章同基调时选择规则：先看爽点类型是否接近，再看情节点数量/原文章节估算字数是否接近本章目标字数，最后取章节号最小者；必读 `{对标书路径}/章节/第K章_摘要.md`，若同章存在 `第K章_深度拆解.md` 则加读，否则回退黄金三章深度拆解/文风文件里的可借鉴技巧，不因非黄金三章缺少深度拆解而失败
      - (c) **模块召回**：从对标的结构化子目录（角色/剧情/设定）中按本章情节检索相关模块
-     - (d) <!-- cross-book-recall:trigger:execution-output --> 输出"对标召回摘要 + 文风召回指令 + 原文锚点片段引用"（合计 ≤10 条），作为 narrative-writer 的输入。**多对标书时**参 `_shared/references/cross-book-recall.md`，进 prompt 的只主对标（副对标不入正文）
+     - (d) <!-- cross-book-recall:trigger:execution-output --> 输出"对标召回摘要 + 文风召回指令 + 原文锚点片段引用"（合计 ≤10 条），作为 narrative-writer 的输入。**多对标书时**参 $globalRefPathcross-book-recall.md`，进 prompt 的只主对标（副对标不入正文）
       - (e) **跨章重复预检**：读取 `追踪/cross-chapter-fingerprint.md`，写作时避免重复以下内容：
         - 高频重复片段（列出 top 5）
         - 高频重复动作（列出 top 5）
@@ -971,7 +971,7 @@ node skills/story-long-write-mimo/scripts/step-guard.js post <step> <workflow_di
    - 2.3 **指令确认**：综合细纲+最简记忆包+模块召回结果，确认本章节奏（快/慢）和情绪目标，用一句话概括本章写作意图。例：「快节奏打脸——读者等了三章，这章必须一拳到位。技法=信息差揭示（hooks-suspense.md），用于第2-4段。」
    - 2.4 **性格锚点检查**（⚠️ 不可跳过）：写对话和行为描写前，从 `追踪/角色状态.md` 读取本章涉及角色的"性格锚点"（核心性格/说话风格/行为模式/禁忌）。如果角色没有性格锚点，从 `设定/角色/{角色名}.md` 提取初始锚点并补录到角色状态文件。写作时严格遵守锚点约束，不得让角色说出/做出违背锚点的事（除非有充分铺垫的性格转变剧情）
    - 2.5 **质量约束注入**（⚠️ 不可跳过）：写作前将以下规则加载到上下文，作为本次写作的硬约束红线。**写的时候就避开这些问题，而不是写完再改**：
-       - **完整规则**：读取 `_shared/references/quality-rules.md`，获取禁用词、AI腔禁令、段落规则、对话规则、心理描写限制、比喻限制、节奏规则、留白规则等全部约束
+       - **完整规则**：读取 $globalRefPathquality-rules.md`，获取禁用词、AI腔禁令、段落规则、对话规则、心理描写限制、比喻限制、节奏规则、留白规则等全部约束
        - **上次质量问题**：读取 `追踪/上下文.md` 中最近记录的质量问题（如有），本次写作直接避开
 3. **资料研究**（按需）：如果写作中遇到需要查证的外部事实（历史年代、地理方位、职业细节等），spawn `story-researcher` agent 搜索并输出到 `参考资料/` 目录。研究完成后再继续写作。
 4. **标题预检**：写正文前从细纲读取章名；如与既有章节同名或明显重复，先按本章核心事件改名，并同步细纲标题与正文文件名。
@@ -1029,7 +1029,7 @@ node skills/story-long-write-mimo/scripts/step-guard.js post <step> <workflow_di
 
 #### 去AI味前置约束（写作时必须遵守）
 
-> ⚠️ 去AI味不是写完再改，而是写作时就必须遵循的规则。完整规则见 `_shared/references/quality-rules.md`。
+> ⚠️ 去AI味不是写完再改，而是写作时就必须遵循的规则。完整规则见 $globalRefPathquality-rules.md`。
 
 ---
 

@@ -1,4 +1,4 @@
----
+﻿---
 name: story-import-mimo
 version: 1.0.0
 description: |
@@ -559,7 +559,7 @@ name: {角色名}
 
 #### 3-S.1 正文迁移
 
-将 `拆文库/{书名}/原文/` 的全文迁移为单文件 `{标题}/正文.md`，按 [_shared/references/format-and-structure.md](_shared/references/format-and-structure.md) 规范化格式（小节标记 `###1.`、段间无空行、对话引号按项目/平台约定统一）。**原文已是成稿，不重写内容，只规范格式。**
+将 `拆文库/{书名}/原文/` 的全文迁移为单文件 `{标题}/正文.md`，按 [$HOME/.config/mimocode/skills/_shared/references/format-and-structure.md](_shared/references/format-and-structure.md) 规范化格式（小节标记 `###1.`、段间无空行、对话引号按项目/平台约定统一）。**原文已是成稿，不重写内容，只规范格式。**
 
 #### 3-S.2 设定生成
 
@@ -698,8 +698,8 @@ name: {角色名}
 | 长篇迁移映射规则 | `references/structure-mapping-long.md` |
 | 短篇迁移映射规则 | `references/structure-mapping-short.md` |
 | 角色状态反推规则（长篇） | `references/character-state-reverse.md` |
-| 角色状态规则（character-state-reverse.md 依赖） | `_shared/references/state-tracking.md` |
-| 短篇正文格式规范 | `_shared/references/format-and-structure.md` |
+| 角色状态规则（character-state-reverse.md 依赖） | $globalRefPathstate-tracking.md` |
+| 短篇正文格式规范 | $globalRefPathformat-and-structure.md` |
 
 > 长篇细纲模板格式参见 story-long-write-mimo（Phase 3 细纲部分）；短篇核心框架模板参见 story-short-write-mimo（核心框架部分）。这两项为纯文本指引，story-import-mimo 不加载对应 skill 的文件。
 

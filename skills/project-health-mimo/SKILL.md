@@ -1,4 +1,4 @@
----
+﻿---
 name: project-health-mimo
 version: 2.1.0
 description: |
@@ -427,7 +427,7 @@ node skills/project-health-mimo/scripts/step-guard.js post 04 <项目目录>
 
 ## Task 跟踪集成
 
-> 规范详见 `_shared/references/task-tracking-conventions.md`。
+> 规范详见 $globalRefPathtask-tracking-conventions.md`。
 
 **触发时第一步：读取下方任务树，然后逐条创建。不跳步。**
 

@@ -1,4 +1,4 @@
----
+﻿---
 name: story-progress-mimo
 version: 2.0.0
 description: |
@@ -586,15 +586,15 @@ node skills/story-progress-mimo/scripts/step-guard.js post <步骤号> {workflow
 
 | 文档 | 用途 |
 |------|------|
-| `_shared/references/cross-volume-tracking.md` | 跨卷追踪规范 |
-| `_shared/references/state-tracking.md` | 角色状态追踪规范 |
-| `_shared/references/consistency-tracking.md` | 一致性追踪规范 |
+| $globalRefPathcross-volume-tracking.md` | 跨卷追踪规范 |
+| $globalRefPathstate-tracking.md` | 角色状态追踪规范 |
+| $globalRefPathconsistency-tracking.md` | 一致性追踪规范 |
 
 ---
 
 ## Task 跟踪集成
 
-> 规范详见 `_shared/references/task-tracking-conventions.md`。
+> 规范详见 $globalRefPathtask-tracking-conventions.md`。
 
 **触发时第一步：读取上方「任务树」（§任务树），然后逐条创建。不跳步。**
 

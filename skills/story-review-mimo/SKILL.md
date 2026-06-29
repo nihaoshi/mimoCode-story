@@ -1,4 +1,4 @@
----
+﻿---
 name: story-review-mimo
 version: 4.0.0
 description: |
@@ -860,7 +860,7 @@ node {skill_dir}/scripts/step-guard.js post <步骤号> {workflow_dir}
 
 ## Task 跟踪集成
 
-> 规范详见 `_shared/references/task-tracking-conventions.md`。
+> 规范详见 $globalRefPathtask-tracking-conventions.md`。
 
 **触发时第一步：读取下方固定任务列表，然后逐条创建。不跳步。**
 
@@ -923,7 +923,7 @@ node {skill_dir}/scripts/step-guard.js post <步骤号> {workflow_dir}
 | 文档 | 用途 |
 |------|------|
 | `references/agent-prompt-templates.md` | 子 Agent Prompt 模板（本文内嵌） |
-| `_shared/references/quality-rules.md` | 质量规则（禁用词、AI腔等） |
+| $globalRefPathquality-rules.md` | 质量规则（禁用词、AI腔等） |
 | `_shared/scripts/wordcount.js` | 字数统计脚本 |
 | `_shared/scripts/cross-chapter-check.js` | 跨章节检测脚本 |
 | `_shared/scripts/voice-check.js` | 角色声音检测脚本 |

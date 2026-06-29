@@ -1,4 +1,4 @@
----
+﻿---
 name: story-setup-mimo
 version: 3.3.0
 description: |
@@ -260,7 +260,7 @@ MiMo Code 的记忆系统是平台内置功能，会自动在 `MEMORY.md` 中保
 
 ## Task 跟踪集成
 
-> 规范详见 `_shared/references/task-tracking-conventions.md`。
+> 规范详见 $globalRefPathtask-tracking-conventions.md`。
 
 **触发时第一步：读取下方任务树，然后逐条创建。不跳步。**
 

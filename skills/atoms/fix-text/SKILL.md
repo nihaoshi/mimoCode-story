@@ -1,4 +1,4 @@
----
+﻿---
 name: fix-text
 version: 2.0.0
 description: 文本修正（AI腔+禁用词+标点）
@@ -22,8 +22,8 @@ outputs:
     type: text
 script: _shared/scripts/punctuation-normalize.js
 references:
-  - _shared/references/banned-words.md
-  - _shared/references/anti-ai-writing.md
+  - $HOME/.config/mimocode/skills/_shared/references/banned-words.md
+  - $HOME/.config/mimocode/skills/_shared/references/anti-ai-writing.md
 triggers:
   - /atom:fix-text
   - 修正文本

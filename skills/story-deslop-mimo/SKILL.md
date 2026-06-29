@@ -403,11 +403,11 @@ node skills/story-long-write-mimo/scripts/step-guard.js post exec {workflow_dir}
 
 ## 参考资料
 
-共享参考文件位于 `../_shared/references/`。
+共享参考文件位于 $globalRefPath`。
 
 | 文件 | 何时加载 |
 |------|----------|
-| `_shared/references/quality-rules.md` | 统一质量规则（禁用词+AI腔+段落规则） |
+| $globalRefPathquality-rules.md` | 统一质量规则（禁用词+AI腔+段落规则） |
 | `../story-long-write-mimo/references/agent-prompt-templates.md` | 子Agent Prompt 模板参考 |
 
 ---

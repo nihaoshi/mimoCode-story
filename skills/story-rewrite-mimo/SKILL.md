@@ -558,8 +558,8 @@ node skills/story-rewrite-mimo/scripts/step-guard.js post <step> {project_dir} {
 
 | 文档 | 用途 |
 |------|------|
-| `_shared/references/quality-rules.md` | 质量规则 |
-| `_shared/references/lazy-prevention.md` | 防偷懒规则 |
-| `_shared/references/tracking-update-rules.md` | 追踪更新规则 |
-| `_shared/references/anti-ai-writing.md` | 去AI味指南 |
-| `_shared/references/banned-words.md` | 禁用词清单 |
+| $globalRefPathquality-rules.md` | 质量规则 |
+| $globalRefPathlazy-prevention.md` | 防偷懒规则 |
+| $globalRefPathtracking-update-rules.md` | 追踪更新规则 |
+| $globalRefPathanti-ai-writing.md` | 去AI味指南 |
+| $globalRefPathbanned-words.md` | 禁用词清单 |
