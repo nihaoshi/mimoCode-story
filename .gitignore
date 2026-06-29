@@ -23,3 +23,7 @@ __pycache__/
 # Temp
 *.tmp
 *.bak
+
+# Workflow
+.workflow/
+.mimocode/
