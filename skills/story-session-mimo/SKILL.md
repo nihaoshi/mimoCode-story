@@ -1,4 +1,4 @@
----
+﻿---
 name: story-session-mimo
 version: 1.0.0
 description: |
@@ -38,7 +38,7 @@ ls {project_dir}/追踪/*.md 2>/dev/null
 
 ### Step 4：检测设定缺口
 
-运行 `node skills/_shared/scripts/detect-story-gaps.js <项目目录>`，检测：
+运行 `node $HOME/.config/mimocode/skills/_shared/scripts/detect-story-gaps.js <项目目录>`，检测：
 - 设定文件完整性
 - 大纲缺失
 - 伏笔断线

@@ -1,4 +1,4 @@
----
+﻿---
 name: quality-mimo
 version: 2.0.0
 description: |
@@ -293,7 +293,7 @@ node {skill_dir}/scripts/step-guard.js post {step} {workflow_dir}
 
 **调用方式**：
 ```bash
-node skills/_shared/scripts/quality-gate.js <章节文件> <项目目录>
+node $HOME/.config/mimocode/skills/_shared/scripts/quality-gate.js <章节文件> <项目目录>
 ```
 
 **检查项目**（由以下原子 skill 执行）：
@@ -306,7 +306,7 @@ node skills/_shared/scripts/quality-gate.js <章节文件> <项目目录>
 
 **增强模式**：
 ```bash
-node skills/_shared/scripts/quality-gate.js --full <章节文件> <项目目录>
+node $HOME/.config/mimocode/skills/_shared/scripts/quality-gate.js --full <章节文件> <项目目录>
 ```
 
 增加（增强模式额外原子）：
@@ -322,7 +322,7 @@ node skills/_shared/scripts/quality-gate.js --full <章节文件> <项目目录>
 
 **调用方式**：
 ```bash
-node skills/_shared/scripts/full-consistency-audit.js <项目目录>
+node $HOME/.config/mimocode/skills/_shared/scripts/full-consistency-audit.js <项目目录>
 ```
 
 **检查内容**：

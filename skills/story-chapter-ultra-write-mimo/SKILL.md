@@ -123,7 +123,7 @@ actor({
     "action": "run",
     "subagent_type": "explore",
     "description": "获取最新章节信息 - 第{N}章",
-    "prompt": "你是章节极致书写流程的章节扫描器。\n\n【防偷懒铁律】不凭记忆，必须扫描目录。\n\n【任务】扫描 {project_dir}/正文/ 目录，找出最新章节。\n\n【执行】\n1. 列出正文/ 目录下所有 .md 文件\n2. 提取最大章节编号\n3. 对最新章节运行字数统计：node skills/_shared/scripts/wordcount.js <最新章节文件> --json\n\n【输出】写入 {project_dir}/.workflow/step02-chapter-info.json，格式：\n{\"latest_chapter\": 5, \"latest_file\": \"正文/第005章.md\", \"word_count\": 3200, \"next_chapter\": 6}",
+    "prompt": "你是章节极致书写流程的章节扫描器。\n\n【防偷懒铁律】不凭记忆，必须扫描目录。\n\n【任务】扫描 {project_dir}/正文/ 目录，找出最新章节。\n\n【执行】\n1. 列出正文/ 目录下所有 .md 文件\n2. 提取最大章节编号\n3. 对最新章节运行字数统计：node $HOME/.config/mimocode/skills/_shared/scripts/wordcount.js <最新章节文件> --json\n\n【输出】写入 {project_dir}/.workflow/step02-chapter-info.json，格式：\n{\"latest_chapter\": 5, \"latest_file\": \"正文/第005章.md\", \"word_count\": 3200, \"next_chapter\": 6}",
     "context": "none"
   }
 })
@@ -151,7 +151,7 @@ actor({
     "action": "run",
     "subagent_type": "general",
     "description": "创建细纲 - 第{N}章",
-    "prompt": "你是章节极致书写流程的细纲创建器。\n\n【防偷懒铁律】必须动态扫描项目目录获取文件列表，不能硬编码。\n\n【任务】为第{N}章创建细纲。\n\n【细纲内容去重（必须执行）】生成新细纲前，扫描前 5 章细纲的核心事件和情节点序列：\n1. 核心事件重复：新章核心事件不得与前 5 章中任意一章高度相似\n2. 情节点重复：新章情节点序列不得与前 3 章有 >50% 重合\n3. 情绪重复：连续 3 章不得交付同一情绪目标\n4. 爽点重复：新章爽点类型不得与前 3 章完全相同\n\n【输出】写入 {project_dir}/大纲/细纲_第{N}章.md\n\n【要求】\n- 情节点 >= 10 个\n- 必须有章首钩子和章尾钩子\n- 必须有爽点标注\n- 必须有字数目标\n- 细纲内容不得违反世界观规则和金手指规则\n- 角色行为必须符合角色设定和性格锚点\n- 如有跨卷伏笔需要在本章回收，必须在细纲中标注",
+    "prompt": "你是章节极致书写流程的细纲创建器。\n\n【防偷懒铁律】必须动态扫描项目目录获取文件列表，不能硬编码。\n\n【任务】为第{N}章创建细纲。\n\n【细纲内容去重（必须执行）】生成新细纲前，扫描前 5 章细纲的核心事件和情节点序列：\n1. 核心事件重复：新章核心事件不得与前 5 章中任意一章高度相似\n2. 情节点重复：新章情节点序列不得与前 3 章有 >50% 重合\n3. 情绪重复：连续 3 章不得交付同一情绪目标\n4. 爽点重复：新章爽点类型不得与前 3 章完全相同\n\n【输出格式】写入 {project_dir}/大纲/细纲_第{N}章.md，格式如下：\n\n# 第{N}章：{章名} 细纲\n\n## 核心事件\n{一句话描述本章核心事件}\n\n## 情节点序列\n1. {情节点1}\n2. {情节点2}\n...（>=10个）\n\n## 目标情绪\n{本章要交付的情绪}\n\n## 章首钩子\n{如何吸引读者继续阅读}\n\n## 章尾钩子\n{如何引导读者期待下一章}\n\n## 爽点\n{本章爽点类型和位置}\n\n## 字数目标\n{预计字数}\n\n## 涉及角色\n{本章出场或提及的角色名列表，用于文件分析器映射到设定文件}\n\n## 涉及场景\n{本章发生的地点/场景，用于映射到世界观文件}\n\n## 涉及伏笔\n{本章需要推进或回收的伏笔，用于从伏笔.md筛选相关行}\n\n【要求】\n- 情节点 >= 10 个\n- 必须有章首钩子和章尾钩子\n- 必须有爽点标注\n- 必须有字数目标\n- 涉及角色/场景/伏笔必须列出，供下游文件分析器使用\n- 细纲内容不得违反世界观规则和金手指规则\n- 角色行为必须符合角色设定和性格锚点\n- 如有跨卷伏笔需要在本章回收，必须在涉及伏笔中标注",
     "context": "none"
   }
 })
@@ -222,7 +222,7 @@ actor({
     "action": "run",
     "subagent_type": "general",
     "description": "读取上下文 - 第{N}章",
-    "prompt": "你是章节极致书写流程的上下文加载器。\n\n【防偷懒铁律】按分层读取，不能跳过任何一层。\n\n【任务】读取 step05 列出的文件，组装写作上下文。参考 skills/_shared/references/context-checklist.md。\n\n【Layer 1 - 必读，<200字】\n1. {project_dir}/追踪/上下文.md — 读取索引块（<200字），获取本章涉及角色、待回收伏笔、涉及物品、环境状态\n2. {project_dir}/大纲/细纲_第{N}章.md — 本章细纲\n\n【Layer 2 - 按需，细纲涉及才读】\n3. {project_dir}/设定/角色/{涉及角色}.md — 只读细纲中出现的角色（2-3个）\n4. {project_dir}/设定/世界观/{涉及场景}.md — 只读细纲中出现的场景（1-2个）\n5. {project_dir}/追踪/角色状态.md — 只读涉及角色的行\n6. {project_dir}/追踪/伏笔.md — 只读涉及伏笔的行\n\n【Layer 3 - 条件读】\n7. {project_dir}/跨卷追踪/跨卷伏笔.md — 细纲标注跨卷伏笔时读取\n8. {project_dir}/故事线/故事线_主线_*.md — 细纲标注故事线推进时读取\n9. {project_dir}/故事线/故事线_交叉点.md — 细纲标注交叉点时读取\n\n【文风召回】\n10. 如有 step04-benchmark.json，读取 {project_dir}/设定/文风.md，提取锚点片段（300-500字）\n11. 输出到 step08-context.json 的 benchmark 字段\n\n【输出】写入 {project_dir}/.workflow/step08-context.json，格式：\n{\n  \"chapter\": {N},\n  \"previous_ending\": \"上一章最后500字原文\",\n  \"minimal_memory_package\": \"<Step 05输出的最简记忆包>\",\n  \"characters\": {\"角色名\": {\"设定\": \"...\", \"状态\": \"...\"}},\n  \"settings\": {\"世界观\": \"...\", \"金手指\": \"...\"},\n  \"tracking\": {\"伏笔\": \"...\", \"时间线\": \"...\"},\n  \"cross_volume\": {\"跨卷伏笔\": \"...\"},\n  \"storylines\": {\"主线\": \"...\"},\n  \"benchmark\": {\n    \"anchor_excerpts\": [\"300-500字锚点片段\"],\n    \"techniques\": [\"可借鉴套路\"]\n  },\n  \"foreshadows\": [...]\n}",
+    "prompt": "你是章节极致书写流程的上下文加载器。\n\n【防偷懒铁律】按分层读取，不能跳过任何一层。\n\n【任务】读取 step05 列出的文件，组装写作上下文。参考 $HOME/.config/mimocode/skills/_shared/references/context-checklist.md。\n\n【Layer 1 - 必读，<200字】\n1. {project_dir}/追踪/上下文.md — 读取索引块（<200字），获取本章涉及角色、待回收伏笔、涉及物品、环境状态\n2. {project_dir}/大纲/细纲_第{N}章.md — 本章细纲\n\n【Layer 2 - 按需，细纲涉及才读】\n3. {project_dir}/设定/角色/{涉及角色}.md — 只读细纲中出现的角色（2-3个）\n4. {project_dir}/设定/世界观/{涉及场景}.md — 只读细纲中出现的场景（1-2个）\n5. {project_dir}/追踪/角色状态.md — 只读涉及角色的行\n6. {project_dir}/追踪/伏笔.md — 只读涉及伏笔的行\n\n【Layer 3 - 条件读】\n7. {project_dir}/跨卷追踪/跨卷伏笔.md — 细纲标注跨卷伏笔时读取\n8. {project_dir}/故事线/故事线_主线_*.md — 细纲标注故事线推进时读取\n9. {project_dir}/故事线/故事线_交叉点.md — 细纲标注交叉点时读取\n\n【文风召回】\n10. 如有 step04-benchmark.json，读取 {project_dir}/设定/文风.md，提取锚点片段（300-500字）\n11. 输出到 step08-context.json 的 benchmark 字段\n\n【输出】写入 {project_dir}/.workflow/step08-context.json，格式：\n{\n  \"chapter\": {N},\n  \"previous_ending\": \"上一章最后500字原文\",\n  \"minimal_memory_package\": \"<Step 05输出的最简记忆包>\",\n  \"characters\": {\"角色名\": {\"设定\": \"...\", \"状态\": \"...\"}},\n  \"settings\": {\"世界观\": \"...\", \"金手指\": \"...\"},\n  \"tracking\": {\"伏笔\": \"...\", \"时间线\": \"...\"},\n  \"cross_volume\": {\"跨卷伏笔\": \"...\"},\n  \"storylines\": {\"主线\": \"...\"},\n  \"benchmark\": {\n    \"anchor_excerpts\": [\"300-500字锚点片段\"],\n    \"techniques\": [\"可借鉴套路\"]\n  },\n  \"foreshadows\": [...]\n}",
     "context": "none"
   }
 })
@@ -237,7 +237,7 @@ actor({
     "action": "run",
     "subagent_type": "general",
     "description": "生成约束+质量注入 - 第{N}章",
-    "prompt": "你是章节极致书写流程的约束生成器。\n\n【防偷懒铁律】禁用词必须从文件加载，字数限制必须明确，质量约束必须注入8项。\n\n【任务】生成本章写作的质量约束参数，注入8项写作硬约束。\n\n【执行】\n1. 读取 {project_dir}/.workflow/step08-context.json 获取上下文和最简记忆包\n2. 从细纲读取字数目标\n3. 加载质量规则（读取 skills/_shared/references/quality-rules.md）\n4. 如有对标，从 step04-benchmark.json 读取锚点片段和技法\n\n【质量约束注入（8项硬约束，写作时直接避开）】\n1. 禁用词清单（一级禁用词）\n2. AI腔句式禁令（'感到X涌上心头'/'宛如'/'这不仅X更Y'/'这一刻'/'面对X选择了Y'/'不是A而是B'）\n3. 段落密度规则（段落≤4行，>60字按动作转折拆开）\n4. 对话自然度规则（对话推进剧情或揭示性格，不能只为了凑字数）\n5. 心理描写限制（≤2句/章）\n6. 比喻限制（≤1个/千字）\n7. 节奏规则（章尾必须有钩子）\n8. 留白规则（不说透，让读者自己感受）\n\n【输出】写入 {project_dir}/.workflow/step09-constraints.json，格式：\n{\n  \"word_count_target\": 3000,\n  \"banned_words\": [...],\n  \"ai_patterns\": [...],\n  \"quality_constraints\": {\n    \"禁用词清单\": [...],\n    \"AI腔句式禁令\": [...],\n    \"段落密度规则\": \"段落≤4行，>60字拆段\",\n    \"对话自然度规则\": \"推进剧情或揭示性格\",\n    \"心理描写限制\": \"≤2句/章\",\n    \"比喻限制\": \"≤1个/千字\",\n    \"节奏规则\": \"章尾必须有钩子\",\n    \"留白规则\": \"不说透，让读者感受\"\n  },\n  \"benchmark_excerpts\": [\"300-500字锚点片段\"],\n  \"techniques\": [...]\n}",
+    "prompt": "你是章节极致书写流程的约束生成器。\n\n【防偷懒铁律】禁用词必须从文件加载，字数限制必须明确，质量约束必须注入8项。\n\n【任务】生成本章写作的质量约束参数，注入8项写作硬约束。\n\n【执行】\n1. 读取 {project_dir}/.workflow/step08-context.json 获取上下文和最简记忆包\n2. 从细纲读取字数目标\n3. 加载质量规则（读取 $HOME/.config/mimocode/skills/_shared/references/quality-rules.md）\n4. 如有对标，从 step04-benchmark.json 读取锚点片段和技法\n\n【质量约束注入（8项硬约束，写作时直接避开）】\n1. 禁用词清单（一级禁用词）\n2. AI腔句式禁令（'感到X涌上心头'/'宛如'/'这不仅X更Y'/'这一刻'/'面对X选择了Y'/'不是A而是B'）\n3. 段落密度规则（段落≤4行，>60字按动作转折拆开）\n4. 对话自然度规则（对话推进剧情或揭示性格，不能只为了凑字数）\n5. 心理描写限制（≤2句/章）\n6. 比喻限制（≤1个/千字）\n7. 节奏规则（章尾必须有钩子）\n8. 留白规则（不说透，让读者自己感受）\n\n【输出】写入 {project_dir}/.workflow/step09-constraints.json，格式：\n{\n  \"word_count_target\": 3000,\n  \"banned_words\": [...],\n  \"ai_patterns\": [...],\n  \"quality_constraints\": {\n    \"禁用词清单\": [...],\n    \"AI腔句式禁令\": [...],\n    \"段落密度规则\": \"段落≤4行，>60字拆段\",\n    \"对话自然度规则\": \"推进剧情或揭示性格\",\n    \"心理描写限制\": \"≤2句/章\",\n    \"比喻限制\": \"≤1个/千字\",\n    \"节奏规则\": \"章尾必须有钩子\",\n    \"留白规则\": \"不说透，让读者感受\"\n  },\n  \"benchmark_excerpts\": [\"300-500字锚点片段\"],\n  \"techniques\": [...]\n}",
     "context": "none"
   }
 })
@@ -252,7 +252,7 @@ actor({
     "action": "run",
     "subagent_type": "general",
     "description": "正文写作 - 第{N}章",
-    "prompt": "你是 narrative-writer，负责正文写作。只写作，不检查质量。\n\n【防偷懒铁律】必须写入文件，不在对话中输出。必须包含所有场景。\n\n【输入文件】\n1. {project_dir}/大纲/细纲_第{N}章.md — 细纲\n2. {project_dir}/.workflow/step08-context.json — 上下文（含最简记忆包+文风召回）\n3. {project_dir}/.workflow/step09-constraints.json — 约束（含8项质量硬约束）\n\n【写作技法（融合 long-write）】\n1. 三维度织入：发生+感知+反应同时织入\n2. 镜头断段：一段只承载一个动作/信息变化\n3. 密度重排：段落>60字按动作转折拆开，单句>45字拆短\n4. 文风模仿：参考 step08-context.json 的 benchmark.anchor_excerpts 片段\n\n【写作要求】\n1. 严格按细纲的事件序列写作\n2. 遵守约束参数（禁用词、文风、字数目标）\n3. 遵守8项质量硬约束（写的时候就避开，不要写完再改）\n4. 字数必须达到 {word_count_target}\n5. 写入文件，不在对话中输出\n\n【质量红线】\n- 禁用词清单中的词绝对不能出现\n- AI腔句式禁止\n- 禁止排比\n- 心理描写≤2句\n- 比喻≤1个/千字\n- 段落≤4行\n- 单句≤45字\n\n【输出】\n- 正文：{project_dir}/正文/第{N}章.md\n\n写完后运行字数验证：\nnode skills/_shared/scripts/wordcount.js {project_dir}/正文/第{N}章.md --json\n字数未达标禁止结束。",
+    "prompt": "你是 narrative-writer，负责正文写作。只写作，不检查质量。\n\n【防偷懒铁律】必须写入文件，不在对话中输出。必须包含所有场景。\n\n【输入文件】\n1. {project_dir}/大纲/细纲_第{N}章.md — 细纲\n2. {project_dir}/.workflow/step08-context.json — 上下文（含最简记忆包+文风召回）\n3. {project_dir}/.workflow/step09-constraints.json — 约束（含8项质量硬约束）\n\n【写作技法（融合 long-write）】\n1. 三维度织入：发生+感知+反应同时织入\n2. 镜头断段：一段只承载一个动作/信息变化\n3. 密度重排：段落>60字按动作转折拆开，单句>45字拆短\n4. 文风模仿：参考 step08-context.json 的 benchmark.anchor_excerpts 片段\n\n【写作要求】\n1. 严格按细纲的事件序列写作\n2. 遵守约束参数（禁用词、文风、字数目标）\n3. 遵守8项质量硬约束（写的时候就避开，不要写完再改）\n4. 字数必须达到 {word_count_target}\n5. 写入文件，不在对话中输出\n\n【质量红线】\n- 禁用词清单中的词绝对不能出现\n- AI腔句式禁止\n- 禁止排比\n- 心理描写≤2句\n- 比喻≤1个/千字\n- 段落≤4行\n- 单句≤45字\n\n【输出】\n- 正文：{project_dir}/正文/第{N}章.md\n\n写完后运行字数验证：\nnode $HOME/.config/mimocode/skills/_shared/scripts/wordcount.js {project_dir}/正文/第{N}章.md --json\n字数未达标禁止结束。",
     "context": "none"
   }
 })
@@ -344,7 +344,7 @@ actor({
     "action": "run",
     "subagent_type": "general",
     "description": "追踪+设定更新 - 第{N}章",
-    "prompt": "你是章节极致书写流程的追踪更新器。\n\n【防偷懒铁律】必须从正文实际提取，不能凭记忆。\n\n【任务】按三步流程更新所有相关文件。\n\n【Step A：动态扫描项目结构】获取所有实际存在的配置文件\n【Step B：分析正文提取变更清单】从本章正文识别变化点\n【Step C：按清单更新文件】只更新变更涉及的文件\n\n【始终更新】：追踪/时间线.md、追踪/上下文.md、追踪/重复语句.md\n【角色同步】更新完角色状态后，运行：node skills/_shared/scripts/character-sync.js {project_dir} --json\n\n【输出】更新后的文件列表",
+    "prompt": "你是章节极致书写流程的追踪更新器。\n\n【防偷懒铁律】必须从正文实际提取，不能凭记忆。\n\n【任务】按三步流程更新所有相关文件。\n\n【Step A：动态扫描项目结构】获取所有实际存在的配置文件\n【Step B：分析正文提取变更清单】从本章正文识别变化点\n【Step C：按清单更新文件】只更新变更涉及的文件\n\n【始终更新】：追踪/时间线.md、追踪/上下文.md、追踪/重复语句.md\n【角色同步】更新完角色状态后，运行：node $HOME/.config/mimocode/skills/_shared/scripts/character-sync.js {project_dir} --json\n\n【输出】更新后的文件列表",
     "context": "none"
   }
 })

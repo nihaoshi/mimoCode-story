@@ -189,7 +189,7 @@ actor({
     "action": "run",
     "subagent_type": "general",
     "description": "读取大纲和追踪文件",
-    "prompt": "你是大纲进度管理器的上下文加载器。\n\n【防偷懒铁律】必须动态扫描项目目录获取文件列表，不能硬编码。\n\n【Step A：读取项目结构定义】\n读取 skills/_shared/references/project-structure.md，获取目录结构和文件清单。\n\n【Step B：动态扫描项目目录】\n```bash\nls {project_dir}/大纲/*.md 2>/dev/null\nls {project_dir}/追踪/*.md 2>/dev/null\nls {project_dir}/跨卷追踪/*.md 2>/dev/null\nls {project_dir}/故事线/*.md 2>/dev/null\nls {project_dir}/正文/*.md 2>/dev/null | tail -1\n```\n\n【Step C：从扫描结果加载文件】\n按扫描结果逐个读取：\n1. 大纲文件（大纲.md、卷纲、细纲）\n2. 追踪文件（伏笔、角色状态、时间线、物品、环境、物资、重复语句、上下文）\n3. 跨卷追踪文件（如存在）\n4. 故事线文件（如存在）\n\n【输出】写入 {project_dir}/.workflow/prog-02-context.json，格式：\n{\"current_volume\": 2, \"current_arc\": \"弧名\", \"latest_chapter\": 42, \"outline_structure\": {...}, \"foreshadows\": [...], \"characters\": [...], \"cross_volume\": {...}, \"items\": [...], \"environment\": {...}, \"supply\": {...}, \"repeated_phrases\": [...], \"story_lines\": {...}}",
+    "prompt": "你是大纲进度管理器的上下文加载器。\n\n【防偷懒铁律】必须动态扫描项目目录获取文件列表，不能硬编码。\n\n【Step A：读取项目结构定义】\n读取 $HOME/.config/mimocode/skills/_shared/references/project-structure.md，获取目录结构和文件清单。\n\n【Step B：动态扫描项目目录】\n```bash\nls {project_dir}/大纲/*.md 2>/dev/null\nls {project_dir}/追踪/*.md 2>/dev/null\nls {project_dir}/跨卷追踪/*.md 2>/dev/null\nls {project_dir}/故事线/*.md 2>/dev/null\nls {project_dir}/正文/*.md 2>/dev/null | tail -1\n```\n\n【Step C：从扫描结果加载文件】\n按扫描结果逐个读取：\n1. 大纲文件（大纲.md、卷纲、细纲）\n2. 追踪文件（伏笔、角色状态、时间线、物品、环境、物资、重复语句、上下文）\n3. 跨卷追踪文件（如存在）\n4. 故事线文件（如存在）\n\n【输出】写入 {project_dir}/.workflow/prog-02-context.json，格式：\n{\"current_volume\": 2, \"current_arc\": \"弧名\", \"latest_chapter\": 42, \"outline_structure\": {...}, \"foreshadows\": [...], \"characters\": [...], \"cross_volume\": {...}, \"items\": [...], \"environment\": {...}, \"supply\": {...}, \"repeated_phrases\": [...], \"story_lines\": {...}}",
     "context": "none"
   }
 })
@@ -257,7 +257,7 @@ actor({
     "action": "run",
     "subagent_type": "general",
     "description": "批量细纲生成",
-    "prompt": "你是细纲批量生成器。\n\n【防偷懒铁律】必须动态扫描项目目录获取文件列表，不能硬编码。\n\n【任务】为下一弧/卷批量生成所有缺失的细纲。\n\n【Step A：读取项目结构定义】\n读取 skills/_shared/references/project-structure.md，获取目录结构和文件清单。\n\n【Step B：动态扫描项目目录】\n执行以下扫描命令获取实际文件列表：\n```bash\n# 必须扫描的目录\nls {project_dir}/设定/世界观/*.md 2>/dev/null\nls {project_dir}/设定/角色/*.md 2>/dev/null\nls {project_dir}/设定/势力/*.md 2>/dev/null\nls {project_dir}/追踪/*.md 2>/dev/null\nls {project_dir}/大纲/细纲_*.md 2>/dev/null\n# 可选扫描的目录\nls {project_dir}/跨卷追踪/*.md 2>/dev/null\nls {project_dir}/故事线/*.md 2>/dev/null\nls {project_dir}/正文/*.md 2>/dev/null | tail -1  # 最新正文\n```\n\n【Step C：从卷纲提取章节规划】\n读取 {project_dir}/大纲/卷纲_第X卷.md，获取下一弧/卷的章节范围和核心事件规划。\n\n【生成流程（逐章）】\n对每个缺失章节号 N：\n1. 去重检查：读取前5章细纲的「核心事件」字段，检查新章核心事件是否重复\n2. 从卷纲中提取本章的事件规划\n3. 结合扫描到的追踪文件（伏笔、角色状态、时间线、物品、环境、物资）设计情节点\n4. 按细纲模板生成：核心事件、情节点序列(>=10个)、目标情绪、章首钩子、章尾钩子、爽点、字数目标\n5. 每章生成后立即写入文件\n\n【输出】写入 {project_dir}/大纲/细纲_第XXX章.md（每章一个文件）\n\n【质量要求】\n- 情节点 >= 10 个\n- 必须有章首钩子和章尾钩子\n- 必须有爽点标注\n- 细纲内容不得违反世界观规则和金手指规则\n- 角色行为必须符合性格锚点\n- 物品/环境/经济状态要与追踪文件一致\n- 跨卷伏笔如需在本章回收，必须标注",
+    "prompt": "你是细纲批量生成器。\n\n【防偷懒铁律】必须动态扫描项目目录获取文件列表，不能硬编码。\n\n【任务】为下一弧/卷批量生成所有缺失的细纲。\n\n【Step A：读取项目结构定义】\n读取 $HOME/.config/mimocode/skills/_shared/references/project-structure.md，获取目录结构和文件清单。\n\n【Step B：动态扫描项目目录】\n执行以下扫描命令获取实际文件列表：\n```bash\n# 必须扫描的目录\nls {project_dir}/设定/世界观/*.md 2>/dev/null\nls {project_dir}/设定/角色/*.md 2>/dev/null\nls {project_dir}/设定/势力/*.md 2>/dev/null\nls {project_dir}/追踪/*.md 2>/dev/null\nls {project_dir}/大纲/细纲_*.md 2>/dev/null\n# 可选扫描的目录\nls {project_dir}/跨卷追踪/*.md 2>/dev/null\nls {project_dir}/故事线/*.md 2>/dev/null\nls {project_dir}/正文/*.md 2>/dev/null | tail -1  # 最新正文\n```\n\n【Step C：从卷纲提取章节规划】\n读取 {project_dir}/大纲/卷纲_第X卷.md，获取下一弧/卷的章节范围和核心事件规划。\n\n【生成流程（逐章）】\n对每个缺失章节号 N：\n1. 去重检查：读取前5章细纲的「核心事件」字段，检查新章核心事件是否重复\n2. 从卷纲中提取本章的事件规划\n3. 结合扫描到的追踪文件（伏笔、角色状态、时间线、物品、环境、物资）设计情节点\n4. 按细纲模板生成：核心事件、情节点序列(>=10个)、目标情绪、章首钩子、章尾钩子、爽点、字数目标\n5. 每章生成后立即写入文件\n\n【输出】写入 {project_dir}/大纲/细纲_第XXX章.md（每章一个文件）\n\n【质量要求】\n- 情节点 >= 10 个\n- 必须有章首钩子和章尾钩子\n- 必须有爽点标注\n- 细纲内容不得违反世界观规则和金手指规则\n- 角色行为必须符合性格锚点\n- 物品/环境/经济状态要与追踪文件一致\n- 跨卷伏笔如需在本章回收，必须标注",
     "context": "none"
   }
 })
@@ -287,7 +287,7 @@ actor({
     "action": "run",
     "subagent_type": "general",
     "description": "大纲一致性检查",
-    "prompt": "你是大纲进度管理器的一致性检查器。\n\n【防偷懒铁律】必须逐项检查，不能跳过。\n\n【任务】检查大纲文件的格式一致性和状态标记正确性。\n\n【检查项】\n1. 大纲.md 中的卷数与实际卷纲文件数是否一致\n2. 卷纲中的章节数与实际细纲文件数是否一致\n3. 细纲格式是否统一（是否包含：核心事件、情节点、钩子、爽点、字数目标）\n4. 状态标记是否正确（⏳/📝/✅/❌）\n5. 正文章节号是否连续（有无跳号）\n\n【输出】写入 {project_dir}/.workflow/prog-09-outline-check.json，格式：\n{\"outline_consistent\": true, \"volume_count_match\": true, \"chapter_count_match\": false, \"format_issues\": [...], \"status_issues\": [...], \"chapter_gaps\": []}",
+    "prompt": "你是大纲进度管理器的一致性检查器。\n\n【防偷懒铁律】必须逐项检查，不能跳过。\n\n【任务】检查大纲文件的格式一致性和状态标记正确性。\n\n【检查项】\n1. 大纲.md 中的卷数与实际卷纲文件数是否一致\n2. 卷纲中的章节数与实际细纲文件数是否一致\n3. 细纲格式是否统一（是否包含：核心事件、情节点、钩子、爽点、字数目标、涉及角色、涉及场景、涉及伏笔）\n4. 状态标记是否正确（⏳/📝/✅/❌）\n5. 正文章节号是否连续（有无跳号）\n\n【输出】写入 {project_dir}/.workflow/prog-09-outline-check.json，格式：\n{\"outline_consistent\": true, \"volume_count_match\": true, \"chapter_count_match\": false, \"format_issues\": [...], \"status_issues\": [...], \"chapter_gaps\": []}",
     "context": "none"
   }
 })

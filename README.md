@@ -356,6 +356,16 @@ node skills/_shared/scripts/character-sync.js 项目目录
 
 ## 更新日志
 
+### v5.7.0（2026-06-29）
+
+**脚本路径统一 + 细纲格式补全**：
+- 修复所有 SKILL.md 中的脚本引用路径：`skills/_shared/scripts/` → `$HOME/.config/mimocode/skills/_shared/scripts/`（32处）
+- 修复所有 SKILL.md 中的参考文档引用路径：`skills/_shared/references/` → `$HOME/.config/mimocode/skills/_shared/references/`（23处）
+- 补全 `agent-prompt-templates.md` 缺失的 Step 4（细纲生成）prompt 模板
+- 细纲格式新增 3 个字段：涉及角色、涉及场景、涉及伏笔（供下游文件分析器使用）
+- 统一 4 个 skill 的细纲格式：story-outline-mimo、story-chapter-write-mimo、story-chapter-fast-write-mimo、story-chapter-ultra-write-mimo
+- 更新 story-progress-mimo 的细纲格式检查项
+
 ### v5.6.0（2026-06-28）
 
 **全量修复与新增技能**：

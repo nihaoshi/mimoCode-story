@@ -1,4 +1,4 @@
----
+﻿---
 name: story-rewrite-mimo
 version: 1.0.0
 description: |
@@ -121,7 +121,7 @@ actor({
     "action": "run",
     "subagent_type": "general",
     "description": "加载原章和上下文 - 第{N}章",
-    "prompt": "你是章节重写的上下文加载器。\n\n【防偷懒铁律】必须动态扫描项目目录获取文件列表，不能硬编码。\n\n【任务】动态扫描项目结构，加载待重写章节的全部上下文。\n\n【Step A：读取项目结构定义】\n读取 skills/_shared/references/project-structure.md，获取目录结构和文件清单。\n\n【Step B：动态扫描项目目录】\n```bash\nls {project_dir}/设定/世界观/*.md 2>/dev/null\nls {project_dir}/设定/角色/*.md 2>/dev/null\nls {project_dir}/设定/势力/*.md 2>/dev/null\nls {project_dir}/设定/关系.md 2>/dev/null\nls {project_dir}/设定/题材定位.md 2>/dev/null\nls {project_dir}/设定/文风.md 2>/dev/null\nls {project_dir}/追踪/*.md 2>/dev/null\nls {project_dir}/跨卷追踪/*.md 2>/dev/null\nls {project_dir}/故事线/*.md 2>/dev/null\n```\n\n【Step C：加载必需文件】\n1. {project_dir}/正文/第{N}章.md — 待重写章节（必须存在）\n2. {project_dir}/大纲/细纲_第{N}章.md — 原始细纲\n3. {project_dir}/正文/第{N-1}章.md — 前一章（首章跳过）\n4. {project_dir}/正文/第{N+1}章.md — 后一章（末章跳过）\n5. 从扫描结果加载所有追踪文件\n6. 从扫描结果加载所有设定文件\n7. 从扫描结果加载跨卷追踪和故事线文件（如存在）\n\n【执行】\n1. 读取原章全文，记录原始字数\n2. 读取细纲，提取情节点、钩子、爽点\n3. 读取前后章，了解衔接\n4. 读取追踪文件，了解伏笔和角色状态\n5. 读取设定文件\n6. 读取跨卷追踪和故事线文件（如存在）\n\n【输出】写入 {project_dir}/.workflow/rw-01-context.json，格式：\n{\"chapter\": {N}, \"original_file\": \"正文/第{N}章.md\", \"original_wordcount\": 3200, \"outline\": {...}, \"previous_ending\": \"...\", \"next_opening\": \"...\", \"foreshadows\": [...], \"characters\": [...], \"items\": [...], \"environment\": {...}, \"supply\": {...}, \"timeline\": [...], \"world_rules\": [...], \"forces\": [...], \"relations\": {...}, \"genre\": {...}, \"style\": {...}, \"cross_volume\": {...}, \"story_lines\": {...}}",
+    "prompt": "你是章节重写的上下文加载器。\n\n【防偷懒铁律】必须动态扫描项目目录获取文件列表，不能硬编码。\n\n【任务】动态扫描项目结构，加载待重写章节的全部上下文。\n\n【Step A：读取项目结构定义】\n读取 $HOME/.config/mimocode/skills/_shared/references/project-structure.md，获取目录结构和文件清单。\n\n【Step B：动态扫描项目目录】\n```bash\nls {project_dir}/设定/世界观/*.md 2>/dev/null\nls {project_dir}/设定/角色/*.md 2>/dev/null\nls {project_dir}/设定/势力/*.md 2>/dev/null\nls {project_dir}/设定/关系.md 2>/dev/null\nls {project_dir}/设定/题材定位.md 2>/dev/null\nls {project_dir}/设定/文风.md 2>/dev/null\nls {project_dir}/追踪/*.md 2>/dev/null\nls {project_dir}/跨卷追踪/*.md 2>/dev/null\nls {project_dir}/故事线/*.md 2>/dev/null\n```\n\n【Step C：加载必需文件】\n1. {project_dir}/正文/第{N}章.md — 待重写章节（必须存在）\n2. {project_dir}/大纲/细纲_第{N}章.md — 原始细纲\n3. {project_dir}/正文/第{N-1}章.md — 前一章（首章跳过）\n4. {project_dir}/正文/第{N+1}章.md — 后一章（末章跳过）\n5. 从扫描结果加载所有追踪文件\n6. 从扫描结果加载所有设定文件\n7. 从扫描结果加载跨卷追踪和故事线文件（如存在）\n\n【执行】\n1. 读取原章全文，记录原始字数\n2. 读取细纲，提取情节点、钩子、爽点\n3. 读取前后章，了解衔接\n4. 读取追踪文件，了解伏笔和角色状态\n5. 读取设定文件\n6. 读取跨卷追踪和故事线文件（如存在）\n\n【输出】写入 {project_dir}/.workflow/rw-01-context.json，格式：\n{\"chapter\": {N}, \"original_file\": \"正文/第{N}章.md\", \"original_wordcount\": 3200, \"outline\": {...}, \"previous_ending\": \"...\", \"next_opening\": \"...\", \"foreshadows\": [...], \"characters\": [...], \"items\": [...], \"environment\": {...}, \"supply\": {...}, \"timeline\": [...], \"world_rules\": [...], \"forces\": [...], \"relations\": {...}, \"genre\": {...}, \"style\": {...}, \"cross_volume\": {...}, \"story_lines\": {...}}",
     "context": "none"
   }
 })
@@ -132,7 +132,7 @@ actor({
     "action": "run",
     "subagent_type": "general",
     "description": "质量诊断 - 第{N}章",
-    "prompt": "你是章节重写的质量诊断器。\n\n【防偷懒铁律】必须运行所有检测脚本，不能跳过。\n\n【任务】对原章进行全面质量诊断。\n\n【检测项】（必须全部运行）\n1. 字数达标 — node skills/_shared/scripts/wordcount.js {chapter_file} --json\n2. 禁用词+AI腔 — node skills/_shared/scripts/style-lint.js --json {chapter_file}\n3. AI标点符号 — node skills/_shared/scripts/punctuation-normalize.js --json {chapter_file}\n4. 一致性 — node skills/_shared/scripts/consistency-check.js --json {chapter_file} {project_dir}\n5. 跨章节检查 — node skills/_shared/scripts/cross-chapter-check.js --json {chapter_file} {project_dir}\n6. 角色声音 — node skills/_shared/scripts/voice-check.js --json {chapter_file} {project_dir}\n\n【LLM分析】\n7. 章首钩子强度\n8. 章尾钩子强度\n9. 爽点密度和位置\n10. 节奏感（快慢交替）\n11. 情绪曲线（起伏是否合理）\n12. 对话自然度\n13. 心理描写质量\n\n【输出】写入 {project_dir}/.workflow/rw-02-diagnosis.json，格式：\n{\"chapter\": {N}, \"overall_score\": 65, \"issues\": [{\"type\": \"ai_taste\", \"severity\": \"BLOCK\", \"detail\": \"...\", \"location\": \"第3段\"}, ...], \"strengths\": [\"...\"], \"weaknesses\": [\"...\"], \"recommended_mode\": \"局部重写\", \"focus_areas\": [\"对话\", \"爽点\"]}",
+    "prompt": "你是章节重写的质量诊断器。\n\n【防偷懒铁律】必须运行所有检测脚本，不能跳过。\n\n【任务】对原章进行全面质量诊断。\n\n【检测项】（必须全部运行）\n1. 字数达标 — node $HOME/.config/mimocode/skills/_shared/scripts/wordcount.js {chapter_file} --json\n2. 禁用词+AI腔 — node $HOME/.config/mimocode/skills/_shared/scripts/style-lint.js --json {chapter_file}\n3. AI标点符号 — node $HOME/.config/mimocode/skills/_shared/scripts/punctuation-normalize.js --json {chapter_file}\n4. 一致性 — node $HOME/.config/mimocode/skills/_shared/scripts/consistency-check.js --json {chapter_file} {project_dir}\n5. 跨章节检查 — node $HOME/.config/mimocode/skills/_shared/scripts/cross-chapter-check.js --json {chapter_file} {project_dir}\n6. 角色声音 — node $HOME/.config/mimocode/skills/_shared/scripts/voice-check.js --json {chapter_file} {project_dir}\n\n【LLM分析】\n7. 章首钩子强度\n8. 章尾钩子强度\n9. 爽点密度和位置\n10. 节奏感（快慢交替）\n11. 情绪曲线（起伏是否合理）\n12. 对话自然度\n13. 心理描写质量\n\n【输出】写入 {project_dir}/.workflow/rw-02-diagnosis.json，格式：\n{\"chapter\": {N}, \"overall_score\": 65, \"issues\": [{\"type\": \"ai_taste\", \"severity\": \"BLOCK\", \"detail\": \"...\", \"location\": \"第3段\"}, ...], \"strengths\": [\"...\"], \"weaknesses\": [\"...\"], \"recommended_mode\": \"局部重写\", \"focus_areas\": [\"对话\", \"爽点\"]}",
     "context": "none"
   }
 })
@@ -168,7 +168,7 @@ actor({
     "action": "run",
     "subagent_type": "general",
     "description": "全文重写 - 第{N}章",
-    "prompt": "你是 narrative-writer，负责全文重写。\n\n【防偷懒铁律】必须写入文件，不在对话中输出。\n\n【输入】\n1. {project_dir}/.workflow/rw-01-context.json — 上下文\n2. {project_dir}/.workflow/rw-02-diagnosis.json — 诊断报告\n3. 质量规则：读取 skills/_shared/references/quality-rules.md\n\n【重写要求】\n1. 基于细纲重新写整章\n2. 保留原章中诊断为'strengths'的部分\n3. 修复诊断报告中所有 issues\n4. 字数必须达到细纲目标\n5. 遵守质量规则（quality-rules.md）\n\n【输出】\n- 备份：{project_dir}/正文/第{N}章_原稿_{YYYYMMDD}.md\n- 重写：{project_dir}/正文/第{N}章.md\n\n写完后运行字数验证：\nnode skills/_shared/scripts/wordcount.js {chapter_file} --json",
+    "prompt": "你是 narrative-writer，负责全文重写。\n\n【防偷懒铁律】必须写入文件，不在对话中输出。\n\n【输入】\n1. {project_dir}/.workflow/rw-01-context.json — 上下文\n2. {project_dir}/.workflow/rw-02-diagnosis.json — 诊断报告\n3. 质量规则：读取 $HOME/.config/mimocode/skills/_shared/references/quality-rules.md\n\n【重写要求】\n1. 基于细纲重新写整章\n2. 保留原章中诊断为'strengths'的部分\n3. 修复诊断报告中所有 issues\n4. 字数必须达到细纲目标\n5. 遵守质量规则（quality-rules.md）\n\n【输出】\n- 备份：{project_dir}/正文/第{N}章_原稿_{YYYYMMDD}.md\n- 重写：{project_dir}/正文/第{N}章.md\n\n写完后运行字数验证：\nnode $HOME/.config/mimocode/skills/_shared/scripts/wordcount.js {chapter_file} --json",
     "context": "none"
   }
 })
@@ -179,7 +179,7 @@ actor({
     "action": "run",
     "subagent_type": "general",
     "description": "局部重写 - 第{N}章",
-    "prompt": "你是 narrative-writer，负责局部重写。\n\n【防偷懒铁律】必须写入文件，不在对话中输出。\n\n【输入】\n1. {project_dir}/.workflow/rw-01-context.json — 上下文\n2. {project_dir}/.workflow/rw-02-diagnosis.json — 诊断报告（focus_areas 指定重写范围）\n3. 质量规则：读取 skills/_shared/references/quality-rules.md\n\n【局部重写要求】\n1. 只修改诊断报告中 issues 指定的段落\n2. 保持其他部分不变\n3. 修改后的段落必须与前后文衔接自然\n4. 字数变化不超过原章的 30%\n\n【输出】\n- 备份：{project_dir}/正文/第{N}章_原稿_{YYYYMMDD}.md\n- 重写：{project_dir}/正文/第{N}章.md",
+    "prompt": "你是 narrative-writer，负责局部重写。\n\n【防偷懒铁律】必须写入文件，不在对话中输出。\n\n【输入】\n1. {project_dir}/.workflow/rw-01-context.json — 上下文\n2. {project_dir}/.workflow/rw-02-diagnosis.json — 诊断报告（focus_areas 指定重写范围）\n3. 质量规则：读取 $HOME/.config/mimocode/skills/_shared/references/quality-rules.md\n\n【局部重写要求】\n1. 只修改诊断报告中 issues 指定的段落\n2. 保持其他部分不变\n3. 修改后的段落必须与前后文衔接自然\n4. 字数变化不超过原章的 30%\n\n【输出】\n- 备份：{project_dir}/正文/第{N}章_原稿_{YYYYMMDD}.md\n- 重写：{project_dir}/正文/第{N}章.md",
     "context": "none"
   }
 })
@@ -190,7 +190,7 @@ actor({
     "action": "run",
     "subagent_type": "general",
     "description": "风格重写 - 第{N}章",
-    "prompt": "你是 narrative-writer，负责风格重写。\n\n【防偷懒铁律】必须写入文件，不在对话中输出。\n\n【输入】\n1. {project_dir}/.workflow/rw-01-context.json — 上下文\n2. {project_dir}/.workflow/rw-02-diagnosis.json — 诊断报告\n3. 质量规则：读取 skills/_shared/references/quality-rules.md\n4. 文风设定：{project_dir}/设定/文风.md\n\n【风格重写要求】\n1. 保留原章的剧情和情节点\n2. 调整语言风格（去AI味、口语化、增加动作描写）\n3. 修复对话腔调\n4. 调整节奏（短句/长句交替）\n5. 遵守质量规则\n\n【输出】\n- 备份：{project_dir}/正文/第{N}章_原稿_{YYYYMMDD}.md\n- 重写：{project_dir}/正文/第{N}章.md",
+    "prompt": "你是 narrative-writer，负责风格重写。\n\n【防偷懒铁律】必须写入文件，不在对话中输出。\n\n【输入】\n1. {project_dir}/.workflow/rw-01-context.json — 上下文\n2. {project_dir}/.workflow/rw-02-diagnosis.json — 诊断报告\n3. 质量规则：读取 $HOME/.config/mimocode/skills/_shared/references/quality-rules.md\n4. 文风设定：{project_dir}/设定/文风.md\n\n【风格重写要求】\n1. 保留原章的剧情和情节点\n2. 调整语言风格（去AI味、口语化、增加动作描写）\n3. 修复对话腔调\n4. 调整节奏（短句/长句交替）\n5. 遵守质量规则\n\n【输出】\n- 备份：{project_dir}/正文/第{N}章_原稿_{YYYYMMDD}.md\n- 重写：{project_dir}/正文/第{N}章.md",
     "context": "none"
   }
 })
@@ -201,7 +201,7 @@ actor({
     "action": "run",
     "subagent_type": "general",
     "description": "增强重写 - 第{N}章",
-    "prompt": "你是 narrative-writer，负责增强重写。\n\n【防偷懒铁律】必须写入文件，不在对话中输出。\n\n【输入】\n1. {project_dir}/.workflow/rw-01-context.json — 上下文\n2. {project_dir}/.workflow/rw-02-diagnosis.json — 诊断报告（focus_areas 指定增强维度）\n3. 质量规则：读取 skills/_shared/references/quality-rules.md\n\n【增强维度】（根据 focus_areas 选择）\n- 爽点不够 → 增加信息差、打脸、反转\n- 钩子不强 → 强化章首/章尾钩子\n- 节奏太慢 → 压缩过渡、增加冲突\n- 情绪太平 → 增加情绪起伏\n\n【输出】\n- 备份：{project_dir}/正文/第{N}章_原稿_{YYYYMMDD}.md\n- 重写：{project_dir}/正文/第{N}章.md",
+    "prompt": "你是 narrative-writer，负责增强重写。\n\n【防偷懒铁律】必须写入文件，不在对话中输出。\n\n【输入】\n1. {project_dir}/.workflow/rw-01-context.json — 上下文\n2. {project_dir}/.workflow/rw-02-diagnosis.json — 诊断报告（focus_areas 指定增强维度）\n3. 质量规则：读取 $HOME/.config/mimocode/skills/_shared/references/quality-rules.md\n\n【增强维度】（根据 focus_areas 选择）\n- 爽点不够 → 增加信息差、打脸、反转\n- 钩子不强 → 强化章首/章尾钩子\n- 节奏太慢 → 压缩过渡、增加冲突\n- 情绪太平 → 增加情绪起伏\n\n【输出】\n- 备份：{project_dir}/正文/第{N}章_原稿_{YYYYMMDD}.md\n- 重写：{project_dir}/正文/第{N}章.md",
     "context": "none"
   }
 })
@@ -216,7 +216,7 @@ actor({
     "action": "run",
     "subagent_type": "general",
     "description": "重写后质量检测 - 第{N}章",
-    "prompt": "你是 quality-checker，负责重写后的质量检测。\n\n【防偷懒铁律】必须运行所有检测脚本。\n\n【任务】对重写后的章节进行全面质量检测。\n\n【检测项】（必须全部运行）\n1. 字数达标 — node skills/_shared/scripts/wordcount.js {chapter_file} --json\n2. 禁用词+AI腔 — node skills/_shared/scripts/style-lint.js --json {chapter_file}\n3. AI标点符号 — node skills/_shared/scripts/punctuation-normalize.js --json {chapter_file}\n4. 一致性 — node skills/_shared/scripts/consistency-check.js --json {chapter_file} {project_dir}\n5. 跨章节检查 — node skills/_shared/scripts/cross-chapter-check.js --json {chapter_file} {project_dir}\n\n【输出】写入 {project_dir}/.workflow/rw-08-recheck.json，格式：\n{\"status\": \"pass|warn|fail\", \"blockers\": [...], \"warnings\": [...], \"improvement\": {\"original_score\": 65, \"new_score\": 85, \"issues_fixed\": 8, \"issues_remaining\": 1}}",
+    "prompt": "你是 quality-checker，负责重写后的质量检测。\n\n【防偷懒铁律】必须运行所有检测脚本。\n\n【任务】对重写后的章节进行全面质量检测。\n\n【检测项】（必须全部运行）\n1. 字数达标 — node $HOME/.config/mimocode/skills/_shared/scripts/wordcount.js {chapter_file} --json\n2. 禁用词+AI腔 — node $HOME/.config/mimocode/skills/_shared/scripts/style-lint.js --json {chapter_file}\n3. AI标点符号 — node $HOME/.config/mimocode/skills/_shared/scripts/punctuation-normalize.js --json {chapter_file}\n4. 一致性 — node $HOME/.config/mimocode/skills/_shared/scripts/consistency-check.js --json {chapter_file} {project_dir}\n5. 跨章节检查 — node $HOME/.config/mimocode/skills/_shared/scripts/cross-chapter-check.js --json {chapter_file} {project_dir}\n\n【输出】写入 {project_dir}/.workflow/rw-08-recheck.json，格式：\n{\"status\": \"pass|warn|fail\", \"blockers\": [...], \"warnings\": [...], \"improvement\": {\"original_score\": 65, \"new_score\": 85, \"issues_fixed\": 8, \"issues_remaining\": 1}}",
     "context": "none"
   }
 })
@@ -227,7 +227,7 @@ actor({
     "action": "run",
     "subagent_type": "general",
     "description": "修复重写后问题 - 第{N}章",
-    "prompt": "你是 quality-fixer，负责修复重写后残留的问题。\n\n【防偷懒铁律】每个问题必须修复。\n\n【输入】\n- 检测报告：{project_dir}/.workflow/rw-08-recheck.json\n- 正文：{project_dir}/正文/第{N}章.md\n- 质量规则：读取 skills/_shared/references/quality-rules.md\n\n【输出】\n- 更新：{project_dir}/正文/第{N}章.md\n- 日志：{project_dir}/.workflow/rw-09-fix-log.json",
+    "prompt": "你是 quality-fixer，负责修复重写后残留的问题。\n\n【防偷懒铁律】每个问题必须修复。\n\n【输入】\n- 检测报告：{project_dir}/.workflow/rw-08-recheck.json\n- 正文：{project_dir}/正文/第{N}章.md\n- 质量规则：读取 $HOME/.config/mimocode/skills/_shared/references/quality-rules.md\n\n【输出】\n- 更新：{project_dir}/正文/第{N}章.md\n- 日志：{project_dir}/.workflow/rw-09-fix-log.json",
     "context": "none"
   }
 })
@@ -416,7 +416,7 @@ actor({
 
 ## Task 跟踪集成
 
-本 skill 遵循 `skills/_shared/references/task-tracking-conventions.md` 规范。
+本 skill 遵循 `$HOME/.config/mimocode/skills/_shared/references/task-tracking-conventions.md` 规范。
 
 ### 任务树模板
 

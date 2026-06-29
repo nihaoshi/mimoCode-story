@@ -1,4 +1,4 @@
----
+﻿---
 name: dream-mimo
 version: 1.0.0
 description: |
@@ -49,7 +49,7 @@ ls {project_dir}/ 2>/dev/null || echo "ERROR: 项目目录不存在"
 调用 `_shared/scripts/dream.js` 分析：
 
 ```bash
-node skills/_shared/scripts/dream.js <项目目录> --days 7
+node $HOME/.config/mimocode/skills/_shared/scripts/dream.js <项目目录> --days 7
 ```
 
 **分析内容**：

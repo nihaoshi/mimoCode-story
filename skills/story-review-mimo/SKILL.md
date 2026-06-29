@@ -194,7 +194,7 @@ actor({
 - 所有子 agent 使用 `context: "none"` 隔离上下文
 - 输入通过 `.workflow/` 目录下的文件传递
 - 输出写入约定的 JSON 文件
-- 质量红线：读取 `skills/_shared/references/quality-rules.md` 获取完整规则
+- 质量红线：读取 `$HOME/.config/mimocode/skills/_shared/references/quality-rules.md` 获取完整规则
 
 ### 结构审查 Agent Prompt
 
@@ -327,7 +327,7 @@ actor({
 【输入文件】（必须用 Read 工具读取）
 - 稿件全文：{project_dir}/.workflow/review-input.md
 - 审查配置：{project_dir}/.workflow/review-config.json
-- 质量规则：{project_dir}/skills/_shared/references/quality-rules.md
+- 质量规则：$HOME/.config/mimocode/skills/_shared/references/quality-rules.md
 
 【检测脚本】（必须运行）
 - 文本质量：node {skill_dir}/../../atoms/detect-quality/scripts/run-detect.js {稿件路径} --type all

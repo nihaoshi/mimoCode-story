@@ -1,4 +1,4 @@
----
+﻿---
 name: distill-mimo
 version: 1.0.0
 description: |
@@ -51,7 +51,7 @@ ls {project_dir}/ 2>/dev/null || echo "ERROR: 项目目录不存在"
 调用 `_shared/scripts/distill.js` 分析：
 
 ```bash
-node skills/_shared/scripts/distill.js <项目目录> --days 30
+node $HOME/.config/mimocode/skills/_shared/scripts/distill.js <项目目录> --days 30
 ```
 
 **分析内容**：

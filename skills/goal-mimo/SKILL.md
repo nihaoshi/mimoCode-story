@@ -1,4 +1,4 @@
----
+﻿---
 name: goal-mimo
 version: 1.1.0
 description: |
@@ -57,7 +57,7 @@ ls {project_dir}/正文/ 2>/dev/null || echo "ERROR: 项目目录或正文目录
 调用 `_shared/scripts/goal.js` 设置目标配置：
 
 ```bash
-node skills/_shared/scripts/goal.js <项目目录> --target "写到第{N}章" --min-words 3000
+node $HOME/.config/mimocode/skills/_shared/scripts/goal.js <项目目录> --target "写到第{N}章" --min-words 3000
 ```
 
 配置保存到 `<项目目录>/.story-goal.json`

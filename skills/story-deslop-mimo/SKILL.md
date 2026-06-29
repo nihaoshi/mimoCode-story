@@ -1,4 +1,4 @@
----
+﻿---
 name: story-deslop-mimo
 version: 3.0.0
 description: |
@@ -155,7 +155,7 @@ Phase 3: 输出结果
 ```
 1. 用户提供文件路径或粘贴文本
 2. 用 Read 工具读取文件内容
-3. 统计原文字数：node skills/_shared/scripts/wordcount.js {文件路径} --json
+3. 统计原文字数：node $HOME/.config/mimocode/skills/_shared/scripts/wordcount.js {文件路径} --json
 ```
 
 ### Step 2：创建工作流目录
@@ -214,7 +214,7 @@ actor({
 
 【输入文件】（必须用 Read 工具读取）
 - 原文：{project_dir}/.workflow/deslop-input.json
-- 质量规则：读取 skills/_shared/references/quality-rules.md（含禁用词+AI腔+段落规则）
+- 质量规则：读取 $HOME/.config/mimocode/skills/_shared/references/quality-rules.md（含禁用词+AI腔+段落规则）
 
 【检测项】（必须全部运行，对应6个维度）
 1. 禁用词扫描 — 统计禁用词数量和位置

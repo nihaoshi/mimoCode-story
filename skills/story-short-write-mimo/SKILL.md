@@ -1,4 +1,4 @@
----
+﻿---
 name: story-short-write-mimo
 version: 3.0.0
 description: |
@@ -239,7 +239,7 @@ actor({
   operation: "run",
   subagent_type: "general",
   description: "短篇质量检测+修复",
-  prompt: "你是 quality-checker-fixer，负责检测和修复。\n\n【项目信息】\n- 项目目录：{project_dir}\n\n【输入文件】\n- 正文：{project_dir}/正文.md\n- 约束：{project_dir}/.workflow/step-prep.json\n\n【检测项】（必须全部运行）\n1. 字数达标 — node skills/_shared/scripts/wordcount.js {project_dir}/正文.md --json — BLOCK\n2. 禁用词+AI腔 — BLOCK\n3. AI标点符号 — BLOCK\n4. 一致性（物品/角色/环境/时间线）— BLOCK\n5. 章内逻辑性 — WARN\n\n【修复规则】\n- 只有问题（WARN或BLOCK）就必须修复\n- 修复后重新检测，直到全部通过\n- 最多3轮修复循环\n- 不能跳过 WARN\n\n【输出】\n- 更新：{project_dir}/正文.md\n- 报告：{project_dir}/.workflow/step-check-report.json\n\n【防偷懒】\n- 必须用 Read 工具读取输入文件\n- 必须运行所有检测脚本\n- 有问题必须修复，不能跳过\n- 必须写入报告文件",
+  prompt: "你是 quality-checker-fixer，负责检测和修复。\n\n【项目信息】\n- 项目目录：{project_dir}\n\n【输入文件】\n- 正文：{project_dir}/正文.md\n- 约束：{project_dir}/.workflow/step-prep.json\n\n【检测项】（必须全部运行）\n1. 字数达标 — node $HOME/.config/mimocode/skills/_shared/scripts/wordcount.js {project_dir}/正文.md --json — BLOCK\n2. 禁用词+AI腔 — BLOCK\n3. AI标点符号 — BLOCK\n4. 一致性（物品/角色/环境/时间线）— BLOCK\n5. 章内逻辑性 — WARN\n\n【修复规则】\n- 只有问题（WARN或BLOCK）就必须修复\n- 修复后重新检测，直到全部通过\n- 最多3轮修复循环\n- 不能跳过 WARN\n\n【输出】\n- 更新：{project_dir}/正文.md\n- 报告：{project_dir}/.workflow/step-check-report.json\n\n【防偷懒】\n- 必须用 Read 工具读取输入文件\n- 必须运行所有检测脚本\n- 有问题必须修复，不能跳过\n- 必须写入报告文件",
   context: "none"
 })
 ```
@@ -287,7 +287,7 @@ actor({
 - 始终更新：追踪/时间线.md、追踪/上下文.md、追踪/重复语句.md
 - 按变更清单更新：追踪/伏笔.md、追踪/角色状态.md、追踪/物品.md、追踪/环境.md
 - 设定文件回写：正文揭示新信息影响设定时，同步更新设定/*.md
-- 角色同步：运行 `node skills/_shared/scripts/character-sync.js {project_dir} --json`
+- 角色同步：运行 `node $HOME/.config/mimocode/skills/_shared/scripts/character-sync.js {project_dir} --json`
 
 #### T-SHORT-TRACK-02: 输出完成报告
 
