@@ -883,10 +883,10 @@ actor({
 
 ```bash
 # 执行前验证
-node skills/story-long-write-mimo/scripts/workflow-guard.js pre <step> <workflow_dir> <project_dir>
+node skills/story-long-write-mimo/scripts/step-guard.js pre <step> <workflow_dir> <project_dir>
 
 # 执行后验证
-node skills/story-long-write-mimo/scripts/workflow-guard.js post <step> <workflow_dir>
+node skills/story-long-write-mimo/scripts/step-guard.js post <step> <workflow_dir>
 ```
 
 **prompt 模板**：详见 `references/agent-prompt-templates.md`
@@ -1085,10 +1085,10 @@ actor({
 
 ```bash
 # 执行前验证
-node skills/story-long-write-mimo/scripts/workflow-guard.js pre check .workflow <project_dir>
+node skills/story-long-write-mimo/scripts/step-guard.js pre check .workflow <project_dir>
 
 # 执行后验证
-node skills/story-long-write-mimo/scripts/workflow-guard.js post check .workflow
+node skills/story-long-write-mimo/scripts/step-guard.js post check .workflow
 ```
 
 **检测项**（8项，必须全部运行）：

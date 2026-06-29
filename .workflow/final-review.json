@@ -1,0 +1,116 @@
+﻿{
+  "dynamic_scan": {
+    "pass": 25,
+    "fail": 2,
+    "details": [
+      {
+        "skill": "audit-mimo",
+        "issue": "item/env/timeline 三个子 agent prompt 硬编码了追踪文件路径（追踪/物品.md、追踪/环境.md、追踪/时间线.md），而 role 和 foreshadow 子 agent 正确使用了动态扫描",
+        "severity": "WARN",
+        "suggestion": "统一改为 '动态扫描获取' 模式，或从 audit-ctx.json 读取（主 agent 已在 Step 02 汇总）"
+      },
+      {
+        "skill": "story-chapter-write-mimo",
+        "issue": "Step 04（创建细纲）prompt 硬编码了 15 个文件路径（大纲.md、卷纲、伏笔.md、角色状态.md 等），而 Step 05 正确使用了动态扫描",
+        "severity": "WARN",
+        "suggestion": "Step 04 的必读文件列表改为引用 context-checklist.md 编号，实际路径由 Step 05 动态扫描提供"
+      }
+    ]
+  },
+  "frontmatter": {
+    "pass": 17,
+    "fail": 10,
+    "missing_skills": [
+      "story-mimo（路由入口，无 project_dir 声明）",
+      "story-short-analyze-mimo（拆文产出到拆文库，需要 project_dir）",
+      "story-long-analyze-mimo（拆文产出到拆文库，需要 project_dir）",
+      "dream-mimo（扫描正文目录，需要 project_dir）",
+      "goal-mimo（读写项目文件，需要 project_dir）",
+      "distill-mimo（分析项目文件，需要 project_dir）",
+      "story-export-mimo（导出正文，需要 project_dir）",
+      "story-synopsis-mimo（可选需要 project_dir 读取设定）",
+      "browser-cdp-mimo（浏览器工具，不适用）",
+      "story-cover-mimo（可选需要 project_dir 读取设定）"
+    ],
+    "notes": "browser-cdp-mimo 不涉及项目目录，属合理缺失；其余 8 个技能涉及项目文件操作但未声明 inputs.project_dir"
+  },
+  "pre_check": {
+    "pass": 12,
+    "fail": 6,
+    "skills_with_check": [
+      "project-health-mimo（本身即检查工具）",
+      "story-setup-mimo（Phase 1 检测 .story-deployed）",
+      "story-import-mimo（Phase 1 检测 .story-deployed）",
+      "story-outline-mimo（前置检查 section 检测设定目录）",
+      "story-review-mimo（前置检查 section 检测正文+设定）",
+      "quality-mimo（前置检查 section 检测正文+设定+追踪）",
+      "story-progress-mimo（前置检查 section 检测大纲+正文+追踪）",
+      "story-rewrite-mimo（前置检查 section 检测正文+追踪+设定）",
+      "story-chapter-write-mimo（Step 01 目录健全检查）",
+      "story-long-write-mimo（Step 1 动态扫描项目目录）",
+      "story-session-mimo（Step 1 扫描追踪目录）",
+      "audit-mimo（Step 01 验证项目结构）"
+    ],
+    "skills_without_check": [
+      "story-deslop-mimo",
+      "story-short-write-mimo",
+      "dream-mimo",
+      "goal-mimo",
+      "distill-mimo",
+      "story-export-mimo"
+    ]
+  },
+  "tracking": {
+    "pass": 4,
+    "fail": 0,
+    "skills_using_three_step": [
+      "story-long-write-mimo（Step A 扫描→Step B 分析变更→Step C 按清单更新）",
+      "story-short-write-mimo（Step A/B/C 三步流程）",
+      "story-chapter-write-mimo（Step 14 三步流程）",
+      "story-rewrite-mimo（Step 10 三步流程）"
+    ]
+  },
+  "dedup": {
+    "pass": 3,
+    "fail": 0,
+    "skills_with_outline_dedup": [
+      "story-long-write-mimo（细纲内容去重：核心事件/情节点/情绪/爽点四维去重）",
+      "story-chapter-write-mimo（Step 04 prompt 包含去重检查）",
+      "story-progress-mimo（Step 09 批量细纲生成含去重检查）"
+    ]
+  },
+  "wordcount": {
+    "pass": 7,
+    "fail": 0,
+    "skills_using_wordcount_js": [
+      "story-long-write-mimo",
+      "story-short-write-mimo",
+      "story-chapter-write-mimo",
+      "story-deslop-mimo",
+      "story-rewrite-mimo",
+      "quality-mimo",
+      "story-progress-mimo"
+    ]
+  },
+  "files_exist": {
+    "project_structure": true,
+    "project_structure_path": "skills/_shared/references/project-structure.md",
+    "project_structure_lines": 271,
+    "scan_script": true,
+    "scan_script_path": "skills/_shared/scripts/scan-project-structure.js",
+    "scan_script_lines": 119
+  },
+  "cross_skill": {
+    "consistent": true,
+    "details": "story-long-write-mimo 和 story-chapter-write-mimo 的追踪更新范围一致：均覆盖追踪/下全部文件（伏笔/时间线/角色状态/物品/环境/物资/重复语句/上下文）、故事线索引+主线+交叉点、跨卷追踪（跨卷伏笔/跨卷角色弧线/卷间过渡）、设定文件回写，并均运行 character-sync.js 验证一致性。两者均使用三步流程（Step A 扫描→Step B 分析变更→Step C 按清单更新）。"
+  },
+  "remaining_gaps": [
+    "audit-mimo 的 item/env/timeline 子 agent prompt 硬编码追踪文件路径，与 role/foreshadow 子 agent 的动态扫描模式不一致",
+    "story-chapter-write-mimo Step 04 prompt 硬编码 15 个文件路径，与 Step 05 的动态扫描模式矛盾",
+    "10 个技能的 frontmatter 缺少 inputs.project_dir 声明（其中 8 个涉及项目文件操作）",
+    "6 个涉及项目文件操作的技能缺少目录存在前置检查",
+    "dream-mimo、goal-mimo、distill-mimo 均操作项目文件但无 frontmatter inputs 也无前置检查"
+  ],
+  "verdict": "pass",
+  "verdict_notes": "核心写作流程（story-long-write-mimo/story-chapter-write-mimo/story-short-write-mimo）的动态扫描、三步追踪流程、细纲去重、wordcount.js 使用均符合规范。问题集中在辅助技能（audit-mimo、dream-mimo 等）的规范性不足，不影响主流程。"
+}

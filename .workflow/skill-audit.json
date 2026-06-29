@@ -1,0 +1,304 @@
+﻿{
+  "word_count_methods": [
+    {
+      "file": "skills/story-chapter-write-mimo/SKILL.md",
+      "line": 125,
+      "method": "wordcount.js",
+      "detail": "node skills/_shared/scripts/wordcount.js <最新章节文件> --json"
+    },
+    {
+      "file": "skills/story-chapter-write-mimo/SKILL.md",
+      "line": 246,
+      "method": "wordcount.js",
+      "detail": "node skills/_shared/scripts/wordcount.js {project_dir}/正文/第{N}章.md --json"
+    },
+    {
+      "file": "skills/story-chapter-write-mimo/SKILL.md",
+      "line": 274,
+      "method": "wordcount.js",
+      "detail": "node skills/_shared/scripts/wordcount.js {chapter_file} --json (修复后验证)"
+    },
+    {
+      "file": "skills/story-long-write-mimo/SKILL.md",
+      "line": 958,
+      "method": "wordcount.js",
+      "detail": "node skills/_shared/scripts/wordcount.js <正文文件> --json (子agent spawn prompt中)"
+    },
+    {
+      "file": "skills/story-long-write-mimo/SKILL.md",
+      "line": 959,
+      "method": "wordcount.js",
+      "detail": "node skills/_shared/scripts/wordcount.js <正文文件> --json (写作后字数验证)"
+    },
+    {
+      "file": "skills/story-long-write-mimo/SKILL.md",
+      "line": 1066,
+      "method": "wordcount.js",
+      "detail": "wordcount.js 统计 (质量门禁表格中)"
+    },
+    {
+      "file": "skills/quality-mimo/SKILL.md",
+      "line": 93,
+      "method": "wordcount.js",
+      "detail": "字数达标（wordcount.js 统计）— BLOCK"
+    },
+    {
+      "file": "skills/quality-mimo/SKILL.md",
+      "line": 199,
+      "method": "wordcount.js",
+      "detail": "字数达标（wordcount.js 统计）— BLOCK"
+    },
+    {
+      "file": "skills/quality-mimo/SKILL.md",
+      "line": 300,
+      "method": "detect-wordcount原子",
+      "detail": "调用原子 detect-wordcount — 字数检查"
+    },
+    {
+      "file": "skills/quality-mimo/SKILL.md",
+      "line": 339,
+      "method": "detect-wordcount原子",
+      "detail": "字数检查 → 调用原子 detect-wordcount"
+    },
+    {
+      "file": "skills/story-rewrite-mimo/SKILL.md",
+      "line": 115,
+      "method": "wordcount.js",
+      "detail": "node skills/_shared/scripts/wordcount.js {chapter_file} --json (诊断)"
+    },
+    {
+      "file": "skills/story-rewrite-mimo/SKILL.md",
+      "line": 134,
+      "method": "wordcount.js",
+      "detail": "node skills/_shared/scripts/wordcount.js {chapter_file} --json (重写后验证)"
+    },
+    {
+      "file": "skills/story-rewrite-mimo/SKILL.md",
+      "line": 182,
+      "method": "wordcount.js",
+      "detail": "node skills/_shared/scripts/wordcount.js {chapter_file} --json (复检)"
+    },
+    {
+      "file": "skills/story-progress-mimo/SKILL.md",
+      "line": 166,
+      "method": "wordcount.js",
+      "detail": "统计章节数量和字数（用 wordcount.js）"
+    },
+    {
+      "file": "skills/story-short-write-mimo/SKILL.md",
+      "line": 236,
+      "method": "wordcount.js(声明但未指定脚本路径)",
+      "detail": "wordcount.js 统计字数 ≥ 目标字数 — 但子agent prompt中未明确调用命令"
+    },
+    {
+      "file": "skills/story-deslop-mimo/SKILL.md",
+      "line": 143,
+      "method": "LLM未指定(无脚本)",
+      "detail": "统计原文字数 — 无具体脚本或命令，由LLM自行计数"
+    },
+    {
+      "file": "skills/story-deslop-mimo/SKILL.md",
+      "line": 160,
+      "method": "LLM未指定(无脚本)",
+      "detail": "char_count字段 — 写入JSON但未指定计数工具"
+    },
+    {
+      "file": "skills/story-deslop-mimo/SKILL.md",
+      "line": 243,
+      "method": "LLM未指定(无脚本)",
+      "detail": "original_char_count/revised_char_count — 报告中使用但无脚本调用"
+    },
+    {
+      "file": "skills/story-deslop-mimo/SKILL.md",
+      "line": 315,
+      "method": "LLM未指定(无脚本)",
+      "detail": "原文字符数/修订后字符数 — 润色报告中输出但无计数工具"
+    },
+    {
+      "file": "skills/atoms/detect-wordcount/SKILL.md",
+      "line": 41,
+      "method": "wordcount.js",
+      "detail": "node _shared/scripts/wordcount.js {chapter_file} --target {target_count} --json"
+    }
+  ],
+  "directory_issues": [
+    {
+      "file": "skills/story-chapter-write-mimo/SKILL.md",
+      "line": 112,
+      "issue": "创建者: Step 01检查并创建缺失目录+追踪文件模板"
+    },
+    {
+      "file": "skills/story-long-write-mimo/SKILL.md",
+      "line": 719,
+      "issue": "创建者: Phase 4描述创建完整项目结构(设定/大纲/正文/对标/追踪/故事线/跨卷追踪)"
+    },
+    {
+      "file": "skills/story-setup-mimo/SKILL.md",
+      "line": 51,
+      "issue": "创建者: Phase 3创建完整项目目录结构(长篇/短篇)"
+    },
+    {
+      "file": "skills/story-import-mimo/SKILL.md",
+      "line": 237,
+      "issue": "创建者: 3.1创建项目骨架(完整目录结构)"
+    },
+    {
+      "file": "skills/story-short-write-mimo/SKILL.md",
+      "line": 132,
+      "issue": "创建者: 创建项目目录结构(设定.md/小节大纲.md/正文.md/.workflow/)"
+    },
+    {
+      "file": "skills/story-deslop-mimo/SKILL.md",
+      "line": 149,
+      "issue": "创建者: mkdir -p {project_dir}/.workflow"
+    },
+    {
+      "file": "skills/audit-mimo/SKILL.md",
+      "line": 74,
+      "issue": "创建者: 确认项目路径缺失目录则创建"
+    },
+    {
+      "file": "skills/project-health-mimo/SKILL.md",
+      "line": 133,
+      "issue": "创建者: 创建缺失目录"
+    },
+    {
+      "file": "skills/story-long-analyze-mimo/SKILL.md",
+      "line": 255,
+      "issue": "创建者: 创建输出目录 拆文库/{书名}/"
+    },
+    {
+      "file": "skills/story-short-analyze-mimo/SKILL.md",
+      "line": 194,
+      "issue": "创建者: 创建输出目录 拆文库/{书名}/"
+    },
+    {
+      "file": "skills/story-rewrite-mimo/SKILL.md",
+      "line": 104,
+      "issue": "读取者但不创建: 读取24个追踪/设定/跨卷/故事线文件，但从不创建任何目录"
+    },
+    {
+      "file": "skills/story-progress-mimo/SKILL.md",
+      "line": 166,
+      "issue": "读取者但不创建: 扫描大纲/正文/追踪/跨卷追踪/设定目录，但从不创建"
+    },
+    {
+      "file": "skills/quality-mimo/SKILL.md",
+      "line": 172,
+      "issue": "读取者但不创建: 读取正文/设定/追踪/跨卷追踪/故事线，但从不创建目录"
+    },
+    {
+      "file": "skills/story-review-mimo/SKILL.md",
+      "line": 162,
+      "issue": "读取者但不创建: 读取稿件和配置，但从不创建目录"
+    },
+    {
+      "file": "skills/story-outline-mimo/SKILL.md",
+      "line": 15,
+      "issue": "读取者但不创建: 声明project_dir输入，读取大纲文件，但从不创建目录"
+    },
+    {
+      "file": "skills/story-chapter-write-mimo/SKILL.md",
+      "line": 12,
+      "issue": "project_dir传递方式: frontmatter inputs声明(name: project_dir, type: directory, required: true)"
+    },
+    {
+      "file": "skills/story-long-write-mimo/SKILL.md",
+      "line": 719,
+      "issue": "project_dir传递方式: 无frontmatter inputs声明，通过用户工作目录隐式获取(在用户指定的工作目录下创建)"
+    },
+    {
+      "file": "skills/story-short-write-mimo/SKILL.md",
+      "line": 1,
+      "issue": "project_dir传递方式: 无frontmatter inputs声明，通过子agent prompt中{project_dir}变量传递"
+    },
+    {
+      "file": "skills/story-rewrite-mimo/SKILL.md",
+      "line": 16,
+      "issue": "project_dir传递方式: frontmatter inputs声明(name: project_dir, required: true)"
+    },
+    {
+      "file": "skills/story-progress-mimo/SKILL.md",
+      "line": 18,
+      "issue": "project_dir传递方式: frontmatter inputs声明(name: project_dir, required: true)"
+    },
+    {
+      "file": "skills/story-outline-mimo/SKILL.md",
+      "line": 15,
+      "issue": "project_dir传递方式: frontmatter inputs声明(name: project_dir, required: true)"
+    },
+    {
+      "file": "skills/story-deslop-mimo/SKILL.md",
+      "line": 149,
+      "issue": "project_dir传递方式: 无frontmatter inputs声明，通过prompt中{project_dir}变量传递"
+    }
+  ],
+  "tracking_issues": [
+    {
+      "file": "skills/story-long-write-mimo/SKILL.md",
+      "line": 427,
+      "scope": "最完整: 追踪(伏笔/时间线/角色状态/物品/环境/上下文) + 故事线(索引/主线/交叉点) + 设定回写 + 跨卷追踪(伏笔/弧线/过渡)",
+      "issue": "更新范围: 6项追踪 + 3项故事线 + 设定回写 + 跨卷追踪(按需) = 全覆盖"
+    },
+    {
+      "file": "skills/story-chapter-write-mimo/SKILL.md",
+      "line": 302,
+      "scope": "完整: 追踪(伏笔/时间线/角色状态/物品/环境/物资/重复语句/上下文) + 设定回写 + 故事线(索引/主线/交叉点) + 跨卷追踪(伏笔/弧线/过渡)",
+      "issue": "更新范围: 8项追踪 + 3项故事线 + 设定回写 + 跨卷追踪(按需) = 全覆盖，与long-write一致"
+    },
+    {
+      "file": "skills/story-short-write-mimo/SKILL.md",
+      "line": 261,
+      "scope": "仅追踪: 伏笔/时间线/角色状态/物品/环境/上下文",
+      "issue": "缺失: 不更新设定文件、不更新故事线、不更新跨卷追踪、不更新物资、不更新重复语句"
+    },
+    {
+      "file": "skills/story-rewrite-mimo/SKILL.md",
+      "line": 198,
+      "scope": "模糊: 仅注释提及'更新追踪文件'和'运行character-sync.js'",
+      "issue": "缺失: 无明确追踪文件清单，无跨卷追踪/故事线更新说明，具体更新哪些文件未定义"
+    },
+    {
+      "file": "skills/story-deslop-mimo/SKILL.md",
+      "line": 243,
+      "scope": "无: 仅记录char_count变化，不更新任何追踪文件",
+      "issue": "缺失: 去AI味修改后不更新伏笔/时间线/角色状态等追踪文件"
+    },
+    {
+      "file": "skills/story-long-write-mimo/SKILL.md",
+      "line": 427,
+      "scope": "注意: 不更新物资.md、不更新重复语句.md",
+      "issue": "与chapter-write-mimo对比: long-write的Step 6少了物资和重复语句两项"
+    },
+    {
+      "file": "skills/story-chapter-write-mimo/SKILL.md",
+      "line": 302,
+      "scope": "注意: 始终更新时间线/上下文/重复语句，其余按需",
+      "issue": "额外项: 比long-write多了重复语句.md和物资.md的更新"
+    }
+  ],
+  "summary": {
+    "word_count_methods": {
+      "total_files": 7,
+      "wordcount_js_files": ["story-chapter-write-mimo", "story-long-write-mimo", "quality-mimo", "story-rewrite-mimo", "story-progress-mimo", "story-short-write-mimo(声明但未指定路径)", "atoms/detect-wordcount"],
+      "llm_no_script_files": ["story-deslop-mimo(4处)"],
+      "inconsistency": "story-deslop-mimo不使用wordcount.js，而是由LLM自行统计字数，输出char_count字段，无脚本调用"
+    },
+    "directory_issues": {
+      "creators": 10,
+      "readers_without_creator": 5,
+      "project_dir_passing": {
+        "frontmatter_inputs": ["story-chapter-write-mimo", "story-rewrite-mimo", "story-progress-mimo", "story-outline-mimo"],
+        "implicit_from_workdir": ["story-long-write-mimo"],
+        "prompt_variable_only": ["story-short-write-mimo", "story-deslop-mimo"]
+      }
+    },
+    "tracking_issues": {
+      "full_scope": ["story-long-write-mimo(缺物资+重复语句)", "story-chapter-write-mimo(最完整)"],
+      "partial_scope": ["story-short-write-mimo(仅6项追踪)"],
+      "undefined_scope": ["story-rewrite-mimo(仅注释提及)"],
+      "no_tracking": ["story-deslop-mimo"],
+      "key_gap": "story-deslop-mimo修改文本后不更新追踪文件；story-rewrite-mimo追踪更新流程未定义"
+    }
+  }
+}

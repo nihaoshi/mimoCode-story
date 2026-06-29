@@ -47,8 +47,8 @@ ls {target_file} 2>/dev/null || echo "ERROR: 目标文件不存在"
 
 **每个阶段执行前后必须运行守卫脚本：**
 ```bash
-node skills/story-long-write-mimo/scripts/workflow-guard.js pre  {step} {workflow_dir} {project_dir}
-node skills/story-long-write-mimo/scripts/workflow-guard.js post {step} {workflow_dir}
+node skills/story-long-write-mimo/scripts/step-guard.js pre  {step} {workflow_dir} {project_dir}
+node skills/story-long-write-mimo/scripts/step-guard.js post {step} {workflow_dir}
 ```
 
 ---
@@ -180,9 +180,9 @@ mkdir -p {project_dir}/.workflow
 ### 守卫验证
 
 ```bash
-node skills/story-long-write-mimo/scripts/workflow-guard.js pre read {workflow_dir} {project_dir}
+node skills/story-long-write-mimo/scripts/step-guard.js pre read {workflow_dir} {project_dir}
 # 写入后
-node skills/story-long-write-mimo/scripts/workflow-guard.js post read {workflow_dir}
+node skills/story-long-write-mimo/scripts/step-guard.js post read {workflow_dir}
 ```
 
 ---
@@ -296,9 +296,9 @@ actor({
 
 ```bash
 # 执行前
-node skills/story-long-write-mimo/scripts/workflow-guard.js pre exec {workflow_dir} {project_dir}
+node skills/story-long-write-mimo/scripts/step-guard.js pre exec {workflow_dir} {project_dir}
 # 执行后
-node skills/story-long-write-mimo/scripts/workflow-guard.js post exec {workflow_dir}
+node skills/story-long-write-mimo/scripts/step-guard.js post exec {workflow_dir}
 ```
 
 ---

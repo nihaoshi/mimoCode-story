@@ -77,13 +77,20 @@ skill-name/
 | `story-short-write-mimo` | 短篇写作4阶段，含逐场景任务树 |
 | `story-chapter-write-mimo` | 单章写作15步，含设定回写验证 |
 | `story-deslop-mimo` | 去AI味4阶段，含Gate A~F条件创建 |
-| `story-review-mimo` | 审稿5维度，含综合报告 |
+| `story-review-mimo` | 审稿7维度，含综合报告 |
+| `goal-mimo` | 自主写作目标控制，含自动循环写作 |
+| `project-health-mimo` | 项目健康检查与修复，含自动修复 |
 | `quality-mimo` | 质量门禁，含标准/增强模式 |
-| `audit-mimo` | 全量审计3维度 |
+| `audit-mimo` | 全量审计10维度 |
 | `story-session-mimo` | 会话生命周期3阶段 |
 | `story-mimo` | 路由入口，含任务状态感知 |
 | `story-long-analyze-mimo` | 长篇拆文6阶段，含Stage 1停靠点 |
 | `story-import-mimo` | 导入4阶段，含篇幅分流 |
+| `story-setup-mimo` | 基础设施部署，含一键配置 |
+| `story-rewrite-mimo` | 章节重写，含风格重写和备份 |
+| `story-outline-mimo` | 全书大纲生成，含卷级和逐卷细纲 |
+| `story-progress-mimo` | 大纲进度管理，含存档和切换阶段 |
+| `story-short-analyze-mimo` | 短篇拆文6阶段，含混合模式拆解 |
 
 ### 新建 skill 时
 

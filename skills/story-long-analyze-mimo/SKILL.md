@@ -61,10 +61,10 @@ actor({
 
 ```bash
 # 执行前验证
-node skills/story-long-analyze-mimo/scripts/workflow-guard.js pre <step> <workflow_dir> <project_dir>
+node skills/story-long-analyze-mimo/scripts/step-guard.js pre <step> <workflow_dir> <project_dir>
 
 # 执行后验证
-node skills/story-long-analyze-mimo/scripts/workflow-guard.js post <step> <workflow_dir>
+node skills/story-long-analyze-mimo/scripts/step-guard.js post <step> <workflow_dir>
 ```
 
 ### 步骤号定义
@@ -322,6 +322,35 @@ T-ANALYZE-LONG: 拆文「{书名}」 [in_progress]
 ### Stage 1 停靠点
 
 Stage 0+1 完成后自动停靠，输出快速预览。用户确认后才继续 Stage 2+。
+
+---
+
+## 与其他 skill 的关系
+
+### 拆文库 → 正文项目目录映射
+
+导入 `story-long-write-mimo` 时，拆文库目录自动转换为正文项目目录：
+
+| 拆文库路径 | → | 正文项目路径 |
+|-----------|---|-------------|
+| `角色/` | → | `设定/角色/` |
+| `文风.md` | → | `设定/文风.md` |
+| `剧情/` | → | `故事线/` |
+| `设定/` | → | `设定/`（保持不变） |
+| `概要.md` | → | `设定/概要.md` |
+| `原文/` | → | `原文/`（保持不变） |
+| `章节/` | → | 参考用，不直接导入 |
+| `拆文报告.md` | → | 参考用，不直接导入 |
+
+### 导入流程中的目录转换
+
+1. **读取拆文库**：`拆文库/{书名}/` 下的所有文件
+2. **目录转换**：按上表映射到正文项目目录
+3. **角色文件**：`角色/{角色名}.md` → `设定/角色/{角色名}.md`，同时同步到 `追踪/角色状态.md`
+4. **文风文件**：`文风.md` → `设定/文风.md`
+5. **剧情文件**：`剧情/{剧情标题}.md` → `故事线/{剧情标题}.md`，`剧情/故事线.md` → `故事线/总纲.md`
+6. **设定文件**：`设定/` 目录直接复制到 `设定/`
+7. **冲突处理**：如正文项目已有同名文件，保留正文项目文件并提示用户确认
 
 ---
 

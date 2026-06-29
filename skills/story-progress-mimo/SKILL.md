@@ -129,8 +129,8 @@ ls {project_dir}/大纲/ {project_dir}/正文/ {project_dir}/追踪/ 2>/dev/null
 
 **每个步骤执行前后必须运行守卫脚本：**
 ```bash
-node skills/story-progress-mimo/scripts/workflow-guard.js pre  <步骤号> {workflow_dir} {project_dir}
-node skills/story-progress-mimo/scripts/workflow-guard.js post <步骤号> {workflow_dir}
+node skills/story-progress-mimo/scripts/step-guard.js pre  <步骤号> {workflow_dir} {project_dir}
+node skills/story-progress-mimo/scripts/step-guard.js post <步骤号> {workflow_dir}
 ```
 
 ---
@@ -141,28 +141,28 @@ node skills/story-progress-mimo/scripts/workflow-guard.js post <步骤号> {work
 T-PROGRESS: 进度管理「{项目名}」
 │
 ├─── Phase 1: 进度检查
-│    ├── T-PROG-01: 扫描项目结构 [子 agent 隔离·explore]
-│    ├── T-PROG-02: 读取大纲和追踪文件 [子 agent 隔离·general]
-│    └── T-PROG-03: 生成进度报告 [主 agent]
+│    ├── T-PROG-P1-01: 扫描项目结构 [子 agent 隔离·explore]
+│    ├── T-PROG-P1-02: 读取大纲和追踪文件 [子 agent 隔离·general]
+│    └── T-PROG-P1-03: 生成进度报告 [主 agent]
 │
 ├─── Phase 2: 存档管理（条件）
-│    ├── [条件] T-PROG-04: 验证弧/卷完成度 [子 agent 隔离·general]
-│    ├── [条件] T-PROG-05: 整合细纲为存档 [子 agent 隔离·general]
-│    └── [条件] T-PROG-06: 清理和更新状态标记 [主 agent]
+│    ├── [条件] T-PROG-P2-04: 验证弧/卷完成度 [子 agent 隔离·general]
+│    ├── [条件] T-PROG-P2-05: 整合细纲为存档 [子 agent 隔离·general]
+│    └── [条件] T-PROG-P2-06: 清理和更新状态标记 [主 agent]
 │
 ├─── Phase 3: 弧/卷切换（条件）
-│    ├── [条件] T-PROG-07: 确认下一阶段就绪 [子 agent 隔离·general]
-│    └── [条件] T-PROG-08: 输出切换指南 [主 agent]
+│    ├── [条件] T-PROG-P3-07: 确认下一阶段就绪 [子 agent 隔离·general]
+│    └── [条件] T-PROG-P3-08: 输出切换指南 [主 agent]
 │
-├─── Phase 5: 批量细纲生成（条件）
-│    ├── [条件] T-PROG-12: 批量细纲生成 [子 agent 隔离·general]
-│    ├── [条件] T-PROG-13: 细纲质量检查 [子 agent 隔离·general]
-│    └── [条件] T-PROG-14: 输出生成报告 [主 agent]
+├─── Phase 4: 文件维护
+│    ├── T-PROG-P4-09: 大纲一致性检查 [子 agent 隔离·general]
+│    ├── T-PROG-P4-10: 追踪文件健康度检查 [子 agent 隔离·general]
+│    └── T-PROG-P4-11: 输出维护报告 [主 agent]
 │
-└─── Phase 4: 文件维护
-     ├── T-PROG-09: 大纲一致性检查 [子 agent 隔离·general]
-     ├── T-PROG-10: 追踪文件健康度检查 [子 agent 隔离·general]
-     └── T-PROG-11: 输出维护报告 [主 agent]
+└─── Phase 5: 批量细纲生成（条件）
+     ├── [条件] T-PROG-P5-12: 批量细纲生成 [子 agent 隔离·general]
+     ├── [条件] T-PROG-P5-13: 细纲质量检查 [子 agent 隔离·general]
+     └── [条件] T-PROG-P5-14: 输出生成报告 [主 agent]
 ```
 
 ---
@@ -172,7 +172,7 @@ T-PROGRESS: 进度管理「{项目名}」
 ### Phase 1: 进度检查
 
 ```javascript
-// Step 01: 扫描项目结构
+// T-PROG-P1-01: 扫描项目结构
 actor({
   "operation": {
     "action": "run",
@@ -183,7 +183,7 @@ actor({
   }
 })
 
-// Step 02: 读取大纲和追踪文件（动态扫描）
+// T-PROG-P1-02: 读取大纲和追踪文件（动态扫描）
 actor({
   "operation": {
     "action": "run",
@@ -194,14 +194,14 @@ actor({
   }
 })
 
-// Step 03: 生成进度报告（主 agent）
+// T-PROG-P1-03: 生成进度报告（主 agent）
 // 读取 prog-01-scan.json 和 prog-02-context.json，生成用户可读报告
 ```
 
 ### Phase 2: 存档管理（条件）
 
 ```javascript
-// Step 04: 验证弧/卷完成度
+// T-PROG-P2-04: 验证弧/卷完成度
 actor({
   "operation": {
     "action": "run",
@@ -212,7 +212,7 @@ actor({
   }
 })
 
-// Step 05: 整合细纲为存档
+// T-PROG-P2-05: 整合细纲为存档
 actor({
   "operation": {
     "action": "run",
@@ -223,7 +223,7 @@ actor({
   }
 })
 
-// Step 06: 清理和更新状态标记（主 agent）
+// T-PROG-P2-06: 清理和更新状态标记（主 agent）
 // 更新卷纲中的状态标记（📝 → ✅）
 // 如果是卷结束，更新大纲.md 中的卷状态
 ```
@@ -231,7 +231,7 @@ actor({
 ### Phase 3: 弧/卷切换（条件）
 
 ```javascript
-// Step 07: 确认下一阶段就绪
+// T-PROG-P3-07: 确认下一阶段就绪
 actor({
   "operation": {
     "action": "run",
@@ -242,16 +242,16 @@ actor({
   }
 })
 
-// Step 08: 输出切换指南（主 agent）
+// T-PROG-P3-08: 输出切换指南（主 agent）
 // 读取 prog-07-next-phase.json，生成用户可读的切换指南
 ```
 
 ### Phase 5: 批量细纲生成（条件）
 
-当 Step 07 发现下一弧细纲缺失时，批量生成。用户也可单独触发：「/progress 补建细纲」。
+当 Phase 4（文件维护）或 Step 07 发现下一弧细纲缺失时，批量生成。用户也可单独触发：「/progress 补建细纲」。
 
 ```javascript
-// Step 09: 批量细纲生成
+// T-PROG-P5-12: 批量细纲生成
 actor({
   "operation": {
     "action": "run",
@@ -262,7 +262,7 @@ actor({
   }
 })
 
-// Step 10: 细纲质量检查
+// T-PROG-P5-13: 细纲质量检查
 actor({
   "operation": {
     "action": "run",
@@ -273,7 +273,7 @@ actor({
   }
 })
 
-// Step 11: 输出生成报告（主 agent）
+// T-PROG-P5-14: 输出生成报告（主 agent）
 // 读取 prog-outline-quality.json，生成用户可读报告
 // 如有质量问题，列出需修改的章节
 ```
@@ -281,7 +281,7 @@ actor({
 ### Phase 4: 文件维护
 
 ```javascript
-// Step 09: 大纲一致性检查
+// T-PROG-P4-09: 大纲一致性检查
 actor({
   "operation": {
     "action": "run",
@@ -292,7 +292,7 @@ actor({
   }
 })
 
-// Step 10: 追踪文件健康度检查
+// T-PROG-P4-10: 追踪文件健康度检查
 actor({
   "operation": {
     "action": "run",
@@ -303,7 +303,7 @@ actor({
   }
 })
 
-// Step 11: 输出维护报告（主 agent）
+// T-PROG-P4-11: 输出维护报告（主 agent）
 // 读取 prog-09-outline-check.json 和 prog-10-health.json，生成维护报告
 ```
 
@@ -311,89 +311,89 @@ actor({
 
 ## 各步骤说明
 
-### Step 01: 扫描项目结构
+### T-PROG-P1-01: 扫描项目结构
 - **Agent**: 子 agent 隔离（explore）
 - **职责**: 扫描项目目录，统计文件数量和字数
 - **输出**: `.workflow/prog-01-scan.json`
 - **防偷懒**: 必须实际扫描目录，不能推断
 
-### Step 02: 读取大纲和追踪文件
+### T-PROG-P1-02: 读取大纲和追踪文件
 - **Agent**: 子 agent 隔离（general）
 - **职责**: 读取所有大纲和追踪文件，组装进度上下文
 - **输出**: `.workflow/prog-02-context.json`
 - **防偷懒**: 必须实际读取每个文件，不能跳过
 
-### Step 03: 生成进度报告
+### T-PROG-P1-03: 生成进度报告
 - **Agent**: 主 agent
 - **职责**: 汇总信息，生成用户可读的进度报告
 - **输出**: 进度报告（直接展示给用户）
 
-### Step 04: 验证弧/卷完成度 [条件]
+### T-PROG-P2-04: 验证弧/卷完成度 [条件]
 - **Agent**: 子 agent 隔离（general）
 - **职责**: 逐章检查细纲和正文是否完成
 - **输出**: `.workflow/prog-04-completion.json`
 - **防偷懒**: 必须逐章检查，不能推断
 - **触发条件**: 用户说"存档"或"归档"
 
-### Step 05: 整合细纲为存档 [条件]
+### T-PROG-P2-05: 整合细纲为存档 [条件]
 - **Agent**: 子 agent 隔离（general）
 - **职责**: 将已完成弧的细纲整合为存档文件
 - **输出**: `大纲/存档/卷X_弧X_弧名.md`
 - **防偷懒**: 必须读取每个细纲文件，按章节顺序整合
 - **触发条件**: Step 04 确认弧/卷完成
 
-### Step 06: 清理和更新状态标记 [条件]
+### T-PROG-P2-06: 清理和更新状态标记 [条件]
 - **Agent**: 主 agent
 - **职责**: 更新卷纲中的状态标记
 - **触发条件**: Step 05 完成存档
 
-### Step 07: 确认下一阶段就绪 [条件]
+### T-PROG-P3-07: 确认下一阶段就绪 [条件]
 - **Agent**: 子 agent 隔离（general）
 - **职责**: 检查下一弧的细纲是否就绪
 - **输出**: `.workflow/prog-07-next-phase.json`
 - **防偷懒**: 必须检查下一弧的细纲是否存在
 - **触发条件**: 用户说"下一弧"或存档完成后
 
-### Step 08: 输出切换指南 [条件]
+### T-PROG-P3-08: 输出切换指南 [条件]
 - **Agent**: 主 agent
 - **职责**: 生成下一阶段的创作指南
 - **触发条件**: Step 07 完成
 
-### Step 09: 批量细纲生成 [条件]
+### T-PROG-P5-12: 批量细纲生成 [条件]
 - **Agent**: 子 agent 隔离（general）
 - **职责**: 为下一弧/卷批量生成所有缺失的细纲
 - **必读文件**: 参考 story-chapter-write-mimo Step 05（16项）
 - **去重检查**: 生成前扫描前5章细纲，避免核心事件/情绪/爽点重复
 - **输出**: `大纲/细纲_第XXX章.md`（每章一个文件）+ `.workflow/prog-outline-batch.json`
-- **触发条件**: Step 07 发现细纲缺失或用户说"补建细纲"
+- **触发条件**: Phase 4 或 Step 07 发现细纲缺失或用户说"补建细纲"
 - **防偷懒**: 必须逐章生成，每章必须去重检查
 
-### Step 10: 细纲质量检查 [条件]
+### T-PROG-P5-13: 细纲质量检查 [条件]
 - **Agent**: 子 agent 隔离（general）
 - **职责**: 检查批量生成的细纲质量和重复度
 - **检查项**: 格式完整性、情节点数量、去重、情绪节奏、爽点类型、伏笔衔接、角色弧线
 - **输出**: `.workflow/prog-outline-quality.json`
-- **触发条件**: Step 09 完成细纲生成
+- **触发条件**: Step 12 完成细纲生成
 - **防偷懒**: 必须逐章检查，不能跳过
 
-### Step 11: 输出生成报告 [条件]
+### T-PROG-P5-14: 输出生成报告 [条件]
 - **Agent**: 主 agent
 - **职责**: 读取质量检查结果，生成用户可读报告
-- **触发条件**: Step 10 完成
+- **触发条件**: Step 13 完成
 
-### Step 09: 大纲一致性检查
+### T-PROG-P4-09: 大纲一致性检查
 - **Agent**: 子 agent 隔离（general）
 - **职责**: 检查大纲文件格式一致性和状态标记
 - **输出**: `.workflow/prog-09-outline-check.json`
 - **防偷懒**: 必须逐项检查，不能跳过
 
-### Step 10: 追踪文件健康度检查
+### T-PROG-P4-10: 追踪文件健康度检查
 - **Agent**: 子 agent 隔离（general）
 - **职责**: 检测伏笔逾期、角色沉默、时间线断层等
 - **输出**: `.workflow/prog-10-health.json`
 - **防偷懒**: 必须读取所有追踪文件，逐项检测
 
-### Step 11: 输出维护报告
+### T-PROG-P4-11: 输出维护报告
 - **Agent**: 主 agent
 - **职责**: 汇总检查结果，生成维护报告
 
@@ -489,14 +489,36 @@ actor({
 
 | 任务 | 触发条件 | 跳过则 |
 |------|---------|--------|
-| T-PROG-04 | 用户说"存档"/"归档" | abandoned |
-| T-PROG-05 | Step 04 确认弧/卷完成 | abandoned |
-| T-PROG-06 | Step 05 完成存档 | abandoned |
-| T-PROG-07 | 用户说"下一弧"或存档完成 | abandoned |
-| T-PROG-08 | Step 07 完成 | abandoned |
-| T-PROG-12 | Step 07 发现细纲缺失或用户说"补建细纲" | abandoned |
-| T-PROG-13 | Step 12 完成细纲生成 | abandoned |
-| T-PROG-14 | Step 13 完成质量检查 | abandoned |
+| T-PROG-P2-04 | 用户说"存档"/"归档" | abandoned |
+| T-PROG-P2-05 | Step 04 确认弧/卷完成 | abandoned |
+| T-PROG-P2-06 | Step 05 完成存档 | abandoned |
+| T-PROG-P3-07 | 用户说"下一弧"或存档完成 | abandoned |
+| T-PROG-P3-08 | Step 07 完成 | abandoned |
+| T-PROG-P5-12 | Phase 4 或 Step 07 发现细纲缺失或用户说"补建细纲" | abandoned |
+| T-PROG-P5-13 | Step 12 完成细纲生成 | abandoned |
+| T-PROG-P5-14 | Step 13 完成质量检查 | abandoned |
+
+---
+
+## 大纲修订流程
+
+当大纲质量自检或维护检查发现问题时，启动大纲修订流程：
+
+1. **识别问题**：从质量自检报告或维护报告中提取问题清单
+2. **确定修订范围**：
+   - 大纲.md 问题 → 修订 Step 2（重新生成全书大纲）
+   - 卷纲问题 → 修订 Step 3（重新生成卷纲）
+   - 细纲问题 → 修订 Step 4（重新生成细纲）
+3. **执行修订**：重新运行对应步骤的子 agent
+4. **重新验证**：再次运行质量自检或维护检查
+5. **确认通过**：所有问题已修复后继续后续流程
+
+修订流程不创建新任务，直接在现有任务树上标记原任务为 abandoned，创建修订任务：
+```
+T-OUTLINE-0X-R1: 修订{步骤名}（第1次修订）
+T-OUTLINE-0X-R2: 修订{步骤名}（第2次修订）
+...
+```
 
 ---
 
@@ -522,25 +544,30 @@ actor({
 
 ```bash
 # 前置验证
-node skills/story-progress-mimo/scripts/workflow-guard.js pre  <步骤号> {workflow_dir} {project_dir}
+node skills/story-progress-mimo/scripts/step-guard.js pre  <步骤号> {workflow_dir} {project_dir}
 
 # 后置验证
-node skills/story-progress-mimo/scripts/workflow-guard.js post <步骤号> {workflow_dir}
+node skills/story-progress-mimo/scripts/step-guard.js post <步骤号> {workflow_dir}
 ```
 
-步骤号定义：
+步骤号定义（覆盖全部14个步骤）：
 
-| 步骤号 | 说明 |
-|--------|------|
-| 01 | 扫描项目结构 |
-| 02 | 读取大纲和追踪 |
-| 04 | 验证完成度 |
-| 05 | 整合存档 |
-| 07 | 确认下一阶段 |
-| 12 | 批量细纲生成 |
-| 13 | 细纲质量检查 |
-| 09 | 大纲一致性 |
-| 10 | 追踪健康度 |
+| 步骤号 | 任务ID | 说明 |
+|--------|--------|------|
+| 01 | T-PROG-P1-01 | 扫描项目结构 |
+| 02 | T-PROG-P1-02 | 读取大纲和追踪 |
+| 03 | T-PROG-P1-03 | 生成进度报告 |
+| 04 | T-PROG-P2-04 | 验证完成度 |
+| 05 | T-PROG-P2-05 | 整合存档 |
+| 06 | T-PROG-P2-06 | 更新状态标记 |
+| 07 | T-PROG-P3-07 | 确认下一阶段 |
+| 08 | T-PROG-P3-08 | 输出切换指南 |
+| 09 | T-PROG-P4-09 | 大纲一致性 |
+| 10 | T-PROG-P4-10 | 追踪健康度 |
+| 11 | T-PROG-P4-11 | 输出维护报告 |
+| 12 | T-PROG-P5-12 | 批量细纲生成 |
+| 13 | T-PROG-P5-13 | 细纲质量检查 |
+| 14 | T-PROG-P5-14 | 输出生成报告 |
 
 ---
 
@@ -562,3 +589,98 @@ node skills/story-progress-mimo/scripts/workflow-guard.js post <步骤号> {work
 | `_shared/references/cross-volume-tracking.md` | 跨卷追踪规范 |
 | `_shared/references/state-tracking.md` | 角色状态追踪规范 |
 | `_shared/references/consistency-tracking.md` | 一致性追踪规范 |
+
+---
+
+## Task 跟踪集成
+
+> 规范详见 `_shared/references/task-tracking-conventions.md`。
+
+**触发时第一步：读取上方「任务树」（§任务树），然后逐条创建。不跳步。**
+
+**强制执行顺序**：
+1. 读取上方「任务树」
+2. 严格按照列表逐条创建任务
+3. 逐个执行
+
+### 任务树概要
+
+```
+T-PROGRESS: 进度管理「{项目名}」
+│
+├─── Phase 1: 进度检查（固定）
+│    ├── T-PROG-P1-01: 扫描项目结构 [子 agent 隔离·explore]
+│    ├── T-PROG-P1-02: 读取大纲和追踪文件 [子 agent 隔离·general]
+│    └── T-PROG-P1-03: 生成进度报告 [主 agent]
+│
+├─── Phase 2: 存档管理（条件）
+│    ├── [条件] T-PROG-P2-04: 验证弧/卷完成度 [子 agent 隔离·general]
+│    ├── [条件] T-PROG-P2-05: 整合细纲为存档 [子 agent 隔离·general]
+│    └── [条件] T-PROG-P2-06: 清理和更新状态标记 [主 agent]
+│
+├─── Phase 3: 弧/卷切换（条件）
+│    ├── [条件] T-PROG-P3-07: 确认下一阶段就绪 [子 agent 隔离·general]
+│    └── [条件] T-PROG-P3-08: 输出切换指南 [主 agent]
+│
+├─── Phase 4: 文件维护（固定）
+│    ├── T-PROG-P4-09: 大纲一致性检查 [子 agent 隔离·general]
+│    ├── T-PROG-P4-10: 追踪文件健康度检查 [子 agent 隔离·general]
+│    └── T-PROG-P4-11: 输出维护报告 [主 agent]
+│
+└─── Phase 5: 批量细纲生成（条件）
+     ├── [条件] T-PROG-P5-12: 批量细纲生成 [子 agent 隔离·general]
+     ├── [条件] T-PROG-P5-13: 细纲质量检查 [子 agent 隔离·general]
+     └── [条件] T-PROG-P5-14: 输出生成报告 [主 agent]
+```
+
+### 条件创建规则
+
+| 任务 | 执行时判断 | 跳过则 abandoned |
+|------|-----------|-----------------|
+| T-PROG-P2-04 | 用户说"存档"/"归档" | abandoned |
+| T-PROG-P2-05 | Step 04 确认弧/卷完成 | abandoned |
+| T-PROG-P2-06 | Step 05 完成存档 | abandoned |
+| T-PROG-P3-07 | 用户说"下一弧"或存档完成 | abandoned |
+| T-PROG-P3-08 | Step 07 完成 | abandoned |
+| T-PROG-P5-12 | Phase 4 或 Step 07 发现细纲缺失或用户说"补建细纲" | abandoned |
+| T-PROG-P5-13 | Step 12 完成细纲生成 | abandoned |
+| T-PROG-P5-14 | Step 13 完成质量检查 | abandoned |
+
+### 循环处理
+
+| 循环 | 触发 | 处理 |
+|------|------|------|
+| 大纲修订 | Phase 4 或维护检查发现问题 | 标记原任务 abandoned，创建 T-OUTLINE-0X-R1 修订任务，重新验证直到通过 |
+
+### 完成标准
+
+| 任务 | 完成标准 |
+|------|---------|
+| T-PROG-P1-01 | `.workflow/prog-01-scan.json` 已写入 |
+| T-PROG-P1-02 | `.workflow/prog-02-context.json` 已写入 |
+| T-PROG-P1-03 | 进度报告已输出给用户 |
+| T-PROG-P2-04 | `.workflow/prog-04-completion.json` 已写入 |
+| T-PROG-P2-05 | `大纲/存档/卷X_弧X_弧名.md` 已创建 |
+| T-PROG-P2-06 | 卷纲状态标记已更新 |
+| T-PROG-P3-07 | `.workflow/prog-07-next-phase.json` 已写入 |
+| T-PROG-P3-08 | 切换指南已输出给用户 |
+| T-PROG-P4-09 | `.workflow/prog-09-outline-check.json` 已写入 |
+| T-PROG-P4-10 | `.workflow/prog-10-health.json` 已写入 |
+| T-PROG-P4-11 | 维护报告已输出给用户 |
+| T-PROG-P5-12 | 细纲文件已生成 |
+| T-PROG-P5-13 | `.workflow/prog-outline-quality.json` 已写入 |
+| T-PROG-P5-14 | 生成报告已输出给用户 |
+
+### 守卫脚本调用
+
+每个步骤执行前后必须运行守卫脚本：
+
+```bash
+# 前置验证
+node skills/story-progress-mimo/scripts/step-guard.js pre  <步骤号> {workflow_dir} {project_dir}
+
+# 后置验证
+node skills/story-progress-mimo/scripts/step-guard.js post <步骤号> {workflow_dir}
+```
+
+步骤号映射见文件内「守卫脚本调用」章节（步骤 01~14）。

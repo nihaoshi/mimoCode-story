@@ -1,0 +1,73 @@
+﻿{
+  "frontmatter": {
+    "pass": 27,
+    "fail": 0,
+    "details": [
+      "All 27 *-mimo SKILL.md files declare inputs.project_dir in frontmatter"
+    ]
+  },
+  "pre_check": {
+    "pass": 23,
+    "fail": 4,
+    "details": [
+      "story-cover-mimo - no directory existence pre-check",
+      "story-synopsis-mimo - no directory existence pre-check",
+      "story-session-mimo - no directory existence pre-check",
+      "browser-cdp-mimo - no directory existence pre-check (utility skill, may be intentional)"
+    ]
+  },
+  "dynamic_scan": {
+    "pass": 25,
+    "fail": 2,
+    "details": [
+      "story-long-write-mimo - fixed task list (lines 155-219) contains 22 hardcoded context-reading file paths; main workflow uses dynamic scan but task list is stale",
+      "story-outline-mimo - Step 1 prompt has hardcoded required file list (lines 93-99) without fallback to dynamic ls scanning",
+      "PASS: story-chapter-write-mimo uses explicit ls commands in agent prompts",
+      "PASS: story-progress-mimo explicitly requires dynamic scanning with anti-hardcode rule",
+      "PASS: story-rewrite-mimo uses dynamic scanning in agent prompts",
+      "PASS: audit-mimo agent prompts specify dynamic scan for input files",
+      "PASS: quality-mimo agent prompts use ls scanning patterns"
+    ]
+  },
+  "wordcount": {
+    "pass": 7,
+    "fail": 0,
+    "details": [
+      "Skills using wordcount.js consistently: story-deslop-mimo, story-chapter-write-mimo, story-short-write-mimo, story-long-write-mimo, story-rewrite-mimo, quality-mimo, story-progress-mimo",
+      "Skills without word counting needs (not required): story-export-mimo, story-synopsis-mimo, story-cover-mimo, story-mimo, distill-mimo, dream-mimo, story-session-mimo, story-setup-mimo, audit-mimo, project-health-mimo, story-review-mimo, story-outline-mimo, story-scan-mimo, story-long-scan-mimo, story-short-scan-mimo, story-short-analyze-mimo, story-long-analyze-mimo, story-import-mimo, browser-cdp-mimo",
+      "All skills that perform word counting use wordcount.js consistently"
+    ]
+  },
+  "tracking": {
+    "pass": 4,
+    "fail": 1,
+    "details": [
+      "story-short-write-mimo - uses three-step flow (Step A scan / Step B extract / Step C update) - PASS",
+      "story-chapter-write-mimo - uses three-step flow in Step 14 - PASS",
+      "story-long-write-mimo - uses three-step flow in step 10 - PASS",
+      "story-rewrite-mimo - references three-step flow in Step 10 - PASS",
+      "story-deslop-mimo - explicitly states no tracking needed (style-only changes) - exempt",
+      "story-session-mimo - only updates context.md, no three-step flow - FAIL"
+    ]
+  },
+  "dedup": {
+    "pass": 3,
+    "fail": 0,
+    "details": [
+      "story-long-write-mimo - outline dedup (4 rules: core event, plot points, emotion, satisfaction) - PASS",
+      "story-chapter-write-mimo - outline dedup in Step 04 - PASS",
+      "story-progress-mimo - dedup check in batch outline generation Step 09 - PASS",
+      "story-outline-mimo - generates volume-level outlines only, no chapter-level dedup needed"
+    ]
+  },
+  "verdict": "fail",
+  "remaining_gaps": [
+    "PRE_CHECK: story-cover-mimo - missing directory existence check",
+    "PRE_CHECK: story-synopsis-mimo - missing directory existence check",
+    "PRE_CHECK: story-session-mimo - missing directory existence check",
+    "PRE_CHECK: browser-cdp-mimo - missing directory existence check (utility skill, may be intentional)",
+    "DYNAMIC_SCAN: story-long-write-mimo - fixed task list (lines 155-219) still has 22 hardcoded file paths, inconsistent with main workflow dynamic scan",
+    "DYNAMIC_SCAN: story-outline-mimo - Step 1 prompt uses hardcoded required file list without ls dynamic scan fallback",
+    "TRACKING: story-session-mimo - only updates context.md, lacks three-step flow"
+  ]
+}

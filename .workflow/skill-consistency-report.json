@@ -1,0 +1,383 @@
+{
+  "report_date": "2026-06-25",
+  "skills": [
+    {
+      "name": "story-setup-mimo",
+      "version": "3.0.0",
+      "creates": [
+        "{书名}/",
+        "{书名}/.active-book",
+        "{书名}/.story-config.json",
+        "{书名}/.story-deployed",
+        "{书名}/.workflow/",
+        "{书名}/AGENTS.md",
+        "{书名}/设定/世界观/背景设定.md",
+        "{书名}/设定/世界观/力量体系.md",
+        "{书名}/设定/世界观/金手指.md",
+        "{书名}/设定/角色/{角色名}.md",
+        "{书名}/设定/势力/{势力名}.md",
+        "{书名}/设定/关系.md",
+        "{书名}/设定/题材定位.md",
+        "{书名}/设定/文风.md",
+        "{书名}/大纲/大纲.md",
+        "{书名}/大纲/卷纲_第X卷.md",
+        "{书名}/大纲/细纲_第XXX章.md",
+        "{书名}/正文/第XXX章_章名.md",
+        "{书名}/对标/{对标书名}/拆文报告.md",
+        "{书名}/对标/{对标书名}/文风.md",
+        "{书名}/对标/{对标书名}/角色/",
+        "{书名}/对标/{对标书名}/剧情/",
+        "{书名}/对标/{对标书名}/设定/",
+        "{书名}/追踪/伏笔.md",
+        "{书名}/追踪/时间线.md",
+        "{书名}/追踪/角色状态.md",
+        "{书名}/追踪/物品.md",
+        "{书名}/追踪/环境.md",
+        "{书名}/追踪/物资.md",
+        "{书名}/追踪/重复语句.md",
+        "{书名}/追踪/上下文.md",
+        "{书名}/故事线/故事线_索引.md",
+        "{书名}/故事线/故事线_主线_XXX.md",
+        "{书名}/故事线/故事线_交叉点.md",
+        "{书名}/跨卷追踪/跨卷伏笔.md",
+        "{书名}/跨卷追踪/跨卷角色弧线.md",
+        "{书名}/跨卷追踪/卷间过渡.md",
+        "{书名}/拆文库/{书名}/原文/",
+        "{书名}/拆文库/{书名}/章节/",
+        "{书名}/拆文库/{书名}/角色/",
+        "{书名}/拆文库/{书名}/剧情/",
+        "{书名}/拆文库/{书名}/设定/",
+        "{书名}/参考资料/"
+      ],
+      "reads": [],
+      "project_dir": "implicit (用户当前目录/书名目录，无 frontmatter inputs)",
+      "tracking_updates": []
+    },
+    {
+      "name": "story-scan-mimo",
+      "version": "2.0.0",
+      "creates": [
+        "选题决策.md"
+      ],
+      "reads": [
+        "references/genre-trends.md",
+        "references/reader-profiling.md",
+        "references/scan-output-format.md",
+        "references/topic-decision.md",
+        "references/publishing-guide.md"
+      ],
+      "project_dir": "implicit (无 frontmatter inputs，输出路径由上下文决定)",
+      "tracking_updates": []
+    },
+    {
+      "name": "story-long-scan-mimo",
+      "version": "1.0.0",
+      "creates": [
+        "{平台}{榜单名称}_{YYYYMMDD}.md",
+        "{outdir}/选题决策.md"
+      ],
+      "reads": [
+        "references/genre-trends.md",
+        "references/reader-profiling.md",
+        "references/scan-output-format.md",
+        "references/topic-decision.md",
+        "references/publishing-guide.md",
+        "scripts/cdp-utils.js",
+        "scripts/fanqie-rank-scraper.js",
+        "scripts/qidian-rank-scraper.js",
+        "scripts/qimao-rank-scraper.js",
+        "scripts/jjwxc-rank-scraper.js",
+        "scripts/ciweimao-rank-scraper.js"
+      ],
+      "project_dir": "implicit (无 frontmatter inputs，Phase 4 输出到 outdir 变量)",
+      "tracking_updates": []
+    },
+    {
+      "name": "story-short-scan-mimo",
+      "version": "1.0.0",
+      "creates": [
+        "{平台}{类型}_{YYYYMMDD}.md"
+      ],
+      "reads": [
+        "references/real-market-data.md",
+        "scripts/cdp-utils.js",
+        "scripts/dz-browse-scraper.js",
+        "scripts/heiyan-booklist-scraper.js"
+      ],
+      "project_dir": "implicit (无 frontmatter inputs，输出路径由上下文决定)",
+      "tracking_updates": []
+    },
+    {
+      "name": "story-outline-mimo",
+      "version": "1.0.0",
+      "creates": [
+        "{project_dir}/大纲/大纲.md",
+        "{project_dir}/大纲/卷纲_第X卷.md（每卷一个）",
+        "{project_dir}/.workflow/step01-settings.json",
+        "{project_dir}/.workflow/step02-outline.json",
+        "{project_dir}/.workflow/step03-volume-meta.json"
+      ],
+      "reads": [
+        "{project_dir}/设定/世界观/*.md",
+        "{project_dir}/设定/角色/*.md",
+        "{project_dir}/设定/势力/*.md",
+        "{project_dir}/设定/关系.md",
+        "{project_dir}/设定/题材定位.md",
+        "{project_dir}/选题决策.md（可选）"
+      ],
+      "project_dir": "explicit (frontmatter inputs: project_dir, required: true)",
+      "tracking_updates": []
+    },
+    {
+      "name": "story-progress-mimo",
+      "version": "2.0.0",
+      "creates": [
+        "{project_dir}/大纲/存档/卷X_弧X_弧名.md（条件：弧/卷完成后）",
+        "{project_dir}/.workflow/prog-01-scan.json",
+        "{project_dir}/.workflow/prog-02-context.json",
+        "{project_dir}/.workflow/prog-04-completion.json",
+        "{project_dir}/.workflow/prog-07-next-phase.json",
+        "{project_dir}/.workflow/prog-09-outline-check.json",
+        "{project_dir}/.workflow/prog-10-health.json"
+      ],
+      "reads": [
+        "{project_dir}/大纲/大纲.md",
+        "{project_dir}/大纲/卷纲_第X卷.md",
+        "{project_dir}/大纲/细纲_第XXX章.md",
+        "{project_dir}/正文/第XXX章.md",
+        "{project_dir}/追踪/上下文.md",
+        "{project_dir}/追踪/伏笔.md",
+        "{project_dir}/追踪/角色状态.md",
+        "{project_dir}/追踪/时间线.md",
+        "{project_dir}/追踪/物品.md",
+        "{project_dir}/追踪/环境.md",
+        "{project_dir}/追踪/物资.md",
+        "{project_dir}/追踪/重复语句.md",
+        "{project_dir}/跨卷追踪/跨卷伏笔.md",
+        "{project_dir}/跨卷追踪/跨卷角色弧线.md",
+        "{project_dir}/跨卷追踪/卷间过渡.md",
+        "{project_dir}/故事线/故事线_索引.md",
+        "{project_dir}/故事线/故事线_主线_*.md",
+        "{project_dir}/故事线/故事线_交叉点.md"
+      ],
+      "project_dir": "explicit (frontmatter inputs: project_dir, required: true)",
+      "tracking_updates": [
+        "大纲/大纲.md（状态标记更新：📝→✅）",
+        "大纲/卷纲_第X卷.md（状态标记更新：📝→✅）",
+        "大纲/存档/（创建存档文件）"
+      ]
+    },
+    {
+      "name": "story-chapter-write-mimo",
+      "version": "2.0.0",
+      "creates": [
+        "{project_dir}/正文/第{N}章.md（或第{N}章_章名.md）",
+        "{project_dir}/大纲/细纲_第{N}章.md（条件：细纲不存在时创建）",
+        "{project_dir}/设定/角色/{新角色名}.md（条件：新角色出现）",
+        "{project_dir}/设定/势力/{新势力名}.md（条件：新势力出现）",
+        "{project_dir}/.workflow/step01-health-check.json",
+        "{project_dir}/.workflow/step02-chapter-info.json",
+        "{project_dir}/.workflow/step03-outline-check.json",
+        "{project_dir}/.workflow/step04-benchmark.json",
+        "{project_dir}/.workflow/step05-required-files.json",
+        "{project_dir}/.workflow/step06-new-settings.json",
+        "{project_dir}/.workflow/step08-context.json",
+        "{project_dir}/.workflow/step09-constraints.json",
+        "{project_dir}/.workflow/step11-quality-report.json",
+        "{project_dir}/.workflow/step12-fix-log.json",
+        "{project_dir}/.workflow/step13-recheck-report.json"
+      ],
+      "reads": [
+        "{project_dir}/大纲/大纲.md",
+        "{project_dir}/大纲/卷纲_第X卷.md",
+        "{project_dir}/大纲/细纲_第{N}章.md",
+        "{project_dir}/正文/第{N-1}章.md（上一章）",
+        "{project_dir}/设定/世界观/*.md",
+        "{project_dir}/设定/世界观/金手指.md",
+        "{project_dir}/设定/角色/{相关角色}.md",
+        "{project_dir}/设定/势力/*.md",
+        "{project_dir}/设定/关系.md",
+        "{project_dir}/设定/题材定位.md",
+        "{project_dir}/设定/文风.md",
+        "{project_dir}/追踪/伏笔.md",
+        "{project_dir}/追踪/时间线.md",
+        "{project_dir}/追踪/角色状态.md",
+        "{project_dir}/追踪/物品.md",
+        "{project_dir}/追踪/环境.md",
+        "{project_dir}/追踪/物资.md",
+        "{project_dir}/追踪/重复语句.md",
+        "{project_dir}/追踪/上下文.md",
+        "{project_dir}/跨卷追踪/跨卷伏笔.md",
+        "{project_dir}/跨卷追踪/跨卷角色弧线.md",
+        "{project_dir}/跨卷追踪/卷间过渡.md",
+        "{project_dir}/故事线/故事线_索引.md",
+        "{project_dir}/故事线/故事线_主线_*.md",
+        "{project_dir}/故事线/故事线_交叉点.md",
+        "{project_dir}/对标/{书名}/拆文报告.md（可选）",
+        "{project_dir}/对标/{书名}/文风.md（可选）",
+        "{project_dir}/选题决策.md（通过题材定位间接引用）"
+      ],
+      "project_dir": "explicit (frontmatter inputs: project_dir+chapter_number, required: true)",
+      "tracking_updates": [
+        "追踪/时间线.md（始终更新）",
+        "追踪/上下文.md（始终更新）",
+        "追踪/重复语句.md（始终更新）",
+        "追踪/伏笔.md（条件：有伏笔变更时）",
+        "追踪/角色状态.md（条件：角色状态变更时）",
+        "追踪/物品.md（条件：物品变更时）",
+        "追踪/环境.md（条件：环境变更时）",
+        "追踪/物资.md（条件：经济活动时）",
+        "跨卷追踪/跨卷伏笔.md（条件：跨卷伏笔变更时）",
+        "跨卷追踪/跨卷角色弧线.md（条件：角色弧线变化时）",
+        "跨卷追踪/卷间过渡.md（条件：接近卷末时）",
+        "故事线/故事线_*.md（条件：故事线推进时）",
+        "设定/角色/{角色名}.md（条件：正文揭示新信息时回写）",
+        "设定/势力/{势力名}.md（条件：正文揭示新信息时回写）",
+        "设定/世界观/*.md（条件：正文揭示新信息时回写）"
+      ]
+    },
+    {
+      "name": "quality-mimo",
+      "version": "2.0.0",
+      "creates": [
+        "{project_dir}/.workflow/step01-chapter-content.json",
+        "{project_dir}/.workflow/step02-quality-report.json",
+        "{project_dir}/.workflow/step03-fix-log.json",
+        "{project_dir}/.workflow/step04-recheck-report.json"
+      ],
+      "reads": [
+        "{project_dir}/正文/{chapter_file}",
+        "{project_dir}/设定/世界观/*.md",
+        "{project_dir}/设定/世界观/金手指.md",
+        "{project_dir}/设定/角色/{相关角色}.md",
+        "{project_dir}/设定/势力/*.md",
+        "{project_dir}/设定/关系.md",
+        "{project_dir}/设定/题材定位.md",
+        "{project_dir}/设定/文风.md",
+        "{project_dir}/追踪/伏笔.md",
+        "{project_dir}/追踪/角色状态.md",
+        "{project_dir}/追踪/物品.md",
+        "{project_dir}/追踪/环境.md",
+        "{project_dir}/追踪/物资.md",
+        "{project_dir}/追踪/时间线.md",
+        "{project_dir}/跨卷追踪/跨卷伏笔.md",
+        "{project_dir}/跨卷追踪/跨卷角色弧线.md",
+        "{project_dir}/故事线/故事线_索引.md",
+        "{project_dir}/故事线/故事线_主线_*.md",
+        "{project_dir}/故事线/故事线_交叉点.md"
+      ],
+      "project_dir": "explicit (frontmatter inputs: project_dir, required: true)",
+      "tracking_updates": []
+    }
+  ],
+  "issues": [
+    {
+      "id": "ISS-001",
+      "severity": "medium",
+      "from": "story-scan-mimo",
+      "to": "story-outline-mimo",
+      "type": "project_dir_declaraction",
+      "issue": "story-scan-mimo 未在 frontmatter inputs 中声明 project_dir，而 story-outline-mimo、story-progress-mimo、story-chapter-write-mimo、quality-mimo 均声明了 project_dir。3 个扫榜技能的 project_dir 传递方式不统一：无 frontmatter inputs，输出路径依赖上下文或 outdir 变量，无法由编排层自动验证。"
+    },
+    {
+      "id": "ISS-002",
+      "severity": "medium",
+      "from": "story-long-scan-mimo",
+      "to": "story-outline-mimo",
+      "type": "project_dir_declaraction",
+      "issue": "story-long-scan-mimo 未在 frontmatter inputs 中声明 project_dir。Phase 4 使用 {outdir} 变量写入选题决策.md，但 outdir 未在 SKILL.md 中定义为正式输入参数。"
+    },
+    {
+      "id": "ISS-003",
+      "severity": "medium",
+      "from": "story-short-scan-mimo",
+      "to": "story-chapter-write-mimo",
+      "type": "project_dir_declaraction",
+      "issue": "story-short-scan-mimo 未在 frontmatter inputs 中声明 project_dir，与 story-chapter-write-mimo 等下游技能不一致。"
+    },
+    {
+      "id": "ISS-004",
+      "severity": "high",
+      "from": "story-long-scan-mimo",
+      "to": "story-outline-mimo",
+      "type": "file_handoff",
+      "issue": "story-long-scan-mimo Phase 4 产出选题决策.md 写在 {outdir}/选题决策.md（扫榜输出目录），而 story-outline-mimo Step 1 读取 {project_dir}/选题决策.md。两者路径可能不同。需用户手动搬运文件（SKILL.md 有文字提示但无自动化机制）。story-scan-mimo 保存到 '选题决策.md'（无明确路径），同样存在路径不一致风险。"
+    },
+    {
+      "id": "ISS-005",
+      "severity": "low",
+      "from": "story-outline-mimo",
+      "to": "story-chapter-write-mimo",
+      "type": "output_description_mismatch",
+      "issue": "story-outline-mimo description 称 '生成全书卷级大纲和逐卷细纲'，但实际 Step 3 输出为 大纲/卷纲_第X卷.md（含'章节规划'一节的一行描述），而非独立的 大纲/细纲_第XXX章.md 文件。细纲文件由 story-chapter-write-mimo Step 04 按需创建。描述与实际产出有轻微不一致。"
+    },
+    {
+      "id": "ISS-006",
+      "severity": "medium",
+      "from": "story-progress-mimo",
+      "to": "其他技能",
+      "type": "output_not_consumed",
+      "issue": "story-progress-mimo Step 05 创建 大纲/存档/卷X_弧X_弧名.md，但无下游技能读取该目录。存档文件仅作为人类参考，不影响自动化流程，但占用了目录空间且可能引起混淆。"
+    },
+    {
+      "id": "ISS-007",
+      "severity": "low",
+      "from": "story-chapter-write-mimo",
+      "to": "story-progress-mimo",
+      "type": "incomplete_tracking_update",
+      "issue": "story-chapter-write-mimo Step 14 更新追踪文件（伏笔/时间线/角色状态/物品/环境/物资/重复语句/上下文+跨卷追踪+故事线），但不更新 大纲/ 中的状态标记（⏳→📝→✅）。状态标记仅由 story-progress-mimo 管理。如果用户不调用 story-progress-mimo，大纲状态标记会滞后。"
+    },
+    {
+      "id": "ISS-008",
+      "severity": "low",
+      "from": "story-setup-mimo",
+      "to": "下游技能",
+      "type": "unused_artifacts",
+      "issue": "story-setup-mimo 创建了 .active-book、.story-config.json、.story-deployed 等配置文件，但无下游核心技能（outline/progress/chapter-write/quality）显式读取这些文件。这些文件可能仅用于部署检查或外部工具，但在技能链内无消费者。"
+    },
+    {
+      "id": "ISS-009",
+      "severity": "medium",
+      "from": "story-scan-mimo",
+      "to": "story-long-scan-mimo",
+      "type": "output_path_inconsistency",
+      "issue": "story-scan-mimo 保存选题决策到 '选题决策.md'（无明确目录前缀），而 story-long-scan-mimo 写入 '{outdir}/选题决策.md'。两个扫榜技能的选题决策输出路径不一致，下游（outline/write）读取时需处理两种可能路径。"
+    },
+    {
+      "id": "ISS-010",
+      "severity": "low",
+      "from": "story-chapter-write-mimo",
+      "to": "story-progress-mimo",
+      "type": "chapter_number_gap",
+      "issue": "story-chapter-write-mimo auto-detects 下一章号（扫描正文/目录找最大编号），而非从 story-progress-mimo 或大纲获取。如果用户手动创建了正文文件导致编号跳跃，自动检测可能写入错误章节。"
+    }
+  ],
+  "directory_flow_analysis": {
+    "created_by_setup_read_by_others": [
+      {"dir": "设定/", "created_by": "story-setup-mimo", "read_by": ["story-outline-mimo", "story-chapter-write-mimo", "quality-mimo", "story-progress-mimo"]},
+      {"dir": "大纲/", "created_by": "story-setup-mimo", "read_by": ["story-outline-mimo", "story-chapter-write-mimo", "quality-mimo", "story-progress-mimo"]},
+      {"dir": "正文/", "created_by": "story-setup-mimo", "read_by": ["story-chapter-write-mimo", "quality-mimo", "story-progress-mimo"]},
+      {"dir": "追踪/", "created_by": "story-setup-mimo", "read_by": ["story-chapter-write-mimo", "quality-mimo", "story-progress-mimo"]},
+      {"dir": "跨卷追踪/", "created_by": "story-setup-mimo", "read_by": ["story-chapter-write-mimo", "quality-mimo", "story-progress-mimo"]},
+      {"dir": "故事线/", "created_by": "story-setup-mimo", "read_by": ["story-chapter-write-mimo", "quality-mimo", "story-progress-mimo"]},
+      {"dir": "对标/", "created_by": "story-setup-mimo", "read_by": ["story-chapter-write-mimo"]},
+      {"dir": ".workflow/", "created_by": "story-setup-mimo", "read_by": ["story-outline-mimo", "story-chapter-write-mimo", "quality-mimo", "story-progress-mimo"]}
+    ],
+    "created_but_not_read": [
+      {"dir": "拆文库/", "created_by": "story-setup-mimo", "note": "可选目录，非核心技能读取"},
+      {"dir": "参考资料/", "created_by": "story-setup-mimo", "note": "可选目录，非核心技能读取"},
+      {"dir": "大纲/存档/", "created_by": "story-progress-mimo", "note": "存档文件无下游消费者"}
+    ],
+    "read_but_not_created_by_core_skills": [
+      {"dir": "设定/", "note": "由 story-setup-mimo 创建，所有读取技能均依赖此上游"},
+      {"dir": "追踪/", "note": "由 story-setup-mimo 创建，所有读取技能均依赖此上游"}
+    ]
+  },
+  "project_dir_flow": {
+    "summary": "6个核心技能中，4个在 frontmatter inputs 中显式声明 project_dir（outline/progress/chapter-write/quality），3个扫榜技能未声明（scan/long-scan/short-scan）。project_dir 在 prompt 变量中传递，非系统级注入。",
+    "consistent_skills": ["story-outline-mimo", "story-progress-mimo", "story-chapter-write-mimo", "quality-mimo"],
+    "inconsistent_skills": ["story-scan-mimo", "story-long-scan-mimo", "story-short-scan-mimo"]
+  },
+  "verdict": "fail",
+  "verdict_reason": "存在 10 个一致性问题，其中 2 个高/中风险：(1) 3个扫榜技能未声明 project_dir，与下游技能不一致；(2) 选题决策.md 的路径在扫榜→大纲/写作之间需要手动搬运，无自动化机制。其余问题为低风险设计选择或描述不精确。核心文件流（设定→大纲→写作→追踪→质量检查）整体连贯，但 project_dir 传递和文件交接存在断裂点。"
+}

@@ -255,3 +255,89 @@ MiMo Code 的记忆系统是平台内置功能，会自动在 `MEMORY.md` 中保
 
 - 跟随用户的语言回复
 - 中文回复遵循《中文文案排版指北》
+
+---
+
+## Task 跟踪集成
+
+> 规范详见 `_shared/references/task-tracking-conventions.md`。
+
+**触发时第一步：读取下方任务树，然后逐条创建。不跳步。**
+
+**强制执行顺序**：
+1. 读取上方「任务树」
+2. 严格按照列表逐条创建任务
+3. 逐个执行
+
+### 固定任务列表
+
+```
+# ===== 第1层：父任务 =====
+1. task create "T-SETUP: 网文写作基础设施部署"                          → T-SETUP
+
+# ===== 第2层：阶段任务 =====
+2. task create "T-SETUP-PHASE1: Phase 1 检测项目状态"  parent=T-SETUP  → T-SETUP-PHASE1
+3. task create "T-SETUP-PHASE2: Phase 2 配置选项"  parent=T-SETUP      → T-SETUP-PHASE2
+4. task create "T-SETUP-PHASE3: Phase 3 部署基础设施"  parent=T-SETUP  → T-SETUP-PHASE3
+5. task create "T-SETUP-PHASE4: Phase 4 验证安装"  parent=T-SETUP      → T-SETUP-PHASE4
+
+# ===== 第3层：具体步骤 =====
+
+# Phase 1: 检测项目状态
+6. task create "T-SETUP-P1-01: 检查 .story-deployed 标记"  parent=T-SETUP-PHASE1  → T-SETUP-P1-01
+7. task create "T-SETUP-P1-02: 检查是否有书名目录（长篇/短篇识别）"  parent=T-SETUP-PHASE1  → T-SETUP-P1-02
+8. task create "T-SETUP-P1-03: 询问是否重新部署"  parent=T-SETUP-PHASE1  → T-SETUP-P1-03
+
+# Phase 2: 配置选项
+9. task create "T-SETUP-P2-01: 询问用户功能偏好（Git 版本控制、并行章节处理）"  parent=T-SETUP-PHASE2  → T-SETUP-P2-01
+10. task create "T-SETUP-P2-02: 创建 .story-config.json"  parent=T-SETUP-PHASE2  → T-SETUP-P2-02
+
+# Phase 3: 部署基础设施
+11. task create "T-SETUP-P3-01: 根据项目类型创建目录结构（长篇/短篇）"  parent=T-SETUP-PHASE3  → T-SETUP-P3-01
+12. task create "T-SETUP-P3-02: 创建 .story-deployed 标记"  parent=T-SETUP-PHASE3  → T-SETUP-P3-02
+13. task create "T-SETUP-P3-03: 创建 .active-book"  parent=T-SETUP-PHASE3  → T-SETUP-P3-03
+14. task create "T-SETUP-P3-04: 创建项目 AGENTS.md（如不存在）"  parent=T-SETUP-PHASE3  → T-SETUP-P3-04
+15. task create "T-SETUP-P3-05: Git 初始化（仅 version_control=true）"  parent=T-SETUP-PHASE3  → T-SETUP-P3-05
+16. task create "T-SETUP-P3-06: 安装 Git hooks（仅 version_control=true）"  parent=T-SETUP-PHASE3  → T-SETUP-P3-06
+
+# Phase 4: 验证安装
+17. task create "T-SETUP-P4-01: 验证目录结构完整性"  parent=T-SETUP-PHASE4  → T-SETUP-P4-01
+18. task create "T-SETUP-P4-02: 输出安装报告"  parent=T-SETUP-PHASE4  → T-SETUP-P4-02
+19. task create "T-SETUP-P4-03: 提示用户使用 /story-long-write-mimo 或 /story-short-write-mimo"  parent=T-SETUP-PHASE4  → T-SETUP-P4-03
+```
+
+### 条件创建规则
+
+| 任务 | 执行时判断 | 跳过则 abandoned |
+|------|-----------|-----------------|
+| T-SETUP-P1-03 | 检测到已存在 .story-deployed | 用户选择不重新部署则 abandoned 整个 T-SETUP |
+| T-SETUP-P3-05 | version_control=true | false 则 abandoned |
+| T-SETUP-P3-06 | version_control=true | false 则 abandoned |
+| T-SETUP-P3-04 | 项目根目录不存在 AGENTS.md | 已存在则跳过，abandoned |
+
+### 循环处理
+
+| 循环 | 触发 | 处理 |
+|------|------|------|
+| 无 | 部署是一次性流程 | 无循环，顺序执行即可 |
+
+### 完成标准
+
+| 任务 | 完成标准 |
+|------|---------|
+| T-SETUP-P1-01 | .story-deployed 存在性已确认 |
+| T-SETUP-P1-02 | 项目类型（长篇/短篇）已识别 |
+| T-SETUP-P1-03 | 用户确认是否重新部署 |
+| T-SETUP-P2-01 | 用户偏好已收集 |
+| T-SETUP-P2-02 | .story-config.json 已创建 |
+| T-SETUP-P3-01 | 目录结构已创建 |
+| T-SETUP-P3-02 | .story-deployed 已写入 |
+| T-SETUP-P3-03 | .active-book 已创建 |
+| T-SETUP-P3-04 | AGENTS.md 已创建或跳过 |
+| T-SETUP-P3-05 | git init 已执行 |
+| T-SETUP-P3-06 | hooks 已安装 |
+| T-SETUP-P4-01 | 目录结构验证通过 |
+| T-SETUP-P4-02 | 安装报告已输出 |
+| T-SETUP-P4-03 | 使用提示已输出 |
+
+---
