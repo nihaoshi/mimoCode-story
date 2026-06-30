@@ -1,4 +1,4 @@
-﻿---
+---
 name: story-long-write-mimo
 version: 1.0.0
 description: |
@@ -204,21 +204,25 @@ inputs:
 50. task create "T-CONSIST-{N}-FIX: 一致性修正（条件创建）" parent=T-CONSIST-{N}
 51. task create "T-CONSIST-{N}-RECHECK: 一致性复查（条件创建）" parent=T-CONSIST-{N}
 
+# ===== 第3层：百分制评分（条件创建） =====
+52. task create "T-SCORE-{N}: 百分制评分（条件创建）" parent=T-WRITE-{N}
+53. task create "T-SCORE-{N}-FIX: 评分修复（条件创建）" parent=T-WRITE-{N}
+
 # ===== 第3层：追踪文件更新（11个子任务） =====
-52. task create "T-TRACK-{N}-FORESH: 更新伏笔.md"      parent=T-TRACK-{N}
-53. task create "T-TRACK-{N}-TIME: 更新时间线.md"       parent=T-TRACK-{N}
-54. task create "T-TRACK-{N}-CHAR: 更新角色状态.md"     parent=T-TRACK-{N}
-55. task create "T-TRACK-{N}-ITEM: 更新物品.md"         parent=T-TRACK-{N}
-56. task create "T-TRACK-{N}-ENV: 更新环境.md"          parent=T-TRACK-{N}
-57. task create "T-TRACK-{N}-SUPPLY: 更新物资.md"       parent=T-TRACK-{N}
-58. task create "T-TRACK-{N}-REPEAT: 更新重复语句.md"   parent=T-TRACK-{N}
-59. task create "T-TRACK-{N}-CTX: 更新上下文.md"        parent=T-TRACK-{N}
-60. task create "T-TRACK-{N}-STORY-IDX: 更新故事线_索引.md" parent=T-TRACK-{N}
-61. task create "T-TRACK-{N}-STORY-MAIN: 更新故事线_主线_*.md" parent=T-TRACK-{N}
-62. task create "T-TRACK-{N}-STORY-CROSS: 更新故事线_交叉点.md" parent=T-TRACK-{N}
+54. task create "T-TRACK-{N}-FORESH: 更新伏笔.md"      parent=T-TRACK-{N}
+55. task create "T-TRACK-{N}-TIME: 更新时间线.md"       parent=T-TRACK-{N}
+56. task create "T-TRACK-{N}-CHAR: 更新角色状态.md"     parent=T-TRACK-{N}
+57. task create "T-TRACK-{N}-ITEM: 更新物品.md"         parent=T-TRACK-{N}
+58. task create "T-TRACK-{N}-ENV: 更新环境.md"          parent=T-TRACK-{N}
+59. task create "T-TRACK-{N}-SUPPLY: 更新物资.md"       parent=T-TRACK-{N}
+60. task create "T-TRACK-{N}-REPEAT: 更新重复语句.md"   parent=T-TRACK-{N}
+61. task create "T-TRACK-{N}-CTX: 更新上下文.md"        parent=T-TRACK-{N}
+62. task create "T-TRACK-{N}-STORY-IDX: 更新故事线_索引.md" parent=T-TRACK-{N}
+63. task create "T-TRACK-{N}-STORY-MAIN: 更新故事线_主线_*.md" parent=T-TRACK-{N}
+64. task create "T-TRACK-{N}-STORY-CROSS: 更新故事线_交叉点.md" parent=T-TRACK-{N}
 ```
 
-**共62条任务，必须逐条创建。条件创建的任务（第41、42、50、51条）先创建为 open 状态，执行时再判断是否跳过。**
+**共64条任务，必须逐条创建。条件创建的任务（第41、42、50、51、52、53条）先创建为 open 状态，执行时再判断是否跳过。**
 │   ├── T-CTX-{N}-12: 读对标剧情/故事线.md [WARN: 无对标则跳过]
 │   ├── T-CTX-{N}-13: 读对标剧情/{相关线}.md [WARN: 无对标则跳过]
 │   ├── T-CTX-{N}-14: 读对标设定/世界观/*.md [WARN: 无对标则跳过]
@@ -297,6 +301,10 @@ inputs:
 │   │   └── 修正时间线问题
 │   └── [条件] T-CONSIST-{N}-RECHECK: 复查（FIX后创建）
 │
+├── T-SCORE-{N}: 百分制评分（条件创建，质量门禁+一致性通过后）
+│   ├── T-SCORE-{N}-FIX: 评分修复（条件创建，score < 90时）
+│   └── [循环] T-SCORE-{N}-RECHECK: 重新评分（修复后，上限3轮）
+│
 ├── T-TRACK-{N}: 追踪文件更新（串行）
 │   ├── T-TRACK-{N}-FORESH: 伏笔.md
 │   ├── T-TRACK-{N}-TIME: 时间线.md
@@ -328,6 +336,8 @@ inputs:
 | T-GATE-{N}-RECHECK | FIX完成后 start | 无FIX则 abandoned |
 | T-CONSIST-{N}-FIX | 任一检测不通过时 start | 全部通过则 abandoned |
 | T-CONSIST-{N}-RECHECK | FIX完成后 start | 无FIX则 abandoned |
+| T-SCORE-{N} | T-CONSIST通过后 start | T-CONSIST阻断则 abandoned |
+| T-SCORE-{N}-FIX | score < 90时 start | score >= 90则 abandoned |
 
 #### 循环处理
 
@@ -337,6 +347,7 @@ inputs:
 | 质量BLOCK | 任一detect返回BLOCK | 创建对应FIX子任务 → 修正 → RECHECK |
 | 修正后复查 | FIX完成 | 创建RECHECK：① 回到字数验证（改了内容必须重验）→ ② 重新detect → 不通过再FIX（上限3轮） |
 | 一致性修正 | 一致性检测不通过 | 创建FIX → 修正 → RECHECK → 重新检测（上限3轮） |
+| 评分不达标 | score < 90 | 创建FIX → 修复低分维度 → 重新评分（上限3轮） → 3轮后仍不达标则阻断 |
 | 追踪同步 | Phase5修正正文 | 重新创建受影响的TRACK任务 |
 
 #### 修正后完整回环流程
@@ -360,7 +371,16 @@ T-CONSIST-{N}: 一致性检查
     └── 角色声音一致性
     ↓
 如果有不一致 → 创建T-CONSIST-{N}-FIX → 修正 → RECHECK
-如果全部通过 → 进入T-TRACK（追踪文件更新）
+如果全部通过 → 进入T-SCORE（百分制评分）
+    ↓
+T-SCORE-{N}: 百分制评分
+    ├── 运行 writing-scorer.js 生成评审任务
+    ├── 按15维度标准打分
+    ├── score >= 90 → 进入T-TRACK
+    └── score < 90 → 创建T-SCORE-{N}-FIX → 修复低分维度 → 重新评分（上限3轮）
+        → 3轮后仍 < 90 → 阻断
+    ↓
+如果通过 → 进入T-TRACK（追踪文件更新）
 ```
 
 #### 跨会话恢复
@@ -425,6 +445,13 @@ AI：（后台自动执行）
 ```
 
 **质量检查由AI自动执行，用户不需要手动运行node命令**
+
+**Step 5.5：百分制评分（条件创建）**
+质量门禁和一致性检查通过后，spawn 子 agent 进行百分制评分：
+1. 运行 `node skills/_shared/scripts/writing-scorer.js --json <章节文件> <项目目录> --genre <题材>`
+2. 按15维度标准打分
+3. score >= 90 → 继续
+4. score < 90 → 修复低分维度，重新评分（上限3轮），3轮后仍不达标则阻断
 
 **Step 6：更新所有配置文件（三步流程）**
 

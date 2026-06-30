@@ -1,4 +1,4 @@
-﻿---
+---
 name: story-short-write-mimo
 version: 3.0.0
 description: |
@@ -83,6 +83,7 @@ T-SHORT-WRITE: 写短篇「{标题}」
 ├─── Step 4: 综合检测+修复 [子 agent 隔离]
 │    ├── T-SHORT-CHECK-01: 综合质量检测
 │    └── [条件] T-SHORT-CHECK-02: 综合修复+复查（最多3轮）
+│    └── [条件] T-SHORT-CHECK-03: 百分制评分 [子 agent 隔离]
 │
 └─── Step 5: 追踪更新 [主 agent]
      ├── T-SHORT-TRACK-01: 更新所有配置文件（追踪+设定+故事线+跨卷追踪）
@@ -264,8 +265,56 @@ actor({
   ↓
 仍有问题 → 再修复（上限3轮）
   ↓
-全部通过 → Step 5
+全部通过 → Step 4.5 百分制评分
+  ↓
+score >= 90 → Step 5
+score < 90 → 修复低分维度 → 重新评分（上限3轮）→ 仍不达标则阻断
 ```
+
+---
+
+### Step 4.5: 百分制评分（条件创建）
+
+**触发条件**：Step 4 检测修复全部通过后创建
+
+**执行方式**：子agent隔离执行
+
+**prompt**：
+你是章节评分评审 agent。
+
+## 任务
+对刚通过质量门禁的章节进行百分制评分。
+
+## 执行步骤
+1. 运行评分脚本生成评审任务：
+   node skills/_shared/scripts/writing-scorer.js --json <章节文件> <项目目录> --genre <题材>
+2. 读取输出中的 prompt 字段
+3. 作为评审 agent，按照 prompt 中的15维度标准对章节打分
+4. 将评分结果写入追踪/评分记录.md
+5. 返回 JSON 格式结果：{"score": XX, "pass": true/false, "weak_dims": [...], "suggestions": [...]}
+
+## 评分标准
+详见 skills/_shared/references/writing-score-rubric.md
+
+**判定规则**：
+score >= 90 → 通过
+score < 90 → 创建 Step 4.6 修复任务
+
+### Step 4.6: 评分修复（条件创建）
+
+**触发条件**：评分 < 90
+
+**执行方式**：子agent隔离执行
+
+**prompt**：
+你是章节评分修复 agent。
+针对评分不达标的维度进行定向修复。
+- 仅修改低分维度涉及的内容
+- 修复时参考 writing-score-rubric.md 对应维度标准
+- 修复后不得破坏其他维度的得分
+
+**后续流程**：
+修复后重新评分 → 仍 < 90 则再修复（上限3轮） → 3轮后仍不达标则阻断
 
 ---
 

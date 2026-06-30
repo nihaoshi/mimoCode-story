@@ -5,7 +5,7 @@ const { execFileSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-const USAGE = `Usage: node quality-gate.js <chapter-file> [project-dir] [--json] [--full]
+const USAGE = `Usage: node quality-gate.js <chapter-file> [project-dir] [options]
 
 Unified quality gate that runs all checks and blocks output if standards aren't met.
 
@@ -19,12 +19,17 @@ Checks:
   7. emotion-analyzer — Emotion curve flatness → WARN
   8. satisfaction      — Satisfaction point density → WARN
   9. detect-story-gaps — Setting/outline/tracking gaps → WARN (full mode only)
+  10. writing-score   — 百分制评分（--genre 选择题材模板）
 
 Options:
   --json              Output structured JSON
   --full              Enable enhanced checks (identity, timeline, format)
   --target-words N    Override target word count (default: from 细纲 or 3000)
   --window N          Cross-chapter window size (default: 5)
+  --genre NAME        题材模板（默认: default，可选: xuanhuan/xianxia/dushi/xuanyi/yanqing/lishi/kehuan/moshi/chongsheng/chuanyue/xitong/wuxianliu/gongdou/duanpian）
+  --no-score          跳过百分制评分
+  --score N           直接传入评分结果（跳过 LLM 评审，仅做阈值判断）
+  --threshold N       评分通过阈值（默认: 90）
   --skip-lint         Skip style-lint check
   --skip-consistency  Skip consistency check
   --skip-foreshadow   Skip foreshadow check
@@ -35,9 +40,10 @@ Options:
   --fast              Only run blocking checks (skip warnings)
 
 Exit codes:
-  0 = all passed
+  0 = all passed (including score >= threshold)
   1 = warnings only (non-blocking)
-  2 = blocked (must fix before continuing)`;
+  2 = blocked (must fix before continuing)
+  3 = score_fail (rule checks passed but score < threshold)`;
 
 function runScript(scriptPath, args) {
   try {
@@ -100,10 +106,15 @@ function main() {
   const skipEmotion = args.includes('--skip-emotion');
   const skipSatisfaction = args.includes('--skip-satisfaction');
   const fastMode = args.includes('--fast');
+  const noScore = args.includes('--no-score');
+  const genre = args.includes('--genre') ? args[args.indexOf('--genre') + 1] : 'default';
+  const directScore = args.includes('--score') ? parseInt(args[args.indexOf('--score') + 1], 10) : null;
+  const threshold = args.includes('--threshold') ? parseInt(args[args.indexOf('--threshold') + 1], 10) : 90;
 
   const filteredArgs = args.filter(a =>
     a !== '--json' && a !== '--full' && a !== '--skip-lint' && a !== '--skip-consistency' && a !== '--skip-foreshadow' &&
-    a !== '--skip-cross-chapter' && a !== '--skip-voice' && a !== '--skip-emotion' && a !== '--skip-satisfaction' && a !== '--fast'
+    a !== '--skip-cross-chapter' && a !== '--skip-voice' && a !== '--skip-emotion' && a !== '--skip-satisfaction' &&
+    a !== '--fast' && a !== '--no-score' && a !== '--genre' && a !== '--score' && a !== '--threshold'
   );
 
   if (filteredArgs.length === 0 || filteredArgs[0] === '--help') {
@@ -257,7 +268,47 @@ function main() {
     }
   }
 
-  const overallStatus = blockers.length > 0 ? 'blocked' : (warnings.length > 0 ? 'warn' : 'pass');
+  // --- Scoring layer ---
+  let scoreResult = null;
+  let scoreFailed = false;
+
+  if (blockers.length === 0 && warnings.length === 0 && !noScore) {
+    if (directScore !== null) {
+      // Direct score provided (from LLM evaluation)
+      scoreResult = {
+        status: directScore >= threshold ? 'pass' : 'fail',
+        score: directScore,
+        threshold: threshold,
+        source: 'direct',
+      };
+      if (directScore < threshold) {
+        scoreFailed = true;
+      }
+    } else {
+      // Generate evaluation prompt via writing-scorer.js
+      const scorerScript = path.join(scriptsDir, 'writing-scorer.js');
+      const scorerArgs = ['--json', chapterFile, projectDir, '--genre', genre];
+      const r = runScript(scorerScript, scorerArgs);
+      const data = parseJsonOutput(r.output);
+      if (data && data.status === 'ready') {
+        scoreResult = {
+          status: 'pending',
+          prompt: data.prompt,
+          threshold: data.threshold,
+          genre: data.genre,
+          dimensions: data.dimensions,
+          source: 'scorer',
+        };
+      } else {
+        scoreResult = { status: 'error', raw: r.output };
+      }
+    }
+  }
+
+  const overallStatus = blockers.length > 0 ? 'blocked'
+    : (warnings.length > 0 ? 'warn'
+    : (scoreFailed ? 'score_fail'
+    : 'pass'));
 
   if (jsonMode) {
     const result = {
@@ -272,8 +323,14 @@ function main() {
       warnings,
       details: results,
     };
+    if (scoreResult) {
+      result.score = scoreResult;
+    }
     console.log(JSON.stringify(result, null, 2));
-    process.exit(blockers.length > 0 ? 2 : (warnings.length > 0 ? 1 : 0));
+    if (blockers.length > 0) process.exit(2);
+    if (warnings.length > 0) process.exit(1);
+    if (scoreFailed) process.exit(3);
+    process.exit(0);
   }
 
   console.log('🔍 质量门禁检查报告');
@@ -348,11 +405,24 @@ function main() {
     warnings.forEach((w, i) => console.log(`  ${i + 1}. ${w}`));
   }
 
-  if (blockers.length === 0 && warnings.length === 0) {
+  if (scoreResult) {
+    if (scoreResult.status === 'pass') {
+      console.log(`✅ 评分通过：${scoreResult.score}/${threshold}`);
+    } else if (scoreResult.status === 'fail') {
+      console.log(`❌ 评分不达标：${scoreResult.score}/${threshold}（需修复后重评）`);
+    } else if (scoreResult.status === 'pending') {
+      console.log(`📝 评分待执行：请用子 agent 对章节执行 LLM 评审`);
+    }
+  }
+
+  if (blockers.length === 0 && warnings.length === 0 && !scoreFailed) {
     console.log('\n✅ 全部通过！可以继续。');
   }
 
-  process.exit(blockers.length > 0 ? 2 : (warnings.length > 0 ? 1 : 0));
+  if (blockers.length > 0) process.exit(2);
+  if (warnings.length > 0) process.exit(1);
+  if (scoreFailed) process.exit(3);
+  process.exit(0);
 }
 
 main();

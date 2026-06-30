@@ -1,4 +1,4 @@
-﻿---
+---
 name: story-rewrite-mimo
 version: 1.0.0
 description: |
@@ -231,6 +231,13 @@ actor({
     "context": "none"
   }
 })
+
+// Step 09.5: 百分制评分（条件创建）
+// Step 08 检测通过后，进行百分制评分
+// 运行 writing-scorer.js 生成评审任务
+// 按15维度标准打分
+// score >= 90 → 继续
+// score < 90 → 修复低分维度，重新评分（上限3轮），3轮后仍不达标则阻断
 
 // Step 10: 更新所有配置文件（三步流程）（主 agent）
 // 重写可能影响伏笔、角色状态等，需要更新所有配置文件
