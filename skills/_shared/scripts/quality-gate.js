@@ -272,6 +272,7 @@ function main() {
   let scoreResult = null;
   let scoreFailed = false;
 
+  // 评分仅在无阻断且无警告时执行（有警告时需先处理warn，复查通过后再评分）
   if (blockers.length === 0 && warnings.length === 0 && !noScore) {
     if (directScore !== null) {
       // Direct score provided (from LLM evaluation)

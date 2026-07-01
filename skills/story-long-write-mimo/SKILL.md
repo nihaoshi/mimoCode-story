@@ -287,7 +287,7 @@ inputs:
 │       ├── T-GATE-{N}-RECHECK-COUNT: 回到字数验证（改了内容必须重验字数）
 │       └── T-GATE-{N}-RECHECK-QUAL: 重新detect-quality
 │
-├── T-CONSIST-{N}: 一致性检查（质量门禁通过后执行）
+├── T-CONSIST-{N}: 一致性检查（质量门禁无阻断且无警告后执行）
 │   ├── T-CONSIST-{N}-ITEM: detect-consistency — 物品位置是否前后一致
 │   ├── T-CONSIST-{N}-CHAR: detect-consistency — 角色状态是否前后一致
 │   ├── T-CONSIST-{N}-ENV: detect-consistency — 环境描述是否前后一致
@@ -301,7 +301,7 @@ inputs:
 │   │   └── 修正时间线问题
 │   └── [条件] T-CONSIST-{N}-RECHECK: 复查（FIX后创建）
 │
-├── T-SCORE-{N}: 百分制评分（条件创建，质量门禁+一致性通过后）
+├── T-SCORE-{N}: 百分制评分（条件创建，质量门禁+一致性无阻断且无警告后）
 │   ├── T-SCORE-{N}-FIX: 评分修复（条件创建，score < 90时）
 │   └── [循环] T-SCORE-{N}-RECHECK: 重新评分（修复后，上限3轮）
 │
@@ -336,7 +336,7 @@ inputs:
 | T-GATE-{N}-RECHECK | FIX完成后 start | 无FIX则 abandoned |
 | T-CONSIST-{N}-FIX | 任一检测不通过时 start | 全部通过则 abandoned |
 | T-CONSIST-{N}-RECHECK | FIX完成后 start | 无FIX则 abandoned |
-| T-SCORE-{N} | T-CONSIST通过后 start | T-CONSIST阻断则 abandoned |
+| T-SCORE-{N} | T-CONSIST无阻断且无警告后 start | T-CONSIST阻断或有警告则 abandoned |
 | T-SCORE-{N}-FIX | score < 90时 start | score >= 90则 abandoned |
 
 #### 循环处理
@@ -360,7 +360,8 @@ T-GATE-{N}-RECHECK-COUNT: 回到字数验证（改了内容可能影响字数）
 T-GATE-{N}-RECHECK-QUAL: 重新detect-quality
     ↓
 如果仍有BLOCK → 再创建FIX（上限3轮）
-如果全部通过 → 进入T-CONSIST（一致性检查）
+如果无阻断且无警告 → 进入T-CONSIST（一致性检查）
+如果有警告 → 创建FIX处理警告 → 复查通过后进入T-CONSIST
     ↓
 T-CONSIST-{N}: 一致性检查
     ├── 物品位置一致性
@@ -371,7 +372,8 @@ T-CONSIST-{N}: 一致性检查
     └── 角色声音一致性
     ↓
 如果有不一致 → 创建T-CONSIST-{N}-FIX → 修正 → RECHECK
-如果全部通过 → 进入T-SCORE（百分制评分）
+如果无阻断且无警告 → 进入T-SCORE（百分制评分）
+如果有警告 → 创建T-CONSIST-FIX处理警告 → 复查 → 无警告后进入T-SCORE
     ↓
 T-SCORE-{N}: 百分制评分
     ├── 运行 writing-scorer.js 生成评审任务
@@ -439,19 +441,26 @@ AI在写作流程中自动调用质量检查脚本，用户只需说"继续写"�
 用户：继续写
 AI：（后台自动执行）
 1. 写第{N}章
-2. 调用 quality-gate.js 检查 → 通过
-3. 更新所有配置文件
-4. 输出：第{N}章完成，继续吗？
+2. 调用 quality-gate.js 检查 → 通过（无阻断且无警告）
+3. 如有警告 → 创建FIX任务处理 → 复查通过
+4. 更新所有配置文件
+5. 输出：第{N}章完成，继续吗？
 ```
 
 **质量检查由AI自动执行，用户不需要手动运行node命令**
 
 **Step 5.5：百分制评分（条件创建）**
-质量门禁和一致性检查通过后，spawn 子 agent 进行百分制评分：
+质量门禁和一致性检查**无阻断且无警告**后，spawn 子 agent 进行百分制评分：
 1. 运行 `node skills/_shared/scripts/writing-scorer.js --json <章节文件> <项目目录> --genre <题材>`
 2. 按15维度标准打分
 3. score >= 90 → 继续
 4. score < 90 → 修复低分维度，重新评分（上限3轮），3轮后仍不达标则阻断
+
+**⚠️ 重要：warn 也必须处理！**
+- quality-gate.js 返回 warn（exit code 1）时，必须创建 FIX 任务处理警告
+- 处理完后重新运行 quality-gate.js 复查
+- 复查通过（exit code 0）后才能进入评分
+- **不可跳过 warn 直接执行评分**
 
 **Step 6：更新所有配置文件（三步流程）**
 
@@ -471,12 +480,14 @@ AI：（后台自动执行）
 - 角色弧线阶段变化？→ 需要更新跨卷追踪/跨卷角色弧线.md
 - 接近卷末？→ 需要检查跨卷追踪/卷间过渡.md
 
-**Step C：按清单更新文件** — 只更新变更涉及的文件
+**Step C：按清单更新文件（必须实际执行，不可只列出）**
+- **必须用 Edit/Write 工具实际修改文件**，不能只是列出需要更新的文件
 - 始终更新：追踪/时间线.md（记录事件时序）、追踪/上下文.md（进度摘要）、追踪/重复语句.md（记录重复表达）
 - 按变更清单更新其余文件（对照 Step A 文件清单 + Step B 变更清单）
-- 设定文件回写：正文揭示新信息影响设定时，同步更新对应设定/文件
+- **设定文件回写（必须执行）**：正文揭示新信息影响设定时，必须用 Edit 工具更新对应设定/文件
 - 跨卷追踪更新：涉及跨卷伏笔回收/推进或角色弧线变化时，更新跨卷追踪/下对应文件
 - 故事线更新：故事线推进时更新故事线/故事线_*.md
+- **防偷懒**：Step B 列出的每个变更项，Step C 必须实际执行编辑操作
 
 **角色同步**：更新完角色状态后，运行：
 ```bash

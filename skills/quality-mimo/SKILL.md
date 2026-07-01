@@ -1,4 +1,4 @@
-﻿---
+---
 name: quality-mimo
 version: 2.0.0
 description: |
@@ -295,6 +295,18 @@ node {skill_dir}/scripts/step-guard.js post {step} {workflow_dir}
 ```bash
 node $HOME/.config/mimocode/skills/_shared/scripts/quality-gate.js <章节文件> <项目目录>
 ```
+
+**返回值说明**：
+- `exit code 0`：全部通过（无阻断、无警告）
+- `exit code 1`：有警告（WARN）— **必须处理警告后复查，不可跳过**
+- `exit code 2`：有阻断项（BLOCK）— 必须修复后复查
+- `exit code 3`：评分不达标（score < 90）— 需修复后重新评分
+
+**⚠️ 重要：warn 也必须处理！**
+- 返回 exit code 1 时，必须创建 FIX 任务处理警告
+- 处理完后重新运行 quality-gate.js 复查
+- 复查通过（exit code 0）后才能继续后续流程
+- **不可跳过 warn 直接执行后续步骤**
 
 **检查项目**（由以下原子 skill 执行）：
 - 调用原子 `detect-quality` — 禁用词+AI腔检测

@@ -305,7 +305,13 @@ node skills/story-long-write-mimo/scripts/step-guard.js post exec {workflow_dir}
 
 ## Phase 2.5：百分制评分（条件创建）
 
-**触发条件**：Phase 2 去AI味修复全部通过后创建
+**触发条件**：Phase 2 去AI味修复**无阻断且无警告**后创建
+
+**⚠️ 重要：warn 也必须处理！**
+- quality-gate.js 返回 warn（exit code 1）时，必须创建 FIX 任务处理警告
+- 处理完后重新运行 quality-gate.js 复查
+- 复查通过（exit code 0）后才能进入评分
+- **不可跳过 warn 直接执行评分**
 
 **执行方式**：子agent隔离执行
 
