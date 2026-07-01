@@ -380,6 +380,8 @@ node skills/_shared/scripts/character-sync.js 项目目录
 - 修复 6 个写作 skill 评分触发条件：统一改为"无阻断且无警告"后才执行评分
 - 修复 6 个写作 skill warn 处理：添加 `warn 必须处理，不可跳过` 强制提示
 - 修复 6 个写作 skill 设定回写：添加 `必须实际执行编辑，不可只列出` 要求
+- 修复 5 个写作 skill 条件任务表格：补充评分任务触发条件（Step 13.5/4.5/09.5）
+- 修复 3 个写作 skill 修复循环流程图：补充评分步骤位置
 - 涉及文件：`quality-gate.js`、`story-long-write-mimo`、`story-chapter-write-mimo`、`story-chapter-fast-write-mimo`、`story-chapter-ultra-write-mimo`、`story-short-write-mimo`、`story-deslop-mimo`、`story-rewrite-mimo`、`quality-mimo`
 
 ### v5.8.0（2026-06-30）
