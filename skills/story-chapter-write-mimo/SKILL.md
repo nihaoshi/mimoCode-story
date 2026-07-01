@@ -550,6 +550,8 @@ score < 90 → 创建 Step 13.6 修复任务
 | Step 07 | step06.need_new_settings=true | abandoned |
 | Step 12 | step11有任何WARN或BLOCK | abandoned |
 | Step 13 | step12存在 | abandoned |
+| Step 13.5 | Step 11无阻断且无警告（或Step 13复查通过） | abandoned |
+| Step 13.6 | score < 90 | abandoned |
 | Step 14.5 | step14完成 | abandoned |
 
 ---

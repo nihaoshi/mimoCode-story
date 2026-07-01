@@ -379,6 +379,8 @@ score < 90 → 创建 Step 4.6 修复任务
 | 任务 | 触发条件 | 跳过则 |
 |------|---------|--------|
 | T-SHORT-CHECK-02 | 检测有任何WARN或BLOCK | abandoned |
+| Step 4.5 | Step 4检测无阻断且无警告 | abandoned |
+| Step 4.6 | score < 90 | abandoned |
 
 ---
 

@@ -519,6 +519,8 @@ T-REWRITE-{N}: 重写第{N}章
 | T-RW-{N}-06 | 用户选择风格重写 | abandoned |
 | T-RW-{N}-07 | 用户选择增强重写 | abandoned |
 | T-RW-{N}-09 | Step 08 有 BLOCK | abandoned |
+| Step 09.5 | Step 08无阻断且无警告 | abandoned |
+| Step 09.6 | score < 90 | abandoned |
 | T-RW-{N}-10d | Step 10c BLOCK/WARN + 用户确认 | abandoned |
 
 ---
