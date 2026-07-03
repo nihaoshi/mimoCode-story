@@ -12,13 +12,13 @@ Unified quality gate that runs all checks and blocks output if standards aren't 
 Checks:
   1. style-lint       — Level 1 banned words → BLOCK
   2. consistency      — Item/environment/character/timeline errors → BLOCK
-  3. foreshadow       — Overdue foreshadowing (>50 chapters) → WARN
+  3. foreshadow       — Overdue foreshadowing (>50 chapters) → BLOCK
   4. wordcount        — Chapter word count < target 90% → BLOCK
-  5. cross-chapter    — Cross-chapter duplicate detection → WARN
-  6. voice-check      — Character voice consistency → WARN
-  7. emotion-analyzer — Emotion curve flatness → WARN
-  8. satisfaction      — Satisfaction point density → WARN
-  9. detect-story-gaps — Setting/outline/tracking gaps → WARN (full mode only)
+  5. cross-chapter    — Cross-chapter duplicate detection → BLOCK
+  6. voice-check      — Character voice consistency → BLOCK
+  7. emotion-analyzer — Emotion curve flatness → BLOCK
+  8. satisfaction      — Satisfaction point density → BLOCK
+  9. detect-story-gaps — Setting/outline/tracking gaps → BLOCK (full mode only)
   10. writing-score   — 百分制评分（--genre 选择题材模板）
 
 Options:
@@ -41,8 +41,7 @@ Options:
 
 Exit codes:
   0 = all passed (including score >= threshold)
-  1 = warnings only (non-blocking)
-  2 = blocked (must fix before continuing)
+  2 = blocked (any issue found, must fix before continuing)
   3 = score_fail (rule checks passed but score < threshold)`;
 
 function runScript(scriptPath, args) {
@@ -144,7 +143,6 @@ function main() {
   };
 
   const blockers = [];
-  const warnings = [];
 
   if (!skipLint) {
     const script = path.join(scriptsDir, 'style-lint.js');
@@ -170,7 +168,7 @@ function main() {
     if (data && data.status === 'error') {
       blockers.push(`一致性检查错误：${data.summary.errors} 个错误`);
     } else if (data && data.status === 'warn') {
-      warnings.push(`一致性检查警告：${data.summary.warnings} 个警告`);
+      blockers.push(`一致性检查警告：${data.summary.warnings} 个警告`);
     }
   }
 
@@ -183,7 +181,7 @@ function main() {
     results.foreshadow = data || { status: 'error', raw: r.output };
 
     if (data && data.status === 'warn' && data.summary.overdue > 0) {
-      warnings.push(`伏笔逾期：${data.summary.overdue} 条伏笔超过 50 章未回收`);
+      blockers.push(`伏笔逾期：${data.summary.overdue} 条伏笔超过 50 章未回收`);
     }
   }
 
@@ -215,7 +213,7 @@ function main() {
 
     if (data && data.status === 'warn') {
       const total = (data.summary.sentence_dupes || 0) + (data.summary.paragraph_dupes || 0) + (data.summary.action_dupes || 0);
-      warnings.push(`跨章重复：${total} 处重复（句子${data.summary.sentence_dupes || 0}、段落${data.summary.paragraph_dupes || 0}、动作${data.summary.action_dupes || 0}）`);
+      blockers.push(`跨章重复：${total} 处重复（句子${data.summary.sentence_dupes || 0}、段落${data.summary.paragraph_dupes || 0}、动作${data.summary.action_dupes || 0}）`);
     }
   }
 
@@ -226,7 +224,7 @@ function main() {
     results.voice = data || { status: 'error', raw: r.output };
 
     if (data && data.status === 'warn') {
-      warnings.push(`角色声音：${data.summary.warnings} 个警告`);
+      blockers.push(`角色声音：${data.summary.warnings} 个警告`);
     }
   }
 
@@ -237,7 +235,7 @@ function main() {
     results.emotion = data || { status: 'error', raw: r.output };
 
     if (data && data.status === 'warn') {
-      warnings.push(`情绪曲线：${data.summary.flat_warnings} 个平坦警告`);
+      blockers.push(`情绪曲线：${data.summary.flat_warnings} 个平坦警告`);
     }
   }
 
@@ -248,7 +246,7 @@ function main() {
     results.satisfaction = data || { status: 'error', raw: r.output };
 
     if (data && data.status === 'warn') {
-      warnings.push(`爽点密度：间距 ${data.summary.max_gap} 字超过目标`);
+      blockers.push(`爽点密度：间距 ${data.summary.max_gap} 字超过目标`);
     }
   }
 
@@ -260,10 +258,10 @@ function main() {
 
     if (data && data.summary) {
       if (data.summary.totalBlocking > 0) {
-        warnings.push(`设定缺口：${data.summary.totalBlocking} 个阻断缺口`);
+        blockers.push(`设定缺口：${data.summary.totalBlocking} 个阻断缺口`);
       }
       if (data.summary.totalWarnings > 0) {
-        warnings.push(`设定缺口：${data.summary.totalWarnings} 个警告`);
+        blockers.push(`设定缺口：${data.summary.totalWarnings} 个警告`);
       }
     }
   }
@@ -272,8 +270,8 @@ function main() {
   let scoreResult = null;
   let scoreFailed = false;
 
-  // 评分仅在无阻断且无警告时执行（有警告时需先处理warn，复查通过后再评分）
-  if (blockers.length === 0 && warnings.length === 0 && !noScore) {
+  // 评分仅在无阻断时执行
+  if (blockers.length === 0 && !noScore) {
     if (directScore !== null) {
       // Direct score provided (from LLM evaluation)
       scoreResult = {
@@ -307,9 +305,8 @@ function main() {
   }
 
   const overallStatus = blockers.length > 0 ? 'blocked'
-    : (warnings.length > 0 ? 'warn'
     : (scoreFailed ? 'score_fail'
-    : 'pass'));
+    : 'pass');
 
   if (jsonMode) {
     const result = {
@@ -317,11 +314,9 @@ function main() {
       file: chapterFile,
       summary: {
         blockers: blockers.length,
-        warnings: warnings.length,
         checks_run: Object.values(results).filter(v => v !== null).length,
       },
       blockers,
-      warnings,
       details: results,
     };
     if (scoreResult) {
@@ -329,7 +324,6 @@ function main() {
     }
     console.log(JSON.stringify(result, null, 2));
     if (blockers.length > 0) process.exit(2);
-    if (warnings.length > 0) process.exit(1);
     if (scoreFailed) process.exit(3);
     process.exit(0);
   }
@@ -401,11 +395,6 @@ function main() {
     blockers.forEach((b, i) => console.log(`  ${i + 1}. ${b}`));
   }
 
-  if (warnings.length > 0) {
-    console.log('\n⚠️  警告项（建议修复）：');
-    warnings.forEach((w, i) => console.log(`  ${i + 1}. ${w}`));
-  }
-
   if (scoreResult) {
     if (scoreResult.status === 'pass') {
       console.log(`✅ 评分通过：${scoreResult.score}/${threshold}`);
@@ -416,12 +405,11 @@ function main() {
     }
   }
 
-  if (blockers.length === 0 && warnings.length === 0 && !scoreFailed) {
+  if (blockers.length === 0 && !scoreFailed) {
     console.log('\n✅ 全部通过！可以继续。');
   }
 
   if (blockers.length > 0) process.exit(2);
-  if (warnings.length > 0) process.exit(1);
   if (scoreFailed) process.exit(3);
   process.exit(0);
 }

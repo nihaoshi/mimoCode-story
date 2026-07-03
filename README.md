@@ -305,13 +305,13 @@ node skills/_shared/scripts/character-sync.js 项目目录
   ├── 第一层：脚本检查（客观项）
   │   ├── style-lint        一级禁用词 > 0 → 阻断
   │   ├── consistency       物品/环境/角色/时间线错误 → 阻断
-  │   ├── foreshadow        伏笔逾期 > 50 章 → 警告
+  │   ├── foreshadow        伏笔逾期 > 50 章 → 阻断
   │   ├── wordcount         字数 < 目标 90% → 阻断
-  │   ├── cross-chapter     跨章重复检测 → 警告
-  │   ├── voice-check       角色声音不一致 → 警告
-  │   ├── emotion-analyzer  情绪曲线平坦 → 警告
-  │   ├── satisfaction      爽点密度不足 → 警告
-  │   └── detect-gaps       设定缺口/大纲缺失 → 警告
+  │   ├── cross-chapter     跨章重复检测 → 阻断
+  │   ├── voice-check       角色声音不一致 → 阻断
+  │   ├── emotion-analyzer  情绪曲线平坦 → 阻断
+  │   ├── satisfaction      爽点密度不足 → 阻断
+  │   └── detect-gaps       设定缺口/大纲缺失 → 阻断
   │
   └── 第二层：百分制评分（主观项）
       ├── 15维度LLM评审（开场/情感/结构/语言/细节/过渡/逻辑/对比/张力/亲和/感官/节奏/连贯/具体化/爆发力）
@@ -321,12 +321,11 @@ node skills/_shared/scripts/character-sync.js 项目目录
 
 退出码：
   0 = 全部通过（含评分 ≥ 90）
-  1 = 有警告（必须处理后复查，不可跳过）
-  2 = 有阻断项（必须修复）
+  2 = 有问题（必须修复后复查）
   3 = 评分不达标（需修复后重评）
 
-⚠️ 重要：warn 也必须处理！
-  - 返回 exit code 1 时，必须创建 FIX 任务处理警告
+⚠️ 重要：任何问题都必须处理！
+  - 返回 exit code 2 时，必须修复所有阻断项
   - 处理完后重新运行 quality-gate.js 复查
   - 复查通过（exit code 0）后才能继续后续流程
 ```
@@ -374,6 +373,13 @@ node skills/_shared/scripts/character-sync.js 项目目录
 ## 更新日志
 
 ### v5.8.2（2026-07-03）
+
+**质量门禁简化**：
+- 移除 WARN 级别，所有问题统一为 BLOCK（exit code 2）
+- 只有 exit code 0 才能进入下一步（评分/继续写作）
+- 修改 `quality-gate.js`：9 项检查全部改为阻断
+- 修改 7 个 SKILL.md：更新退出码说明和评分触发条件
+- 更新 README 质量门禁体系图示
 
 **脚本路径全面修复**：
 - 修复 `story-chapter-fast-write-mimo`：创建缺失的 `scripts/` 目录，复制 `step-guard.js`

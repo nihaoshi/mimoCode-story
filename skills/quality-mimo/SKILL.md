@@ -297,16 +297,15 @@ node $HOME/.config/mimocode/skills/_shared/scripts/quality-gate.js <章节文件
 ```
 
 **返回值说明**：
-- `exit code 0`：全部通过（无阻断、无警告）
-- `exit code 1`：有警告（WARN）— **必须处理警告后复查，不可跳过**
-- `exit code 2`：有阻断项（BLOCK）— 必须修复后复查
+- `exit code 0`：全部通过
+- `exit code 2`：有问题（必须修复后复查）
 - `exit code 3`：评分不达标（score < 90）— 需修复后重新评分
 
-**⚠️ 重要：warn 也必须处理！**
-- 返回 exit code 1 时，必须创建 FIX 任务处理警告
+**⚠️ 重要：任何问题都必须处理！**
+- 返回 exit code 2 时，必须修复所有阻断项
 - 处理完后重新运行 quality-gate.js 复查
 - 复查通过（exit code 0）后才能继续后续流程
-- **不可跳过 warn 直接执行后续步骤**
+- **有问题必须修复，不可跳过**
 
 **检查项目**（由以下原子 skill 执行）：
 - 调用原子 `detect-quality` — 禁用词+AI腔检测
