@@ -135,7 +135,7 @@ function main() {
   const metrics = calculateMetrics(analysis);
 
   const densityOk = metrics.density <= targetGap;
-  const status = densityOk ? 'pass' : 'warn';
+  const status = densityOk ? 'pass' : 'fail';
 
   if (jsonMode) {
     const result = {

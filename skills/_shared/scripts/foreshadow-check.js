@@ -187,7 +187,7 @@ function main() {
 
   if (jsonMode) {
     const result = {
-      status: warnings.length > 0 ? 'warn' : 'pass',
+      status: warnings.length > 0 ? 'fail' : 'pass',
       file: chapterFile,
       summary: { total: tracked.length, recovered: tracked.length - unrecovered.length, pending: unrecovered.length, overdue: overdue.length },
       issues: warnings,

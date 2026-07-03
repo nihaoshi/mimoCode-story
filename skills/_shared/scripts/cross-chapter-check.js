@@ -382,7 +382,7 @@ function main() {
     chapters_checked: previousContents.length,
   };
   
-  const status = allIssues.length > 0 ? 'warn' : 'pass';
+  const status = allIssues.length > 0 ? 'fail' : 'pass';
   
   if (jsonMode) {
     console.log(JSON.stringify({

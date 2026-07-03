@@ -189,7 +189,7 @@ function main() {
 
   if (jsonMode) {
     const result = {
-      status: warnings.length > 0 ? 'warn' : 'pass',
+      status: warnings.length > 0 ? 'fail' : 'pass',
       file: chapterFile,
       summary: {
         characters_found: Object.keys(voices).length,

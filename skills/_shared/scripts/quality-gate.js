@@ -167,8 +167,8 @@ function main() {
 
     if (data && data.status === 'error') {
       blockers.push(`一致性检查错误：${data.summary.errors} 个错误`);
-    } else if (data && data.status === 'warn') {
-      blockers.push(`一致性检查警告：${data.summary.warnings} 个警告`);
+    } else if (data && data.status === 'fail') {
+      blockers.push(`一致性检查：${data.summary.warnings} 个问题`);
     }
   }
 
@@ -180,7 +180,7 @@ function main() {
     const data = parseJsonOutput(r.output);
     results.foreshadow = data || { status: 'error', raw: r.output };
 
-    if (data && data.status === 'warn' && data.summary.overdue > 0) {
+    if (data && data.status === 'fail' && data.summary.overdue > 0) {
       blockers.push(`伏笔逾期：${data.summary.overdue} 条伏笔超过 50 章未回收`);
     }
   }
@@ -211,7 +211,7 @@ function main() {
     const data = parseJsonOutput(r.output);
     results.cross_chapter = data || { status: 'error', raw: r.output };
 
-    if (data && data.status === 'warn') {
+    if (data && data.status === 'fail') {
       const total = (data.summary.sentence_dupes || 0) + (data.summary.paragraph_dupes || 0) + (data.summary.action_dupes || 0);
       blockers.push(`跨章重复：${total} 处重复（句子${data.summary.sentence_dupes || 0}、段落${data.summary.paragraph_dupes || 0}、动作${data.summary.action_dupes || 0}）`);
     }
@@ -223,8 +223,8 @@ function main() {
     const data = parseJsonOutput(r.output);
     results.voice = data || { status: 'error', raw: r.output };
 
-    if (data && data.status === 'warn') {
-      blockers.push(`角色声音：${data.summary.warnings} 个警告`);
+    if (data && data.status === 'fail') {
+      blockers.push(`角色声音：${data.summary.warnings} 个问题`);
     }
   }
 
@@ -234,8 +234,8 @@ function main() {
     const data = parseJsonOutput(r.output);
     results.emotion = data || { status: 'error', raw: r.output };
 
-    if (data && data.status === 'warn') {
-      blockers.push(`情绪曲线：${data.summary.flat_warnings} 个平坦警告`);
+    if (data && data.status === 'fail') {
+      blockers.push(`情绪曲线：${data.summary.flat_warnings} 个问题`);
     }
   }
 
@@ -245,7 +245,7 @@ function main() {
     const data = parseJsonOutput(r.output);
     results.satisfaction = data || { status: 'error', raw: r.output };
 
-    if (data && data.status === 'warn') {
+    if (data && data.status === 'fail') {
       blockers.push(`爽点密度：间距 ${data.summary.max_gap} 字超过目标`);
     }
   }

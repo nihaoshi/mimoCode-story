@@ -186,7 +186,7 @@ function main() {
 
   if (jsonMode) {
     const result = {
-      status: flatWarnings.length > 0 ? 'warn' : 'pass',
+      status: flatWarnings.length > 0 ? 'fail' : 'pass',
       file: chapterFile,
       summary: {
         total_paragraphs: paragraphs.length,

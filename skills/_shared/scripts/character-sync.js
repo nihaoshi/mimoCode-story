@@ -217,7 +217,7 @@ function main() {
     fs.writeFileSync(trackingPath, trackingContent, 'utf-8');
   }
 
-  const status = issues.length > 0 ? 'warn' : 'pass';
+  const status = issues.length > 0 ? 'fail' : 'pass';
 
   if (jsonMode) {
     console.log(JSON.stringify({

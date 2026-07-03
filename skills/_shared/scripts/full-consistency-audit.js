@@ -156,7 +156,7 @@ function main() {
   // 输出结果
   if (jsonMode) {
     const result = {
-      status: allIssues.length === 0 ? 'pass' : (allIssues.some(i => i.level === 2) ? 'error' : 'warn'),
+      status: allIssues.length === 0 ? 'pass' : 'fail',
       project: projectDir,
       summary: {
         total: allIssues.length,

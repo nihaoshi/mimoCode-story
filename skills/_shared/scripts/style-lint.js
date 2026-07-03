@@ -220,7 +220,7 @@ function main() {
 
   if (jsonMode) {
     const result = {
-      status: issues.length === 0 ? 'pass' : (level1Count > 0 ? 'fail' : 'warn'),
+      status: issues.length === 0 ? 'pass' : 'fail',
       file: chapterFile,
       summary: { level1: level1Count, level2: level2Count, total: issues.length },
       issues,

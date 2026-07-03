@@ -386,7 +386,7 @@ function main() {
 
   if (jsonMode) {
     const result = {
-      status: errors.length > 0 ? 'error' : (warnings.length > 0 ? 'warn' : 'pass'),
+      status: errors.length > 0 || warnings.length > 0 ? 'fail' : 'pass',
       file: chapterFile,
       summary: { errors: errors.length, warnings: warnings.length },
       issues: [...errors, ...warnings],
