@@ -423,7 +423,7 @@ function main() {
     }
   }
   
-  process.exit(allIssues.length > 0 ? 1 : 0);
+  process.exit(allIssues.length > 0 ? 2 : 0);
 }
 
 main();

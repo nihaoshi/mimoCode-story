@@ -18,7 +18,7 @@ Options:
   --json    Output structured JSON instead of human-readable text
   --full    Enable full consistency checks (slower but more thorough)
 
-Exit code 0 = pass, 1 = warnings found, 2 = errors found`;
+Exit code 0 = pass, 2 = issues found`;
 
 function die(msg) {
   console.error(`Error: ${msg}`);
@@ -396,9 +396,9 @@ function main() {
   }
 
   if (warnings.length > 0) {
-    console.log(`\n⚠️  一致性检查发现 ${warnings.length} 个问题：`);
+    console.log(`\n🚫 一致性检查发现 ${warnings.length} 个问题：`);
     warnings.forEach((w, i) => console.log(`  ${i + 1}. [${w.type}] ${w.message}`));
-    process.exit(1);
+    process.exit(2);
   }
 
   console.log('✅ 一致性检查通过');

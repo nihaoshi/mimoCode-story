@@ -18,7 +18,7 @@ Options:
   --json    Output structured JSON
   --target-gap N  Target gap between satisfaction points (default: 3000)
 
-Exit code 0 = pass, 1 = low density warning`;
+Exit code 0 = pass, 2 = low density warning`;
 
 const SATISFACTION_SIGNALS = {
   strong: { words: ['打脸', '反杀', '逆袭', '翻身', '扬眉吐气', '一鸣惊人', '全场沸腾', '掌声雷动', '刮目相看', '跪下', '求饶', '后悔莫及', '肠子悔青', '众人震惊', '目瞪口呆', '瞠目结舌', '大快人心', '痛快', '爽', '太帅了', '牛逼', '厉害了'], weight: 5 },
@@ -167,8 +167,8 @@ function main() {
   }
 
   if (!densityOk) {
-    console.log(`\n⚠️  爽点间距超过目标（${metrics.max_gap} > ${targetGap}），建议增加爽点`);
-    process.exit(1);
+    console.log(`\n🚫 爽点间距超过目标（${metrics.max_gap} > ${targetGap}），必须增加爽点`);
+    process.exit(2);
   }
 
   console.log('\n✅ 爽点密度达标');

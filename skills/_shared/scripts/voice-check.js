@@ -17,7 +17,7 @@ Checks:
 Options:
   --json    Output structured JSON
 
-Exit code 0 = pass, 1 = warnings found`;
+Exit code 0 = pass, 2 = issues found`;
 
 function readFile(p) {
   try {
@@ -219,9 +219,9 @@ function main() {
   }
 
   if (warnings.length > 0) {
-    console.log(`\n⚠️  发现 ${warnings.length} 个问题：`);
+    console.log(`\n🚫 发现 ${warnings.length} 个问题：`);
     warnings.forEach((w, i) => console.log(`  ${i + 1}. ${w.message}`));
-    process.exit(1);
+    process.exit(2);
   }
 
   console.log('\n✅ 角色声音一致性检查通过');

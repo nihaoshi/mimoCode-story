@@ -18,7 +18,7 @@ Options:
   --json    Output structured JSON
   --verbose Include all paragraph details
 
-Exit code 0 = pass, 1 = flat warning detected`;
+Exit code 0 = pass, 2 = flat warning detected`;
 
 const EMOTION_KEYWORDS = {
   tension: { words: ['紧张', '担心', '担忧', '害怕', '恐惧', '不安', '焦虑', '着急', '急切', '慌', '惊恐', '惊慌', '心惊', '胆战', '毛骨悚然', '不寒而栗'], weight: 3 },
@@ -224,7 +224,7 @@ function main() {
   }
 
   if (flatWarnings.length > 0) {
-    process.exit(1);
+    process.exit(2);
   }
   console.log('\n✅ 情绪曲线正常');
   process.exit(0);

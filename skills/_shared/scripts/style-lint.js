@@ -19,7 +19,7 @@ Options:
   --json    Output structured JSON instead of human-readable text
   --full    Enable full checks (heading format, professional terms)
 
-Exit code 0 = pass, 1 = warnings found`;
+Exit code 0 = pass, 2 = issues found`;
 
 const DIALOGUE_TAGS = ['说道', '问道', '答道', '喊道', '叫道', '笑道', '叹道'];
 
@@ -276,8 +276,8 @@ function main() {
     process.exit(2);
   }
 
-  console.log(`\n⚠️  发现 ${issues.length} 个文风问题，建议修改`);
-  process.exit(1);
+  console.log(`\n🚫 发现 ${issues.length} 个文风问题，必须修改`);
+  process.exit(2);
 }
 
 main();

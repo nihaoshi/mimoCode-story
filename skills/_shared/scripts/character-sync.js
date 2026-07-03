@@ -20,8 +20,7 @@ Options:
 
 Exit codes:
   0 = all synced
-  1 = warnings (missing entries found)
-  2 = error (project dir invalid)`;
+  2 = issues found (missing entries)`;
 
 function findCharacterFiles(settingsDir) {
   const charDir = path.join(settingsDir, '角色');
@@ -230,7 +229,7 @@ function main() {
       design_characters: charFiles.map(c => c.name),
       tracking_characters: tracking.characters.map(c => c.name),
     }, null, 2));
-    process.exit(issues.length > 0 ? 1 : 0);
+    process.exit(issues.length > 0 ? 2 : 0);
   }
 
   console.log('🔍 角色同步检查');
@@ -239,7 +238,7 @@ function main() {
   console.log(`追踪角色：${tracking.characters.length} 个 — ${tracking.characters.map(c => c.name).join(', ') || '(无)'}`);
 
   if (issues.length > 0) {
-    console.log('\n⚠️  发现问题：');
+    console.log('\n🚫 发现问题：');
     issues.forEach((issue, i) => {
       console.log(`  ${i + 1}. [${issue.type}] ${issue.message}`);
     });
@@ -253,7 +252,7 @@ function main() {
   }
 
   console.log('='.repeat(50));
-  process.exit(issues.length > 0 ? 1 : 0);
+  process.exit(issues.length > 0 ? 2 : 0);
 }
 
 main();

@@ -15,7 +15,7 @@ Detect story project gaps before writing:
 Options:
   --json    Output structured JSON instead of human-readable text
 
-Exit code 0 = no gaps, 1 = warnings, 2 = blocking gaps`;
+Exit code 0 = no gaps, 2 = issues found`;
 
 function readFile(p) {
   try {
@@ -326,10 +326,8 @@ function main() {
   }
 
   // 退出码
-  if (allBlocking.length > 0) {
+  if (allBlocking.length > 0 || allWarnings.length > 0) {
     process.exit(2);
-  } else if (allWarnings.length > 0) {
-    process.exit(1);
   } else {
     process.exit(0);
   }

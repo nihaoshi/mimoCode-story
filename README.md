@@ -265,14 +265,14 @@ Step C：按清单更新 → 只更新涉及的文件（追踪+设定+故事线+
 
 | 脚本 | 功能 | 退出码 |
 |------|------|--------|
-| `quality-gate.js` | 统一质量门禁（9重检查+百分制评分） | 0=通过, 1=警告, 2=阻断, 3=评分不达标 |
-| `style-lint.js` | 禁用词+AI腔检测 | 0=通过, 1=有问题 |
-| `consistency-check.js` | 一致性检查 | 0=通过, 1=警告, 2=错误 |
-| `cross-chapter-check.js` | 跨章重复检测 | 0=通过, 1=重复 |
-| `voice-check.js` | 角色声音一致性 | 0=通过, 1=不一致 |
-| `emotion-analyzer.js` | 情绪曲线分析 | 0=正常, 1=平坦警告 |
-| `satisfaction-meter.js` | 爽点密度度量 | 0=达标, 1=不足 |
-| `detect-story-gaps.js` | 项目缺口检测 | 0=通过, 1=警告, 2=阻断 |
+| `quality-gate.js` | 统一质量门禁（9重检查+百分制评分） | 0=通过, 2=阻断, 3=评分不达标 |
+| `style-lint.js` | 禁用词+AI腔检测 | 0=通过, 2=有问题 |
+| `consistency-check.js` | 一致性检查 | 0=通过, 2=有问题 |
+| `cross-chapter-check.js` | 跨章重复检测 | 0=通过, 2=有问题 |
+| `voice-check.js` | 角色声音一致性 | 0=通过, 2=有问题 |
+| `emotion-analyzer.js` | 情绪曲线分析 | 0=通过, 2=有问题 |
+| `satisfaction-meter.js` | 爽点密度度量 | 0=通过, 2=有问题 |
+| `detect-story-gaps.js` | 项目缺口检测 | 0=通过, 2=有问题 |
 | `writing-scorer.js` | 百分制评分（生成LLM评审任务） | 0=达标, 1=不达标, 2=错误 |
 | `wordcount.js` | 字数统计 | - |
 

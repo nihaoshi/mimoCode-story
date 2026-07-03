@@ -15,7 +15,7 @@ Full consistency audit for a writing project:
 Options:
   --json    Output structured JSON instead of human-readable text
 
-Exit code 0 = pass, 1 = warnings, 2 = errors`;
+Exit code 0 = pass, 2 = issues found`;
 
 function readFile(p) {
   try {

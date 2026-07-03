@@ -17,7 +17,7 @@ Options:
   --json    Output structured JSON instead of human-readable text
   --full    Enable full checks (format, overlap detection)
 
-Exit code 0 = pass, 1 = warnings, 2 = errors`;
+Exit code 0 = pass, 2 = issues found`;
 
 function die(msg) {
   console.error(`Error: ${msg}`);
@@ -197,10 +197,10 @@ function main() {
   }
 
   if (warnings.length > 0) {
-    console.log(`\n⚠️  伏笔检查发现 ${warnings.length} 个问题：`);
+    console.log(`\n🚫 伏笔检查发现 ${warnings.length} 个问题：`);
     warnings.forEach((w, i) => console.log(`  ${i + 1}. [${w.type}] ${w.message}`));
     console.log(`\n📊 伏笔统计：共 ${tracked.length} 条，已回收 ${tracked.length - unrecovered.length} 条，待回收 ${unrecovered.length} 条`);
-    process.exit(1);
+    process.exit(2);
   }
 
   console.log(`✅ 伏笔检查通过（共 ${tracked.length} 条，待回收 ${unrecovered.length} 条）`);
