@@ -61,10 +61,10 @@ actor({
 
 ```bash
 # 执行前验证
-node skills/story-long-analyze-mimo/scripts/step-guard.js pre <step> <workflow_dir> <project_dir>
+node {skill_dir}/scripts/step-guard.js pre <step> <workflow_dir> <project_dir>
 
 # 执行后验证
-node skills/story-long-analyze-mimo/scripts/step-guard.js post <step> <workflow_dir>
+node {skill_dir}/scripts/step-guard.js post <step> <workflow_dir>
 ```
 
 ### 步骤号定义

@@ -105,5 +105,5 @@
 node {skill_dir}/scripts/step-guard.js post <步骤号> {workflow_dir}
 
 # 示例
-node skills/story-chapter-write-mimo/scripts/step-guard.js post 11 demo/项目/.workflow
+node {skill_dir}/scripts/step-guard.js post 11 demo/项目/.workflow
 ```

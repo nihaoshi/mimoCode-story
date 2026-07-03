@@ -74,7 +74,7 @@ inputs:
 
 **输出规范**：详见 [references/scan-output-format.md](references/scan-output-format.md)，包含各平台字段定义、输出模板、文件命名规范。
 
-**起点采集目标**（优先运行 `node skills/story-long-scan-mimo/scripts/qidian-rank-scraper.js --type {榜单} --outdir {输出目录}`；默认 `--mode auto` 会先用 `https://m.qidian.com` 移动端 SSR，PC/CDP 只作回退）：
+**起点采集目标**（优先运行 `node {skill_dir}/scripts/qidian-rank-scraper.js --type {榜单} --outdir {输出目录}`；默认 `--mode auto` 会先用 `https://m.qidian.com` 移动端 SSR，PC/CDP 只作回退）：
 
 | 榜单 | URL | 核心字段 |
 |------|-----|----------|

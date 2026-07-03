@@ -124,16 +124,16 @@ MiMo Code 的 checkpoint 恢复机制会自动注入 memory 内容，但如果 m
 **守卫脚本调用**：
 ```bash
 # 正文写作前验证
-node skills/story-long-write-mimo/scripts/workflow-guard.js pre write .workflow <project_dir>
+node {skill_dir}/scripts/workflow-guard.js pre write .workflow <project_dir>
 
 # 正文写作后验证
-node skills/story-long-write-mimo/scripts/workflow-guard.js post write .workflow
+node {skill_dir}/scripts/workflow-guard.js post write .workflow
 
 # 质量检测前验证
-node skills/story-long-write-mimo/scripts/workflow-guard.js pre check .workflow <project_dir>
+node {skill_dir}/scripts/workflow-guard.js pre check .workflow <project_dir>
 
 # 质量检测后验证
-node skills/story-long-write-mimo/scripts/workflow-guard.js post check .workflow
+node {skill_dir}/scripts/workflow-guard.js post check .workflow
 ```
 
 **prompt 模板**：详见 `references/agent-prompt-templates.md`
@@ -170,7 +170,7 @@ node skills/story-long-write-mimo/scripts/workflow-guard.js post check .workflow
         - 设定文件回写：正文揭示新信息影响设定时，同步更新对应 `设定/` 文件
         - 跨卷追踪更新：涉及跨卷伏笔回收/推进或角色弧线变化时，更新 `跨卷追踪/` 下对应文件
         - 故事线更新：故事线推进时更新 `故事线/故事线_*.md`
-        - 角色同步：运行 `node skills/_shared/scripts/character-sync.js <项目目录> --json`
+        - 角色同步：运行 `node $HOME/.config/mimocode/skills/_shared/scripts/character-sync.js <项目目录> --json`
    - **质检提示**（可选）：本章写作完成。如需一致性检查，运行 `/story-review-mimo lean`。批量写作模式跳过此步骤，全部写完后再统一审查。
    - **版本提交**（仅当 version_control=true）：检查 `.story-config.json` 中的 `version_control` 字段。如果为 true，执行 `git add 正文/第{N}章_*.md 追踪/*.md && git commit -m "Ch{N}: {章名} ({字数}字)"`；如果为 false 或不存在，跳过 git 操作
     - **质量门禁**：AI自动调用 `quality-gate.js` 检查，用户无需手动执行。退出码 2（阻断）时AI自动修复后重新检查，不得标记任务完成。
@@ -231,7 +231,7 @@ actor({
 
 **守卫脚本验证**：
 ```bash
-node skills/story-long-write-mimo/scripts/workflow-guard.js post check .workflow
+node {skill_dir}/scripts/workflow-guard.js post check .workflow
 ```
 
 ---

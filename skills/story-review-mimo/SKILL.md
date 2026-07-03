@@ -1,4 +1,4 @@
-﻿---
+---
 name: story-review-mimo
 version: 4.0.0
 description: |
@@ -330,7 +330,7 @@ actor({
 - 质量规则：$HOME/.config/mimocode/skills/_shared/references/quality-rules.md
 
 【检测脚本】（必须运行）
-- 文本质量：node {skill_dir}/../../atoms/detect-quality/scripts/run-detect.js {稿件路径} --type all
+- 文本质量：node {skill_dir}/../../_shared/scripts/style-lint.js --json {稿件路径}
 
 【检查项】（必须全部检查）
 1. AI 味检测 — 是否有明显 AI 写作痕迹（排比、模板句、升华结尾）
@@ -395,7 +395,7 @@ actor({
 - 审查配置：{project_dir}/.workflow/review-config.json
 
 【检测脚本】（必须运行）
-- 情绪爽点：node {skill_dir}/../../atoms/detect-emotion/scripts/run-detect.js {稿件路径} --type satisfaction
+- 情绪爽点：node {skill_dir}/../../_shared/scripts/satisfaction-meter.js --json {稿件路径}
 
 【检查项】（必须全部检查）
 1. 爽点密度 — 每 3000-5000 字是否有爽点，分布是否均匀
@@ -485,7 +485,7 @@ actor({
 - 交叉点：{project_dir}/故事线/故事线_交叉点.md（如存在）
 
 【检测脚本】（必须运行）
-- 一致性检测：node {skill_dir}/../../atoms/detect-consistency/scripts/run-detect.js {稿件路径}
+- 一致性检测：node {skill_dir}/../../_shared/scripts/consistency-check.js --json {稿件路径} {project_dir}
 
 【检查项】（必须全部检查）
 1. 事实一致 — 设定/属性是否前后一致，有无矛盾

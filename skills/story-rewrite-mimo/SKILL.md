@@ -67,7 +67,7 @@ inputs:
 
 ```bash
 # 前置守卫验证
-node skills/story-rewrite-mimo/scripts/step-guard.js pre 01 {project_dir} {chapter_number}
+node {skill_dir}/scripts/step-guard.js pre 01 {project_dir} {chapter_number}
 # 检查目录存在
 ls {project_dir}/正文/ {project_dir}/追踪/ {project_dir}/设定/ 2>/dev/null || echo "ERROR: 项目目录缺失"
 ```
@@ -546,9 +546,9 @@ T-REWRITE-{N}: 重写第{N}章
 
 ```bash
 # 前置验证
-node skills/story-rewrite-mimo/scripts/step-guard.js pre <step> {project_dir} {chapter}
+node {skill_dir}/scripts/step-guard.js pre <step> {project_dir} {chapter}
 # 后置验证
-node skills/story-rewrite-mimo/scripts/step-guard.js post <step> {project_dir} {chapter}
+node {skill_dir}/scripts/step-guard.js post <step> {project_dir} {chapter}
 ```
 
 支持的步骤：01~11, 10b, 10c, 10d, 10e

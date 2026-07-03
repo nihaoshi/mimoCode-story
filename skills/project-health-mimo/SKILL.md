@@ -1,4 +1,4 @@
-﻿---
+---
 name: project-health-mimo
 version: 2.1.0
 description: |
@@ -118,11 +118,11 @@ inputs:
 
 ```bash
 # 前置守卫验证
-node skills/project-health-mimo/scripts/step-guard.js pre 01 <项目目录>
+node {skill_dir}/scripts/step-guard.js pre 01 <项目目录>
 # 运行检测
-node skills/project-health-mimo/scripts/project-health.js <项目目录> --check
+node {skill_dir}/scripts/project-health.js <项目目录> --check
 # 后置守卫验证
-node skills/project-health-mimo/scripts/step-guard.js post 02 <项目目录>
+node {skill_dir}/scripts/step-guard.js post 02 <项目目录>
 ```
 
 ### Step 2：输出检测报告
@@ -153,11 +153,11 @@ node skills/project-health-mimo/scripts/step-guard.js post 02 <项目目录>
 
 ```bash
 # 前置守卫验证
-node skills/project-health-mimo/scripts/step-guard.js pre 04 <项目目录>
+node {skill_dir}/scripts/step-guard.js pre 04 <项目目录>
 # 运行修复
-node skills/project-health-mimo/scripts/project-health.js <项目目录> --fix
+node {skill_dir}/scripts/project-health.js <项目目录> --fix
 # 后置守卫验证
-node skills/project-health-mimo/scripts/step-guard.js post 04 <项目目录>
+node {skill_dir}/scripts/step-guard.js post 04 <项目目录>
 ```
 
 **修复内容**：

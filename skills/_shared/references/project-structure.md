@@ -220,7 +220,7 @@
 当项目目录结构发生变化（新增文件夹/文件）时，运行以下命令更新 `project-structure.md`：
 
 ```bash
-node skills/_shared/scripts/scan-project-structure.js <项目目录>
+node $HOME/.config/mimocode/skills/_shared/scripts/scan-project-structure.js <项目目录>
 ```
 
 此命令会扫描项目目录，输出当前文件结构。技能执行时应先运行此扫描，再基于扫描结果加载文件。
@@ -242,7 +242,7 @@ node skills/_shared/scripts/scan-project-structure.js <项目目录>
 
 ```bash
 # 方式1：运行自动扫描脚本（推荐）
-node skills/_shared/scripts/scan-project-structure.js {project_dir}
+node $HOME/.config/mimocode/skills/_shared/scripts/scan-project-structure.js {project_dir}
 
 # 方式2：直接扫描特定目录
 ls {project_dir}/{目录}/*.md 2>/dev/null

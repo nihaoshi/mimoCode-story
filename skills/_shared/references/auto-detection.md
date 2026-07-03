@@ -291,9 +291,9 @@ function getCurrentChapter(projectDir) {
 
 ```bash
 # 在workflow-daily.md Step 2每章写完后执行
-node skills/_shared/scripts/consistency-check.js {project_dir}
-node skills/_shared/scripts/style-lint.js 正文/第{N}章_*.md
-node skills/_shared/scripts/foreshadow-check.js {project_dir}
+node $HOME/.config/mimocode/skills/_shared/scripts/consistency-check.js {project_dir}
+node $HOME/.config/mimocode/skills/_shared/scripts/style-lint.js 正文/第{N}章_*.md
+node $HOME/.config/mimocode/skills/_shared/scripts/foreshadow-check.js {project_dir}
 ```
 
 ### 2. 检测结果处理

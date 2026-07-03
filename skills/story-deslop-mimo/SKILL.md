@@ -47,8 +47,8 @@ ls {target_file} 2>/dev/null || echo "ERROR: 目标文件不存在"
 
 **每个阶段执行前后必须运行守卫脚本：**
 ```bash
-node skills/story-long-write-mimo/scripts/step-guard.js pre  {step} {workflow_dir} {project_dir}
-node skills/story-long-write-mimo/scripts/step-guard.js post {step} {workflow_dir}
+node $HOME/.config/mimocode/skills/story-long-write-mimo/scripts/step-guard.js pre  {step} {workflow_dir} {project_dir}
+node $HOME/.config/mimocode/skills/story-long-write-mimo/scripts/step-guard.js post {step} {workflow_dir}
 ```
 
 ---
@@ -180,9 +180,9 @@ mkdir -p {project_dir}/.workflow
 ### 守卫验证
 
 ```bash
-node skills/story-long-write-mimo/scripts/step-guard.js pre read {workflow_dir} {project_dir}
+node $HOME/.config/mimocode/skills/story-long-write-mimo/scripts/step-guard.js pre read {workflow_dir} {project_dir}
 # 写入后
-node skills/story-long-write-mimo/scripts/step-guard.js post read {workflow_dir}
+node $HOME/.config/mimocode/skills/story-long-write-mimo/scripts/step-guard.js post read {workflow_dir}
 ```
 
 ---
@@ -296,9 +296,9 @@ actor({
 
 ```bash
 # 执行前
-node skills/story-long-write-mimo/scripts/step-guard.js pre exec {workflow_dir} {project_dir}
+node $HOME/.config/mimocode/skills/story-long-write-mimo/scripts/step-guard.js pre exec {workflow_dir} {project_dir}
 # 执行后
-node skills/story-long-write-mimo/scripts/step-guard.js post exec {workflow_dir}
+node $HOME/.config/mimocode/skills/story-long-write-mimo/scripts/step-guard.js post exec {workflow_dir}
 ```
 
 ---
@@ -323,7 +323,7 @@ node skills/story-long-write-mimo/scripts/step-guard.js post exec {workflow_dir}
 
 ## 执行步骤
 1. 运行评分脚本生成评审任务：
-   node skills/_shared/scripts/writing-scorer.js --json <章节文件> <项目目录> --genre <题材>
+   node $HOME/.config/mimocode/skills/_shared/scripts/writing-scorer.js --json <章节文件> <项目目录> --genre <题材>
 2. 读取输出中的 prompt 字段
 3. 作为评审 agent，按照 prompt 中的15维度标准对章节打分
 4. 将评分结果写入追踪/评分记录.md

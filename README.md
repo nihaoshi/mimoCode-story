@@ -373,6 +373,16 @@ node skills/_shared/scripts/character-sync.js 项目目录
 
 ## 更新日志
 
+### v5.8.2（2026-07-03）
+
+**脚本路径全面修复**：
+- 修复 `story-chapter-fast-write-mimo`：创建缺失的 `scripts/` 目录，复制 `step-guard.js`
+- 修复 `story-chapter-ultra-write-mimo`：创建缺失的 `scripts/` 目录，复制 `step-guard.js`
+- 修复 `story-review-mimo`：3 处引用不存在的 `atoms/*/scripts/run-detect.js` 改为 `_shared/scripts/` 对应脚本
+- 修复 57 处模糊路径 `node skills/xxx` 统一为 `{skill_dir}/` 或 `$HOME/.config/mimocode/skills/`
+- 涉及 18 个文件：12 个 SKILL.md + 6 个 references/*.md
+- 路径规范：技能自带脚本用 `{skill_dir}/scripts/`，共享脚本用 `$HOME/.config/mimocode/skills/_shared/scripts/`
+
 ### v5.8.1（2026-07-01）
 
 **评分模块与质量检测修复**：

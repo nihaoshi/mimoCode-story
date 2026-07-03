@@ -1,4 +1,4 @@
-﻿---
+---
 name: story-progress-mimo
 version: 2.0.0
 description: |
@@ -129,8 +129,8 @@ ls {project_dir}/大纲/ {project_dir}/正文/ {project_dir}/追踪/ 2>/dev/null
 
 **每个步骤执行前后必须运行守卫脚本：**
 ```bash
-node skills/story-progress-mimo/scripts/step-guard.js pre  <步骤号> {workflow_dir} {project_dir}
-node skills/story-progress-mimo/scripts/step-guard.js post <步骤号> {workflow_dir}
+node {skill_dir}/scripts/step-guard.js pre  <步骤号> {workflow_dir} {project_dir}
+node {skill_dir}/scripts/step-guard.js post <步骤号> {workflow_dir}
 ```
 
 ---
@@ -544,10 +544,10 @@ T-OUTLINE-0X-R2: 修订{步骤名}（第2次修订）
 
 ```bash
 # 前置验证
-node skills/story-progress-mimo/scripts/step-guard.js pre  <步骤号> {workflow_dir} {project_dir}
+node {skill_dir}/scripts/step-guard.js pre  <步骤号> {workflow_dir} {project_dir}
 
 # 后置验证
-node skills/story-progress-mimo/scripts/step-guard.js post <步骤号> {workflow_dir}
+node {skill_dir}/scripts/step-guard.js post <步骤号> {workflow_dir}
 ```
 
 步骤号定义（覆盖全部14个步骤）：
@@ -677,10 +677,10 @@ T-PROGRESS: 进度管理「{项目名}」
 
 ```bash
 # 前置验证
-node skills/story-progress-mimo/scripts/step-guard.js pre  <步骤号> {workflow_dir} {project_dir}
+node {skill_dir}/scripts/step-guard.js pre  <步骤号> {workflow_dir} {project_dir}
 
 # 后置验证
-node skills/story-progress-mimo/scripts/step-guard.js post <步骤号> {workflow_dir}
+node {skill_dir}/scripts/step-guard.js post <步骤号> {workflow_dir}
 ```
 
 步骤号映射见文件内「守卫脚本调用」章节（步骤 01~14）。

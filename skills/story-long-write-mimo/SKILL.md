@@ -451,7 +451,7 @@ AI：（后台自动执行）
 
 **Step 5.5：百分制评分（条件创建）**
 质量门禁和一致性检查**无阻断且无警告**后，spawn 子 agent 进行百分制评分：
-1. 运行 `node skills/_shared/scripts/writing-scorer.js --json <章节文件> <项目目录> --genre <题材>`
+1. 运行 `node $HOME/.config/mimocode/skills/_shared/scripts/writing-scorer.js --json <章节文件> <项目目录> --genre <题材>`
 2. 按15维度标准打分
 3. score >= 90 → 继续
 4. score < 90 → 修复低分维度，重新评分（上限3轮），3轮后仍不达标则阻断
@@ -921,10 +921,10 @@ actor({
 
 ```bash
 # 执行前验证
-node skills/story-long-write-mimo/scripts/step-guard.js pre <step> <workflow_dir> <project_dir>
+node {skill_dir}/scripts/step-guard.js pre <step> <workflow_dir> <project_dir>
 
 # 执行后验证
-node skills/story-long-write-mimo/scripts/step-guard.js post <step> <workflow_dir>
+node {skill_dir}/scripts/step-guard.js post <step> <workflow_dir>
 ```
 
 **prompt 模板**：详见 `references/agent-prompt-templates.md`
@@ -1123,10 +1123,10 @@ actor({
 
 ```bash
 # 执行前验证
-node skills/story-long-write-mimo/scripts/step-guard.js pre check .workflow <project_dir>
+node {skill_dir}/scripts/step-guard.js pre check .workflow <project_dir>
 
 # 执行后验证
-node skills/story-long-write-mimo/scripts/step-guard.js post check .workflow
+node {skill_dir}/scripts/step-guard.js post check .workflow
 ```
 
 **检测项**（8项，必须全部运行）：

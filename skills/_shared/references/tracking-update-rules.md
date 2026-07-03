@@ -28,7 +28,7 @@
 
 更新角色状态后，运行：
 ```bash
-node skills/_shared/scripts/character-sync.js <项目目录> --json
+node $HOME/.config/mimocode/skills/_shared/scripts/character-sync.js <项目目录> --json
 ```
 
 验证 `设定/角色/` 和 `追踪/角色状态.md` 一致。

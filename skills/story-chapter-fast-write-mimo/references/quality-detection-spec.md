@@ -8,14 +8,14 @@
 
 ### 1. 字数检测
 ```bash
-node skills/_shared/scripts/wordcount.js <章节文件> --json
+node $HOME/.config/mimocode/skills/_shared/scripts/wordcount.js <章节文件> --json
 ```
 - 达标：字数 >= 细纲目标的90%
 - 不达标：BLOCK
 
 ### 2. 禁用词+AI腔检测
 ```bash
-node skills/_shared/scripts/style-lint.js --json <章节文件>
+node $HOME/.config/mimocode/skills/_shared/scripts/style-lint.js --json <章节文件>
 ```
 - 一级禁用词命中：BLOCK
 - AI腔句式命中：BLOCK
@@ -23,13 +23,13 @@ node skills/_shared/scripts/style-lint.js --json <章节文件>
 
 ### 3. 标点符号检测
 ```bash
-node skills/_shared/scripts/punctuation-normalize.js --json <章节文件>
+node $HOME/.config/mimocode/skills/_shared/scripts/punctuation-normalize.js --json <章节文件>
 ```
 - AI标点符号命中：BLOCK
 
 ### 4. 一致性检测
 ```bash
-node skills/_shared/scripts/consistency-check.js --json <章节文件> <项目目录>
+node $HOME/.config/mimocode/skills/_shared/scripts/consistency-check.js --json <章节文件> <项目目录>
 ```
 - 物品位置不一致：BLOCK
 - 角色状态矛盾：BLOCK
@@ -51,7 +51,7 @@ node skills/_shared/scripts/consistency-check.js --json <章节文件> <项目�
 
 ### 7. 跨章节检查
 ```bash
-node skills/_shared/scripts/cross-chapter-check.js --json <章节文件> <项目目录>
+node $HOME/.config/mimocode/skills/_shared/scripts/cross-chapter-check.js --json <章节文件> <项目目录>
 ```
 - 跨章节重复内容：WARN
 - 跨章节矛盾：WARN

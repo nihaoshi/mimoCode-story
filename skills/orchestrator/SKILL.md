@@ -34,13 +34,13 @@ AI（子智能体）
 
 ```bash
 # 初始化项目
-node skills/orchestrator/orchestrator.js <项目目录> init
+node {skill_dir}/orchestrator.js <项目目录> init
 
 # 查看进度
-node skills/orchestrator/orchestrator.js <项目目录> status
+node {skill_dir}/orchestrator.js <项目目录> status
 
 # 写指定章节（完整流程）
-node skills/orchestrator/orchestrator.js <项目目录> write <章节号>
+node {skill_dir}/orchestrator.js <项目目录> write <章节号>
 ```
 
 ## 流程

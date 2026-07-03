@@ -113,7 +113,7 @@ actor({
 
 **守卫脚本验证**：
 ```bash
-node skills/story-long-write-mimo/scripts/workflow-guard.js post check .workflow
+node {skill_dir}/scripts/workflow-guard.js post check .workflow
 ```
 
 ---
