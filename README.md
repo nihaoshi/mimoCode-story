@@ -139,7 +139,7 @@ Copy-Item -Path "$HOME\mimoCode-story\skills\*" -Destination "$HOME\.config\mimo
 | `story-chapter-fast-write-mimo` | `/快速写章` | 快速书写（按需加载，token优化60-70%） |
 | `story-chapter-ultra-write-mimo` | `/极致写章` | 极致书写（全量检测，追求最高质量） |
 | `story-short-write-mimo` | `/story-short-write-mimo` | 短篇写作（4阶段） |
-| `story-outline-mimo` | `/outline` | 大纲生成（含细纲+质量自检） |
+| `story-outline-mimo` | `/outline` | 大纲生成（迭代式+分题材模板+修改模式+细纲限批≤3章） |
 | `story-progress-mimo` | `/progress` | 进度管理+批量细纲 |
 
 ### 拆文分析（3个）
@@ -158,13 +158,14 @@ Copy-Item -Path "$HOME\mimoCode-story\skills\*" -Destination "$HOME\.config\mimo
 | `story-short-scan-mimo` | `/story-short-scan-mimo` | 短篇扫榜 |
 | `story-scan-mimo` | `/story-scan-mimo` | 通用扫榜 |
 
-### 质量控制（5个）
+### 质量控制（6个）
 
 | 技能 | 触发方式 | 功能 |
 |------|---------|------|
 | `quality-mimo` | `/quality-mimo` | 统一质量检查 |
 | `story-deslop-mimo` | `/story-deslop-mimo` | 去AI味 |
 | `story-review-mimo` | `/story-review-mimo` | 多视角审稿 |
+| `story-critic-mimo` | `/story-critic-mimo`、`/编辑审稿` | 编辑审稿（最严格+8维审查+6平台对标） |
 | `audit-mimo` | `/audit-mimo` | 全量审计 |
 | `project-health-mimo` | `/project-health-mimo` | 项目健康检查 |
 
@@ -371,6 +372,27 @@ node skills/_shared/scripts/character-sync.js 项目目录
 ---
 
 ## 更新日志
+
+### v2.0.0（2026-07-08）
+
+**大纲生成迭代式升级 + 新增编辑审稿技能**：
+
+**`story-outline-mimo` v2.0**：
+- **迭代式沟通**：每步生成草案后展示给用户，获取反馈修改，不限轮数直到满意
+- **分题材模板**：6种题材专属模板（仙侠/都市/重生/火葬场/甜宠/历史），卷纲和细纲各含题材专属字段
+- **模板升级**：总大纲改为6段式结构化模板（基础信息→世界观→核心人物→剧情三幕→主题卖点→卷级结构），卷纲改为"起承转合"分段格式，细纲改为"进场→事件→离场+功能打钩"格式
+- **智能入口**：自动检测已有大纲/卷纲/细纲文件，智能进入对应阶段（续批/跳卷）
+- **修改模式**：支持修改已有大纲/卷纲/细纲，修改后自动触发一致性检查（大纲卷数=卷纲数、卷纲章数=细纲数）
+- **细纲限批**：每次最多生成3章，生成后展示确认
+- **去轮数限制**：所有迭代沟通不再设最大轮数
+- **子Agent强制读文件**：所有子agent prompt中列出必须Read的文件路径，防止凭记忆生成
+
+**新增 `story-critic-mimo` v1.0**：
+- **编辑审稿**：以出版社首席编辑视角，用最严格标准审稿
+- **8维审查**：结构逻辑、人设一致性、爽点密度、钩子效果、情绪节奏、文笔质量、商业化判断、一致性审查
+- **6平台对标**：起点、番茄、晋江、知乎盐选、七猫、点众，各平台独立审稿标准
+- **P0/P1/P2分级**：必改问题→建议优化→锦上添花，每条附修改建议和"修改前→修改后"示例
+- **全类型审稿**：支持正文、大纲、卷纲、细纲四种审稿对象
 
 ### v5.8.2（2026-07-03）
 
