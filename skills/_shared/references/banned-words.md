@@ -1,7 +1,7 @@
 # AI味禁用词与句式表
 
 <!--
-version: 2.0.0
+version: 3.0.0
 sync-source: skills/story-setup-mimo/references/agent-references/banned-words.md
 本文件在 6 个 skill 副本间需保持一致：
   story-deslop-mimo / story-long-write-mimo / story-short-write-mimo /
@@ -31,7 +31,7 @@ sync-source: skills/story-setup-mimo/references/agent-references/banned-words.md
 ## 一级禁用词（出现即替换）
 
 ### 情态类
-仿佛、犹如、宛若、如同、一丝、一抹、些许、几分、隐约
+仿佛、犹如、宛若、如同、恍若、恍如、似是而非、一丝、一抹、些许、几分、隐约
 
 ### 动作类
 深吸一口气、缓缓、不禁、微微、轻轻、淡淡
@@ -40,7 +40,7 @@ sync-source: skills/story-setup-mimo/references/agent-references/banned-words.md
 眼中闪过、嘴角勾起、眉头微皱、眉眼低垂、瞳孔微缩
 
 ### 心理类
-心中一动、心头一震、心下了然、心中暗道、心底泛起、不由得
+心中一动、心头一震、心下了然、心中暗道、心底泛起、不由得、暗自、暗暗、心中感慨、心中叹息、心中苦笑
 
 ### 判断类
 不容置疑、不容置喙、不易察觉、显而易见、毫无疑问、不可否认
@@ -50,6 +50,9 @@ sync-source: skills/story-setup-mimo/references/agent-references/banned-words.md
 
 ### 过渡类
 不由自主、情不自禁、自然而然
+
+### 程度副词（出现即删/替换）
+非常、特别、极其、十分、格外、分外、异常、相当、颇为、无比、极为
 
 ## 二级禁用词（高频出现时替换）
 

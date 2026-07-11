@@ -3,7 +3,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { BANNED_LEVEL1 } = require("../../_shared/scripts/banned-words");
+const { BANNED_LEVEL1, AI_PATTERNS } = require("../../_shared/scripts/banned-words");
 
 const USAGE = `Usage: node quality-gate.js <file> [options]
 
@@ -132,14 +132,8 @@ function checkAIPatterns(text) {
     }
   }
   
-  // 检查其他AI腔模式
-  const patterns = [
-    { re: /他不知道的是/g, desc: '章末预告体' },
-    { re: /这一夜.*无人入睡/g, desc: '升华式结尾' },
-    { re: /仿佛.*般/g, desc: '万能比喻' },
-  ];
-  
-  for (const { re, desc } of patterns) {
+  // 检查其他AI腔模式（从共享 AI_PATTERNS 加载）
+  for (const { re, desc } of AI_PATTERNS) {
     const matches = text.match(re);
     if (matches) {
       issues.push(`${desc}(出现${matches.length}次)`);
