@@ -239,7 +239,7 @@ Copy-Item .githooks\* .git\hooks\ -Force -ErrorAction SilentlyContinue
 ### 3.6 MiMo Code 记忆初始化
 
 MiMo Code 的记忆系统是平台内置功能，会自动在 `MEMORY.md` 中保存项目知识。
-首次写作时，story-long-write-mimo 会自动创建 `MEMORY.md` 初始文件。
+首次写作时，story-write-mimo 会自动创建 `MEMORY.md` 初始文件。
 
 ---
 
@@ -247,7 +247,7 @@ MiMo Code 的记忆系统是平台内置功能，会自动在 `MEMORY.md` 中保
 
 1. 验证目录结构完整
 2. 输出安装报告
-3. 提示用户可以开始使用 `/story-long-write-mimo` 或 `/story-short-write-mimo`
+3. 提示用户可以开始使用 `/story-write-mimo` 或 `/story-short-write-mimo`
 
 ---
 
@@ -303,7 +303,7 @@ MiMo Code 的记忆系统是平台内置功能，会自动在 `MEMORY.md` 中保
 # Phase 4: 验证安装
 17. task create "T-SETUP-P4-01: 验证目录结构完整性"  parent=T-SETUP-PHASE4  → T-SETUP-P4-01
 18. task create "T-SETUP-P4-02: 输出安装报告"  parent=T-SETUP-PHASE4  → T-SETUP-P4-02
-19. task create "T-SETUP-P4-03: 提示用户使用 /story-long-write-mimo 或 /story-short-write-mimo"  parent=T-SETUP-PHASE4  → T-SETUP-P4-03
+19. task create "T-SETUP-P4-03: 提示用户使用 /story-write-mimo 或 /story-short-write-mimo"  parent=T-SETUP-PHASE4  → T-SETUP-P4-03
 ```
 
 ### 条件创建规则

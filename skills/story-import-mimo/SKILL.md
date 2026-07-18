@@ -3,7 +3,7 @@ name: story-import-mimo
 version: 1.0.0
 description: |
   逆向导入已有小说。将已写好的小说（半成品或完本）反向解析为标准项目目录结构，
-  兼容 story-long-write-mimo / story-short-write-mimo 后续写作流程。内部复用 story-long-analyze-mimo /
+  兼容 story-write-mimo / story-short-write-mimo 后续写作流程。内部复用 story-long-analyze-mimo /
   story-short-analyze-mimo 的拆解管道，按篇幅自动分流。
   触发方式：/story-import-mimo、「导入小说」「反向解析」「导入」「把我的书导进来」
 metadata:
@@ -18,7 +18,7 @@ inputs:
 
 # story-import-mimo：逆向导入已有小说
 
-你是小说项目逆向工程师。将用户已有的小说文本（半成品或完本）解析为标准项目目录结构，使其可以无缝接入 story-long-write-mimo / story-short-write-mimo 的后续写作流程。导入流程按篇幅分流：长篇走长篇路径，短篇走短篇路径。
+你是小说项目逆向工程师。将用户已有的小说文本（半成品或完本）解析为标准项目目录结构，使其可以无缝接入 story-write-mimo / story-short-write-mimo 的后续写作流程。导入流程按篇幅分流：长篇走长篇路径，短篇走短篇路径。
 
 **核心信念：好的工具不是从零开始，而是从你已有的东西开始。**
 
@@ -186,7 +186,7 @@ story-short-analyze-mimo 是单一全量拆解管道（Stage 2-6），**无 Stag
 | 3 | 聚合分析 | 全部章节摘要 | 剧情/*.md + 故事线.md。**故事框架识别**（前置）。**两步法剧情聚合**（先从摘要识别剧情大纲，再按大纲分配情节点）。**角色合并**（跨章节去重+别名归一）。**角色分级**（主角/反派/核心配角/功能角色）。**孤立情节兜底**（6步，含覆盖率验证）。**质量门控**（置信度>=0.85/覆盖率85%-95%/重叠率<=35%）。 | 质量检查通过 |
 | 4 | 设定+关系 | 阶段 3 合并后角色数据+情节点 | 设定/*.md + 角色/*.md。**两阶段角色模型**。**别名解析**（置信度≥0.85自动合并）。 | 设定和关系提取完成 |
 | 5 | 汇总报告 | 全部输出 | 拆文报告.md | 报告生成完成 |
-| 6 | 文风 | 拆文报告.md + 章节/第1-3章_深度拆解.md + 章节/*_摘要.md + 原文/原文.txt | 文风.md（整书级写作技法视图，story-long-write-mimo 日更循环必读） | 文风落盘 `拆文库/{书名}/文风.md` |
+| 6 | 文风 | 拆文报告.md + 章节/第1-3章_深度拆解.md + 章节/*_摘要.md + 原文/原文.txt | 文风.md（整书级写作技法视图，story-write-mimo 日更循环必读） | 文风落盘 `拆文库/{书名}/文风.md` |
 
 ### 短篇拆文管道
 
@@ -228,7 +228,7 @@ story-short-analyze-mimo 是单一全量拆解管道（Stage 2-6），**无 Stag
 
 | 篇幅 | 迁移路径 | 映射规则 | 续写接手 |
 |------|---------|---------|---------|
-| 长篇 | **3-L：长篇结构迁移** | [references/structure-mapping-long.md](references/structure-mapping-long.md) | story-long-write-mimo 日更循环 |
+| 长篇 | **3-L：长篇结构迁移** | [references/structure-mapping-long.md](references/structure-mapping-long.md) | story-write-mimo 日更循环 |
 | 短篇 | **3-S：短篇结构迁移** | [references/structure-mapping-short.md](references/structure-mapping-short.md) | story-short-write-mimo Phase 3 逐场景写作 |
 
 ---
@@ -279,7 +279,7 @@ story-short-analyze-mimo 是单一全量拆解管道（Stage 2-6），**无 Stag
 
 将 `拆文库/{书名}/角色/{角色名}.md` 迁移到 `设定/角色/{角色名}.md`。
 
-迁移时增加 story-long-write-mimo 角色模板字段：
+迁移时增加 story-write-mimo 角色模板字段：
 
 ```markdown
 ---
@@ -412,7 +412,7 @@ name: {角色名}
 - **生成时机**：必须在 `追踪/伏笔.md` 之后（步骤「待回收伏笔」依赖伏笔状态）。
 - **半成品书**：最后一章为残稿时，角色状态以「残稿之前的最后一个完整章节」为准，文件头注明基准章节。
 
-> 此文件不可遗漏。story-long-write-mimo 的日更准备层「状态筛选」依赖 `追踪/角色状态.md`；若缺失，导入书进入日更会永久走「从角色设定和前文推断」的兜底分支，长期降级。
+> 此文件不可遗漏。story-write-mimo 的日更准备层「状态筛选」依赖 `追踪/角色状态.md`；若缺失，导入书进入日更会永久走「从角色设定和前文推断」的兜底分支，长期降级。
 
 **④ 追踪/上下文.md**：进度摘要（最后生成，「当前状态」中的角色状态变更引用 `角色状态.md`）：
 
@@ -517,7 +517,7 @@ name: {角色名}
 `设定/题材定位.md` **必须包含「对标书清单 + 主对标书」段**，格式：
 
 ```yaml
-主对标书: {书名}  # 多本对标时日更默认用哪本的文风；缺失时 story-long-write-mimo 用字典序第一本并提示用户补
+主对标书: {书名}  # 多本对标时日更默认用哪本的文风；缺失时 story-write-mimo 用字典序第一本并提示用户补
 对标书列表:
   - 书名: {书名 A}
     引用强度: 主  # 主 / 辅 / 参考
@@ -622,7 +622,7 @@ name: {角色名}
 
 ## 下一步操作
 - 运行 `/检查项目` 确认项目完整性
-- 运行 `/story-long-write-mimo` + "日更" 开始续写
+- 运行 `/story-write-mimo` + "日更" 开始续写
 ```
 
 **短篇导入完成报告**：
@@ -651,8 +651,8 @@ name: {角色名}
 ### 4.3 项目激活
 
 - 设置 `.active-book` 指向导入的书名/标题目录
-- 确认项目可以被对应写作 skill 识别（长篇 → story-long-write-mimo，短篇 → story-short-write-mimo）
-- **选题决策.md 自动搬迁**：检查原始扫榜目录或拆文库目录是否存在 `选题决策.md`，如存在则自动复制到项目根目录。story-long-write-mimo Phase 1 依赖此文件自动读取选题建议
+- 确认项目可以被对应写作 skill 识别（长篇 → story-write-mimo，短篇 → story-short-write-mimo）
+- **选题决策.md 自动搬迁**：检查原始扫榜目录或拆文库目录是否存在 `选题决策.md`，如存在则自动复制到项目根目录。story-write-mimo Phase 1 依赖此文件自动读取选题建议
 - 可选验证：可使用 actor 工具 spawn explore 子代理进行迁移数据完整性验证
 
 > setup 环境检测已在 Phase 1「环境检测前置」完成，此处不再重复检测。
@@ -701,13 +701,13 @@ name: {角色名}
 | 角色状态规则（character-state-reverse.md 依赖） | $globalRefPathstate-tracking.md` |
 | 短篇正文格式规范 | $globalRefPathformat-and-structure.md` |
 
-> 长篇细纲模板格式参见 story-long-write-mimo（Phase 3 细纲部分）；短篇核心框架模板参见 story-short-write-mimo（核心框架部分）。这两项为纯文本指引，story-import-mimo 不加载对应 skill 的文件。
+> 长篇细纲模板格式参见 story-write-mimo（Phase 3 细纲部分）；短篇核心框架模板参见 story-short-write-mimo（核心框架部分）。这两项为纯文本指引，story-import-mimo 不加载对应 skill 的文件。
 
 ### Phase 4：项目激活
 
 | 场景 | 说明 |
 |------|---------|
-| 长篇项目结构规范 | 参见 story-long-write-mimo（Phase 4 项目文件结构） |
+| 长篇项目结构规范 | 参见 story-write-mimo（Phase 4 项目文件结构） |
 | 短篇项目结构规范 | 参见 story-short-write-mimo（Phase 3 项目结构） |
 | 环境部署 | 部署模板由 `/story-setup-mimo` 提供，story-import-mimo 不负责部署 |
 
@@ -799,12 +799,12 @@ T-IMPORT: 导入小说「{书名}」 [in_progress]
 
 | 时机 | 跳转到 | 命令 |
 |---|---|---|
-| 导入完想继续写（长篇） | story-long-write-mimo | `/story-long-write-mimo` + "日更" |
+| 导入完想继续写（长篇） | story-write-mimo | `/story-write-mimo` + "日更" |
 | 导入完想继续写（短篇） | story-short-write-mimo | `/story-short-write-mimo` |
 | 导入完想审查质量 | story-review-mimo | `/story-review-mimo` |
 | 想深入分析对标（长篇） | story-long-analyze-mimo | `/story-long-analyze-mimo` |
 | 想深入分析对标（短篇） | story-short-analyze-mimo | `/story-short-analyze-mimo` |
-| 从零开新书（长篇） | story-long-write-mimo | `/story-long-write-mimo` + "开书" |
+| 从零开新书（长篇） | story-write-mimo | `/story-write-mimo` + "开书" |
 | 从零开新书（短篇） | story-short-write-mimo | `/story-short-write-mimo` |
 | 项目未部署环境 | story-setup-mimo | `/story-setup-mimo` |
 

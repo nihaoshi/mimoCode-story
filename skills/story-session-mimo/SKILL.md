@@ -3,7 +3,7 @@ name: story-session-mimo
 version: 1.0.0
 description: |
   Session 生命周期管理。会话开始时自动恢复上下文，压缩前保存快照，结束时更新记忆。
-  触发方式：自动触发（由 story-long-write-mimo / story-short-write-mimo 调用）
+  触发方式：自动触发（由 story-write-mimo / story-short-write-mimo 调用）
 metadata:
   openclaw:
     source: https://github.com/nihaoshi/mimoCode-story
@@ -162,14 +162,14 @@ MiMo Code 的 memory 系统在 checkpoint rebuild 时自动注入上下文。此
 
 ---
 
-## 与 story-long-write-mimo 的集成
+## 与 story-write-mimo 的集成
 
-本 skill 作为 story-long-write-mimo 的辅助模块，在以下时机被调用：
+本 skill 作为 story-write-mimo 的辅助模块，在以下时机被调用：
 
 | 时机 | 调用方式 | 执行内容 |
 |------|---------|---------|
 | 日更续写开始 | 自动触发 | Step 1-5（会话恢复） |
-| 每章写完后 | 由 story-long-write-mimo 调用 | 更新所有配置文件 |
+| 每章写完后 | 由 story-write-mimo 调用 | 更新所有配置文件 |
 | 上下文压缩前 | 由 MiMo Code 触发 | 保存快照 |
 | 用户说"结束" | 由用户触发 | Step 1-3（会话结束） |
 

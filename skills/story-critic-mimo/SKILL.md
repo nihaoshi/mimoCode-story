@@ -1,4 +1,4 @@
----
+﻿---
 name: story-critic-mimo
 version: 1.1.0
 description: |
@@ -920,5 +920,5 @@ P2 - {问题标题}
 | Skill | 协作方式 |
 |-------|---------|
 | story-review-mimo | 补充审查维度（story-critic 更严格更针对平台） |
-| story-long-write-mimo | 正文写作后 call critic 做上线前审核 |
+| story-write-mimo | 正文写作后 call critic 做上线前审核 |
 | story-deslop-mimo | critic 发现AI腔严重时，建议先跑去AI味再提交 |

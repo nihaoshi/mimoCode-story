@@ -1,4 +1,4 @@
----
+﻿---
 name: story-outline-mimo
 version: 2.0.0
 description: |
@@ -738,7 +738,7 @@ POV：{视角} | 地点：{...} | 时间：{...}
 
   下一步：
   - 如有未完成的细纲，继续生成
-  - 运行 /story-long-write-mimo 开始写作
+  - 运行 /story-write-mimo 开始写作
   - 或先用 /quality-mimo 检查大纲质量
   ```
 
@@ -872,6 +872,6 @@ POV：{视角} | 地点：{...} | 时间：{...}
 | Skill | 协作方式 |
 |-------|---------|
 | story-progress-mimo | 大纲生成后调用进度管理初始化；弧/卷完成时触发存档 |
-| story-long-write-mimo | Phase 4 写作时读取卷纲和细纲 |
+| story-write-mimo | Phase 4 写作时读取卷纲和细纲 |
 | story-chapter-write-mimo | 单章写作时读取细纲 |
 | story-setup-mimo | 用于快速部署项目结构（设定目录缺失时） |

@@ -2,7 +2,7 @@
 name: goal-mimo
 version: 1.1.0
 description: |
-  自主写作目标控制。设置写作目标，通过可选的写作 skill（story-long-write-mimo / story-chapter-fast-write-mimo / story-chapter-ultra-write-mimo）自动循环写作直到达标。
+  自主写作目标控制。设置写作目标，通过可选的写作 skill（story-write-mimo / story-chapter-fast-write-mimo / story-chapter-ultra-write-mimo）自动循环写作直到达标。
   触发方式：/goal-mimo、/goal、「写到第X章」「完成第X卷」
   写作 skill 选择：默认 long-write，可通过关键词 fast/极致 切换为 fast-write / ultra-write
 inputs:
@@ -20,10 +20,10 @@ inputs:
 
 | 用户说 | 选用的写作 Skill |
 |--------|-----------------|
-| /goal 写到第X章 | story-long-write-mimo（默认） |
+| /goal 写到第X章 | story-write-mimo（默认） |
 | /goal 快速写到第X章 | story-chapter-fast-write-mimo |
 | /goal 极致写到第X章 | story-chapter-ultra-write-mimo |
-| /goal 写到第X章（未指定） | story-long-write-mimo（默认） |
+| /goal 写到第X章（未指定） | story-write-mimo（默认） |
 
 ## 前置检查
 
@@ -41,12 +41,12 @@ ls {project_dir}/正文/ 2>/dev/null || echo "ERROR: 项目目录或正文目录
 
 | 用户说 | 动作 | Skill 选择 |
 |--------|------|-----------|
-| /goal 写到第X章 | 设置章节数目标 | story-long-write-mimo（默认） |
+| /goal 写到第X章 | 设置章节数目标 | story-write-mimo（默认） |
 | /goal 快速写到第X章 | 设置章节数目标 | story-chapter-fast-write-mimo |
 | /goal 极致写到第X章 | 设置章节数目标 | story-chapter-ultra-write-mimo |
-| /goal 完成第X卷 | 设置卷目标 | story-long-write-mimo（默认） |
-| /goal 写X万字 | 设置字数目标 | story-long-write-mimo（默认） |
-| 帮我写到第X章 | 同 /goal | story-long-write-mimo（默认） |
+| /goal 完成第X卷 | 设置卷目标 | story-write-mimo（默认） |
+| /goal 写X万字 | 设置字数目标 | story-write-mimo（默认） |
+| 帮我写到第X章 | 同 /goal | story-write-mimo（默认） |
 
 ---
 
@@ -100,7 +100,7 @@ switch (skill) {
     break;
   case 'long':
   default:
-    writeSkillName = 'story-long-write-mimo';
+    writeSkillName = 'story-write-mimo';
     break;
 }
 
@@ -229,7 +229,7 @@ switch (skill) {
 
 | 关系 | 说明 |
 |------|------|
-| 调用 | `story-long-write-mimo`（默认，高质量深度写作） / `story-chapter-fast-write-mimo`（快速模式） / `story-chapter-ultra-write-mimo`（极致模式） |
+| 调用 | `story-write-mimo`（默认，高质量深度写作） / `story-chapter-fast-write-mimo`（快速模式） / `story-chapter-ultra-write-mimo`（极致模式） |
 | 辅助 | `_shared/scripts/goal.js`（目标配置） |
 | 存储 | `MEMORY.md`（进度记忆） |
 | 检查 | `quality-gate.js`（质量门禁） |
@@ -253,7 +253,7 @@ switch (skill) {
 ```
 
 **writing_skill 字段说明：**
-- `"long"` — 使用 `story-long-write-mimo`（默认）
+- `"long"` — 使用 `story-write-mimo`（默认）
 - `"fast"` — 使用 `story-chapter-fast-write-mimo`
 - `"ultra"` — 使用 `story-chapter-ultra-write-mimo`
 

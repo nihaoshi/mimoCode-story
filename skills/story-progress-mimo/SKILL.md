@@ -1,4 +1,4 @@
----
+﻿---
 name: story-progress-mimo
 version: 2.0.0
 description: |
@@ -575,7 +575,7 @@ node {skill_dir}/scripts/step-guard.js post <步骤号> {workflow_dir}
 
 | Skill | 协作方式 |
 |-------|---------|
-| story-long-write-mimo | Phase 4 写作前调用进度检查，每5章强制停顿 |
+| story-write-mimo | Phase 4 写作前调用进度检查，每5章强制停顿 |
 | story-chapter-write-mimo | 提供当前章的细纲和追踪文件 |
 | story-outline-mimo | 大纲生成后调用进度管理初始化 |
 | story-session-mimo | 会话开始时恢复进度上下文 |

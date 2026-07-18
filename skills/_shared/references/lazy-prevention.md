@@ -1,4 +1,4 @@
-# 防偷懒铁律（统一引用）
+﻿# 防偷懒铁律（统一引用）
 
 > 所有 skill 的防偷懒规则从此文件加载，不再各自定义。
 
@@ -40,13 +40,13 @@ node {skill_dir}/scripts/{guard-script}.js post {step} {workflow_dir}
 
 | Skill | 守卫脚本 |
 |-------|---------|
-| story-long-write-mimo | `workflow-guard.js` |
+| story-write-mimo | `workflow-guard.js` |
 | story-chapter-write-mimo | `step-guard.js` |
 | story-short-write-mimo | `step-guard.js` |
 | story-outline-mimo | `workflow-guard.js` |
 | story-progress-mimo | `workflow-guard.js` |
 | story-review-mimo | `step-guard.js` |
-| story-deslop-mimo | 引用 `story-long-write-mimo/scripts/workflow-guard.js` |
+| story-deslop-mimo | 引用 `story-write-mimo/scripts/workflow-guard.js` |
 | quality-mimo | `step-guard.js` |
 | audit-mimo | `audit-guard.js` |
 | story-long-analyze-mimo | `workflow-guard.js` |

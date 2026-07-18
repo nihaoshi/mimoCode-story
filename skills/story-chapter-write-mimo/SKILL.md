@@ -1,4 +1,4 @@
----
+﻿---
 name: story-chapter-write-mimo
 version: 3.0.0
 description: |
@@ -86,6 +86,6 @@ actor({
 ## 相关skill
 
 - `story-write-mimo` — 统一写作入口（新）
-- `story-long-write-mimo` — 已转发
+- `story-write-mimo` — 已转发
 - `story-chapter-fast-write-mimo` — 已转发
 - `story-chapter-ultra-write-mimo` — 已转发

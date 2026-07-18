@@ -1,4 +1,4 @@
----
+﻿---
 name: project-health-mimo
 version: 2.1.0
 description: |
@@ -408,7 +408,7 @@ node {skill_dir}/scripts/step-guard.js post 04 <项目目录>
 | 关系 | 说明 |
 |------|------|
 | 被调用 | `story-setup-mimo`（初始化后检查） |
-| 被调用 | `story-long-write-mimo`（写作前检查） |
+| 被调用 | `story-write-mimo`（写作前检查） |
 | 调用 | `project-health.js`（检查/修复脚本） |
 
 ---

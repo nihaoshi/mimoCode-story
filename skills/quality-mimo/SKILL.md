@@ -1,4 +1,4 @@
----
+﻿---
 name: quality-mimo
 version: 2.0.0
 description: |
@@ -421,7 +421,7 @@ node $HOME/.config/mimocode/skills/_shared/scripts/full-consistency-audit.js <�
 
 | 关系 | 说明 |
 |------|------|
-| 被调用 | `story-long-write-mimo`（写作流程中自动调用） |
+| 被调用 | `story-write-mimo`（写作流程中自动调用） |
 | 被调用 | `story-short-write-mimo`（短篇写作中调用） |
 | 被调用 | `story-chapter-write-mimo`（单章写作中调用） |
 | 调用 | `quality-gate.js`（质量门禁脚本） |

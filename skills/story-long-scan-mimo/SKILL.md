@@ -1,4 +1,4 @@
----
+﻿---
 name: story-long-scan-mimo
 version: 1.0.0
 description: |
@@ -284,7 +284,7 @@ URL 参数：`/rank/{channel}_{type}_{cat_id}`，channel 0=女频/1=男频，typ
 - 如提供了 `{project_dir}`（项目已存在）→ 写入 `{project_dir}/选题决策.md`
 - 如未提供 `project_dir`（扫榜常在没有项目时进行）→ 写入当前目录 `选题决策.md`
 
-告知用户：「选题决策已生成。开书时用 `/story-long-write-mimo`，Phase 1 会自动读取；想确认"能爆的原因"先 `/story-long-analyze-mimo` 拆对标书。」
+告知用户：「选题决策已生成。开书时用 `/story-write-mimo`，Phase 1 会自动读取；想确认"能爆的原因"先 `/story-long-analyze-mimo` 拆对标书。」
 
 **硬规则：**
 - 可行性上限：背靠榜单标了 `[数据稀疏]` 或同方向样本 <15（小平台<10）⇒ 不许给"高"，强制降到"中" + 写明先验证；内置知识模式一律给"中"。
@@ -313,7 +313,7 @@ URL 参数：`/rank/{channel}_{type}_{cat_id}`，channel 0=女频/1=男频，typ
 | 时机 | 跳转到 | 命令 |
 |---|---|---|
 | 找到方向 | story-long-analyze-mimo | `/story-long-analyze-mimo` |
-| 直接开写 | story-long-write-mimo | `/story-long-write-mimo` |
+| 直接开写 | story-write-mimo | `/story-write-mimo` |
 | 更适合短篇 | story-short-scan-mimo | `/story-short-scan-mimo` |
 
 > **选题决策.md 交接**：如提供了 `project_dir`，选题决策直接写入项目目录，后续流程自动读取。如未提供，选题决策写在当前目录，开书时搬到项目根目录即可。

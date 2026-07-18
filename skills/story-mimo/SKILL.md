@@ -1,4 +1,4 @@
----
+﻿---
 name: story-mimo
 description: |
   网文工具箱主入口。根据用户需求自动路由到对应 skill。
@@ -18,7 +18,7 @@ inputs:
 
 | 用户意图 | 关键词示例 | 路由到 |
 |---|---|---|
-| 写长篇 | 开书、写大纲、长篇、连载 | `story-long-write-mimo` |
+| 写长篇 | 开书、写大纲、长篇、连载 | `story-write-mimo` |
 | 写短篇 | 短篇、盐言、一万字 | `story-short-write-mimo` |
 | 长篇拆文 | 拆文、分析这本书、黄金三章 | `story-long-analyze-mimo` |
 | 短篇拆文 | 拆短篇、分析这个故事 | `story-short-analyze-mimo` |

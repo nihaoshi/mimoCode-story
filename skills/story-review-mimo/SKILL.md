@@ -1,4 +1,4 @@
----
+﻿---
 name: story-review-mimo
 version: 4.0.0
 description: |
@@ -912,7 +912,7 @@ node {skill_dir}/scripts/step-guard.js post <步骤号> {workflow_dir}
 
 | 时机 | 跳转到 |
 |------|--------|
-| 审完修改 | `story-long-write-mimo` / `story-short-write-mimo` |
+| 审完修改 | `story-write-mimo` / `story-short-write-mimo` |
 | 发现 AI 味 | `story-deslop-mimo` |
 | 审稿不通过 | 修改后复检流程 |
 

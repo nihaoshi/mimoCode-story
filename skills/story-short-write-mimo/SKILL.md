@@ -1,4 +1,4 @@
----
+﻿---
 name: story-short-write-mimo
 version: 4.0.0
 description: |
@@ -757,7 +757,7 @@ score < 90 → 创建 Step 4.6 修复任务
 |------|--------|
 | 有参考小说 | `story-short-analyze-mimo` |
 | 写完去AI味 | `story-deslop-mimo` |
-| 设定太大 | `story-long-write-mimo` |
+| 设定太大 | `story-write-mimo` |
 
 ---
 

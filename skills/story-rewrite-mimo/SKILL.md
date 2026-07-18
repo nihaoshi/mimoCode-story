@@ -1,4 +1,4 @@
----
+﻿---
 name: story-rewrite-mimo
 version: 1.0.0
 description: |
@@ -559,7 +559,7 @@ node {skill_dir}/scripts/step-guard.js post <step> {project_dir} {chapter}
 
 | Skill | 协作方式 |
 |-------|---------|
-| story-long-write-mimo | 提供细纲和追踪文件上下文 |
+| story-write-mimo | 提供细纲和追踪文件上下文 |
 | story-chapter-write-mimo | 提供单章写作流程参考 |
 | quality-mimo | 重写后质量检查 |
 | story-deslop-mimo | 风格重写时参考去AI味规则 |

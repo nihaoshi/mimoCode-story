@@ -1,10 +1,10 @@
-# AI味禁用词与句式表
+﻿# AI味禁用词与句式表
 
 <!--
 version: 3.0.0
 sync-source: skills/story-setup-mimo/references/agent-references/banned-words.md
 本文件在 6 个 skill 副本间需保持一致：
-  story-deslop-mimo / story-long-write-mimo / story-short-write-mimo /
+  story-deslop-mimo / story-write-mimo / story-short-write-mimo /
   story-short-analyze-mimo / story-review-mimo / story-setup-mimo
 修改后请同步所有副本（CI 守卫见 scripts/check-shared-files.sh）。
 -->

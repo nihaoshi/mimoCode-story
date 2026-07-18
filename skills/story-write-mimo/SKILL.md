@@ -1,4 +1,4 @@
----
+﻿---
 name: story-write-mimo
 description: >
   统一网文写作入口。支持单章写作、续写、修改、重写。
@@ -17,7 +17,7 @@ triggers:
 # story-write-mimo — 统一写作入口
 
 > 版本：1.0.0
-> 整合自 story-long-write-mimo / story-chapter-write-mimo / story-chapter-fast-write-mimo / story-chapter-ultra-write-mimo
+> 整合自 story-write-mimo / story-chapter-write-mimo / story-chapter-fast-write-mimo / story-chapter-ultra-write-mimo
 
 ---
 

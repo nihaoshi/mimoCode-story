@@ -47,13 +47,13 @@ ls {target_file} 2>/dev/null || echo "ERROR: 目标文件不存在"
 
 **每个阶段执行前后必须运行守卫脚本：**
 ```bash
-node $HOME/.config/mimocode/skills/story-long-write-mimo/scripts/step-guard.js pre  {step} {workflow_dir} {project_dir}
-node $HOME/.config/mimocode/skills/story-long-write-mimo/scripts/step-guard.js post {step} {workflow_dir}
+node {skill_dir}/scripts/step-guard.js pre  {step} {workflow_dir} {project_dir}
+node {skill_dir}/scripts/step-guard.js post {step} {workflow_dir}
 ```
 
 ---
 
-## 执行流程（3 阶段）
+## 执行流程（4 阶段）
 
 ```
 主 Agent                          子 Agent（隔离）
@@ -78,7 +78,10 @@ Phase 1: 读取文本
                                                            ├─ 复查（条件执行）
                                                            └─ 守卫 post/recheck
                     ←── 写出 .workflow/deslop-report.json ────
-Phase 3: 输出结果
+Phase 3: 标点清理（脚本自动）
+  ├─ 运行 punctuation-normalize.js --fix
+  └─ 输出清理报告
+Phase 4: 输出结果
   ├─ 读取报告
   ├─ 将修订写入原文件
   └─ 输出润色报告给用户
@@ -103,25 +106,30 @@ Phase 3: 输出结果
 # ===== 第1层：父任务 =====
 1. task create "T-DESLOP: 去AI味「{文件名}」"                    → T-DESLOP
 
-# ===== 第2层：3个阶段任务 =====
+# ===== 第2层：4个阶段任务 =====
 2. task create "T-DESLOP-READ: Phase1 读取文本 [主Agent]"     parent=T-DESLOP → T-DESLOP-READ
 3. task create "T-DESLOP-EXEC: Phase2 检测+修复 [子Agent隔离]" parent=T-DESLOP → T-DESLOP-EXEC
-4. task create "T-DESLOP-OUT: Phase3 输出结果 [主Agent]"      parent=T-DESLOP → T-DESLOP-OUT
+4. task create "T-DESLOP-NORM: Phase3 标点清理 [主Agent]"     parent=T-DESLOP → T-DESLOP-NORM
+5. task create "T-DESLOP-OUT: Phase4 输出结果 [主Agent]"      parent=T-DESLOP → T-DESLOP-OUT
 
 # ===== 第3层-读取：2个子任务 =====
-5. task create "T-DESLOP-READ-01: 读取目标文件+创建工作流目录"    parent=T-DESLOP-READ
-6. task create "T-DESLOP-READ-02: 写入 deslop-input.json"        parent=T-DESLOP-READ
+6. task create "T-DESLOP-READ-01: 读取目标文件+创建工作流目录"    parent=T-DESLOP-READ
+7. task create "T-DESLOP-READ-02: 写入 deslop-input.json"        parent=T-DESLOP-READ
 
 # ===== 第3层-执行：4个子任务（子Agent内部） =====
-7. task create "T-DESLOP-EXEC-01: AI味扫描（6维度）"              parent=T-DESLOP-EXEC
-8. task create "T-DESLOP-EXEC-02: 诊断分级（轻/中/重）"           parent=T-DESLOP-EXEC
-9. task create "T-DESLOP-EXEC-03: 逐Gate修复（条件执行）"         parent=T-DESLOP-EXEC
-10. task create "T-DESLOP-EXEC-04: 复查（条件执行）"               parent=T-DESLOP-EXEC
+8. task create "T-DESLOP-EXEC-01: AI味扫描（6维度）"              parent=T-DESLOP-EXEC
+9. task create "T-DESLOP-EXEC-02: 诊断分级（轻/中/重）"           parent=T-DESLOP-EXEC
+10. task create "T-DESLOP-EXEC-03: 逐Gate修复（条件执行）"         parent=T-DESLOP-EXEC
+11. task create "T-DESLOP-EXEC-04: 复查（条件执行）"               parent=T-DESLOP-EXEC
+
+# ===== 第3层-标点清理：2个子任务 =====
+12. task create "T-DESLOP-NORM-01: 运行 punctuation-normalize.js" parent=T-DESLOP-NORM
+13. task create "T-DESLOP-NORM-02: 输出清理报告"                  parent=T-DESLOP-NORM
 
 # ===== 第3层-输出：3个子任务 =====
-11. task create "T-DESLOP-OUT-01: 读取报告+写入修订"              parent=T-DESLOP-OUT
-12. task create "T-DESLOP-OUT-02: 统计字数变化"                   parent=T-DESLOP-OUT
-13. task create "T-DESLOP-OUT-03: 输出润色报告给用户"             parent=T-DESLOP-OUT
+14. task create "T-DESLOP-OUT-01: 读取报告+写入修订"              parent=T-DESLOP-OUT
+15. task create "T-DESLOP-OUT-02: 统计字数变化"                   parent=T-DESLOP-OUT
+16. task create "T-DESLOP-OUT-03: 输出润色报告给用户"             parent=T-DESLOP-OUT
 ```
 
 ### 条件创建规则
@@ -180,9 +188,9 @@ mkdir -p {project_dir}/.workflow
 ### 守卫验证
 
 ```bash
-node $HOME/.config/mimocode/skills/story-long-write-mimo/scripts/step-guard.js pre read {workflow_dir} {project_dir}
+node {skill_dir}/scripts/step-guard.js pre read {workflow_dir} {project_dir}
 # 写入后
-node $HOME/.config/mimocode/skills/story-long-write-mimo/scripts/step-guard.js post read {workflow_dir}
+node {skill_dir}/scripts/step-guard.js post read {workflow_dir}
 ```
 
 ---
@@ -297,10 +305,11 @@ actor({
 □ 10. AI特殊标点
    检查项：
    - 智能引号（" " ' '）→ 替换为直引号（" " ' '）
-   - em dash（—）→ 替换为普通破折号（——）
-   - 省略号（…）→ 替换为普通省略号（...）
+   - 破折号（——）→ 替换为逗号或句号（中文正文不应使用破折号）
+   - 省略号（……）→ 密度>5次/百字时精简
    - 零宽空格（U+200B）、BOM（U+FEFF）等不可见字符 → 清理
    修复：全部替换为普通标点
+   自动修复脚本：node {skill_dir}/../_shared/scripts/punctuation-normalize.js {文件路径} --fix
 
 【诊断分级】
 | AI味程度 | 量化标准 | 处理策略 |
@@ -399,9 +408,9 @@ actor({
 
 ```bash
 # 执行前
-node $HOME/.config/mimocode/skills/story-long-write-mimo/scripts/step-guard.js pre exec {workflow_dir} {project_dir}
+node {skill_dir}/scripts/step-guard.js pre exec {workflow_dir} {project_dir}
 # 执行后
-node $HOME/.config/mimocode/skills/story-long-write-mimo/scripts/step-guard.js post exec {workflow_dir}
+node {skill_dir}/scripts/step-guard.js post exec {workflow_dir}
 ```
 
 ---
@@ -436,7 +445,7 @@ node $HOME/.config/mimocode/skills/story-long-write-mimo/scripts/step-guard.js p
 详见 skills/_shared/references/writing-score-rubric.md
 
 **判定规则**：
-score >= 90 → 通过，进入 Phase 3
+score >= 90 → 通过，进入 Phase 3（标点清理）
 score < 90 → 创建 Phase 2.6 修复任务
 
 ### Phase 2.6: 评分修复（条件创建）
@@ -458,7 +467,29 @@ score < 90 → 创建 Phase 2.6 修复任务
 
 ---
 
-## Phase 3：输出结果 [主 Agent]
+## Phase 3：标点清理 [主 Agent]
+
+主 Agent 在当前会话中执行，不隔离。
+
+### Step 1：运行标点清理脚本
+
+```bash
+node $HOME/.config/mimocode/skills/_shared/scripts/punctuation-normalize.js {文件路径} --fix --json
+```
+
+### Step 2：输出清理报告
+
+```
+标点清理完成：
+- 破折号（——）：{N} 处 → 替换为逗号/句号
+- 智能引号：{N} 处 → 替换为直引号
+- 不可见字符：{N} 处 → 已清理
+- markdown 分隔线：{N} 处 → 已移除
+```
+
+---
+
+## Phase 4：输出结果 [主 Agent]
 
 主 Agent 在当前会话中执行，不隔离。
 
@@ -563,13 +594,13 @@ score < 90 → 创建 Phase 2.6 修复任务
 | 文件 | 何时加载 |
 |------|----------|
 | $globalRefPathquality-rules.md` | 统一质量规则（禁用词+AI腔+段落规则） |
-| `../story-long-write-mimo/references/agent-prompt-templates.md` | 子Agent Prompt 模板参考 |
+| `../story-write-mimo/references/` | 子Agent Prompt 模板参考 |
 
 ---
 
 ## Prompt 模板引用
 
-子 Agent 的 Prompt 模板详见 `story-long-write-mimo/references/agent-prompt-templates.md` 中的 `quality-checker-fixer` 模板。去AI味子 Agent 复用相同的隔离执行模式和守卫验证流程。
+子 Agent 的 Prompt 模板详见 `story-write-mimo/references/` 中的模板。去AI味子 Agent 复用相同的隔离执行模式和守卫验证流程。
 
 ---
 
@@ -577,7 +608,7 @@ score < 90 → 创建 Phase 2.6 修复任务
 
 | 时机 | 跳转到 |
 |------|--------|
-| 继续写作 | `story-long-write-mimo` / `story-short-write-mimo` |
+| 继续写作 | `story-write-mimo` / `story-short-write-mimo` |
 | 发现结构问题 | `story-long-analyze-mimo` |
 
 ---

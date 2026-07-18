@@ -1,4 +1,4 @@
----
+﻿---
 name: story-long-analyze-mimo
 version: 3.0.0
 description: |
@@ -329,7 +329,7 @@ Stage 0+1 完成后自动停靠，输出快速预览。用户确认后才继续 
 
 ### 拆文库 → 正文项目目录映射
 
-导入 `story-long-write-mimo` 时，拆文库目录自动转换为正文项目目录：
+导入 `story-write-mimo` 时，拆文库目录自动转换为正文项目目录：
 
 | 拆文库路径 | → | 正文项目路径 |
 |-----------|---|-------------|
@@ -358,7 +358,7 @@ Stage 0+1 完成后自动停靠，输出快速预览。用户确认后才继续 
 
 | 时机 | 跳转到 |
 |------|--------|
-| 准备开写 | `story-long-write-mimo` |
+| 准备开写 | `story-write-mimo` |
 | 需要市场数据 | `story-scan-mimo` |
 
 ---
