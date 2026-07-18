@@ -120,17 +120,25 @@ sync-source: skills/story-setup-mimo/references/agent-references/banned-words.md
 
 ### 印刷级可见标点（AI指纹）
 
+> **注意**：`——`（全角破折号）和 `……`（全角省略号）是正常中文标点，不在检测范围内。
+> 仅检测西文排版标点（en dash、智能引号、不换行空格等）。
+
 | 标点类型 | Unicode | 普通键盘替代 | 说明 |
 |----------|---------|-------------|------|
-| em dash | U+2014 | —— 或 -- | 英文AI最爱 |
-| en dash | U+2013 | -- | 数字区间 |
+| en dash | U+2013 | - | 数字区间 |
 | 左弯双引号 | U+201C | " | 智能引号 |
 | 右弯双引号 | U+201D | " | 智能引号 |
 | 左弯单引号 | U+2018 | ' | 智能引号 |
 | 右弯单引号 | U+2019 | ' | 智能引号 |
-| 水平省略号 | U+2026 | ... | 单字符省略号 |
 | 不换行空格 | U+00A0 | 普通空格 | 数字与单位间 |
 | 窄不换行空格 | U+202F | 普通空格 | 数字与单位间 |
+
+### 破折号使用规则
+
+中文正文中不应使用破折号（`——`），应替换为逗号或句号：
+- 句中停顿 → 逗号
+- 句末收尾 → 句号
+- 例外：数字区间（如 2020——2025）可保留
 
 ### 不可见Unicode字符（必须清除）
 
@@ -146,8 +154,8 @@ sync-source: skills/story-setup-mimo/references/agent-references/banned-words.md
 ### 检测方法
 
 ```javascript
-// 检测AI特殊标点
-const AI_PUNCTUATION = /[\u2014\u2013\u201C\u201D\u2018\u2019\u2026\u00A0\u202F]/g;
+// 检测AI特殊标点（仅西文排版标点，中文全角标点不检测）
+const AI_PUNCTUATION = /[\u2013\u201C\u201D\u2018\u2019\u00A0\u202F]/g;
 const INVISIBLE_CHARS = /[\u200B\u200C\u200D\u2009\uFEFF\u00AD]/g;
 ```
 

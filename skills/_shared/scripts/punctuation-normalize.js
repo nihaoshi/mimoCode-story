@@ -20,19 +20,17 @@ Options:
   node punctuation-normalize.js 正文/第001章.md --fix
   node punctuation-normalize.js 正文/第001章.md --fix --quote-mode yan`;
 
-// AI特殊标点检测正则
-const AI_PUNCTUATION = /[\u2014\u2013\u201C\u201D\u2018\u2019\u2026\u00A0\u202F]/g;
+// AI特殊标点检测正则（仅检测西文排版标点，中文全角标点——和……是正常标点不检测）
+const AI_PUNCTUATION = /[\u2013\u201C\u201D\u2018\u2019\u00A0\u202F]/g;
 const INVISIBLE_CHARS = /[\u200B\u200C\u200D\u2009\uFEFF\u00AD]/g;
 
-// AI偏爱的印刷级标点映射
+// AI偏爱的印刷级标点映射（仅转换西文排版标点为中文等价物）
 const AI_PUNCT_MAP = {
-  '\u2014': '——',  // em dash → 全角破折号
-  '\u2013': '--',   // en dash → 双连字符
+  '\u2013': '-',    // en dash → 半角连字符
   '\u201C': '"',    // 左弯双引号 → 直引号
   '\u201D': '"',    // 右弯双引号 → 直引号
   '\u2018': "'",    // 左弯单引号 → 直引号
   '\u2019': "'",    // 右弯单引号 → 直引号
-  '\u2026': '……',   // 水平省略号 → 全角省略号
   '\u00A0': ' ',    // 不换行空格 → 普通空格
   '\u202F': ' ',    // 窄不换行空格 → 普通空格
 };
@@ -47,13 +45,11 @@ function readFile(p) {
 
 function getCharName(ch) {
   const names = {
-    '\u2014': 'em dash',
     '\u2013': 'en dash',
     '\u201C': '左弯双引号',
     '\u201D': '右弯双引号',
     '\u2018': '左弯单引号',
     '\u2019': '右弯单引号',
-    '\u2026': '水平省略号',
     '\u00A0': '不换行空格',
     '\u202F': '窄不换行空格',
   };
@@ -235,16 +231,15 @@ function isClosingQuote(ch) {
 function chooseDashReplacement(text, start, length) {
   const before = previousNonSpace(text, start - 1);
   const after = nextNonSpace(text, start + length);
-  const rest = text.slice(start + length).trimStart();
 
-  if (before === '') return '';
+  // 数字之间的破折号保留（如 2020——2025）
   if (/\d/.test(before) && /\d/.test(after)) return text.slice(start, start + length);
+  // 引号后的破折号保留
   if (isClosingQuote(after)) return text.slice(start, start + length);
 
+  // 其余情况：破折号在中文正文中不应出现，替换为逗号或句号
   if (!after) return isSentencePunctuation(before) ? '' : '。';
   if (isSentencePunctuation(before) || isPunctuation(after)) return '';
-  if (/^(因为|原来|这是|那是|也就是|换句话|说白了|所谓|答案|原因|结果|真相|问题在于)/.test(rest)) return '：';
-  if (/(原因|答案|真相|结果|结论|问题|选择|意思)$/.test(text.slice(0, start).trim())) return '：';
   return '，';
 }
 

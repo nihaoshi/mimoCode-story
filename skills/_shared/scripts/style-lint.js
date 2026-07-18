@@ -178,11 +178,11 @@ function checkDialogueUsage(text) {
  */
 function checkAIPunctuation(text) {
   const issues = [];
-  // 印刷级可见标点（AI指纹）
-  const aiPunct = /[\u2014\u2013\u201C\u201D\u2018\u2019\u2026\u00A0\u202F]/g;
+  // 印刷级可见标点（AI指纹，仅西文排版标点，中文全角标点——和……是正常标点不检测）
+  const aiPunct = /[\u2013\u201C\u201D\u2018\u2019\u00A0\u202F]/g;
   const punctMatches = text.match(aiPunct);
   if (punctMatches) {
-    issues.push({ type: 'ai_punctuation', count: punctMatches.length, detail: `发现 ${punctMatches.length} 处AI特殊标点（智能引号/破折号/不换行空格等），建议替换为普通标点` });
+    issues.push({ type: 'ai_punctuation', count: punctMatches.length, detail: `发现 ${punctMatches.length} 处AI特殊标点（智能引号/不换行空格等），建议替换为普通标点` });
   }
   // 不可见字符
   const invisible = /[\u200B\u200C\u200D\u2009\uFEFF\u00AD]/g;
