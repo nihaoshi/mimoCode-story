@@ -1,4 +1,4 @@
-﻿---
+---
 name: story-rewrite-mimo
 version: 1.0.0
 description: |
@@ -190,7 +190,7 @@ actor({
     "action": "run",
     "subagent_type": "general",
     "description": "风格重写 - 第{N}章",
-    "prompt": "你是 narrative-writer，负责风格重写。\n\n【防偷懒铁律】必须写入文件，不在对话中输出。\n\n【输入】\n1. {project_dir}/.workflow/rw-01-context.json — 上下文\n2. {project_dir}/.workflow/rw-02-diagnosis.json — 诊断报告\n3. 质量规则：读取 $HOME/.config/mimocode/skills/_shared/references/quality-rules.md\n4. 文风设定：{project_dir}/设定/文风.md\n\n【风格重写要求】\n1. 保留原章的剧情和情节点\n2. 调整语言风格（去AI味、口语化、增加动作描写）\n3. 修复对话腔调\n4. 调整节奏（短句/长句交替）\n5. 遵守质量规则\n\n【输出】\n- 备份：{project_dir}/正文/第{N}章_原稿_{YYYYMMDD}.md\n- 重写：{project_dir}/正文/第{N}章.md",
+    "prompt": "你是 narrative-writer，负责风格重写。\n\n【防偷懒铁律】必须写入文件，不在对话中输出。\n\n【输入】\n1. {project_dir}/.workflow/rw-01-context.json — 上下文\n2. {project_dir}/.workflow/rw-02-diagnosis.json — 诊断报告\n3. 质量规则：读取 $HOME/.config/mimocode/skills/_shared/references/quality-rules.md\n4. 文风设定：{project_dir}/设定/文风.md\n\n【风格重写要求】\n1. 保留原章的剧情和情节点\n2. 调整语言风格（去AI味、口语化、增加动作描写、标点符号规范：破折号——替换为逗号或句号，省略号……密度不超过5次/百字，禁止弯引号和特殊Unicode字符）\n3. 修复对话腔调\n4. 调整节奏（短句/长句交替）\n5. 遵守质量规则\n\n【输出】\n- 备份：{project_dir}/正文/第{N}章_原稿_{YYYYMMDD}.md\n- 重写：{project_dir}/正文/第{N}章.md",
     "context": "none"
   }
 })
