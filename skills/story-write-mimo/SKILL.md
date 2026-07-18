@@ -217,6 +217,84 @@ Phase 7: 收尾
 | Step 08 | 正文 | .workflow/step08-report.json |
 | Step 09 | 正文+追踪 | 追踪文件（更新后） |
 
+### 子 Agent 调用规范
+所有写作、检测、修复、评分任务必须由子agent执行，主agent只负责流程控制。以下为关键步骤的子agent调用示例：
+
+#### Step 04: 正文写作 [子 agent 隔离]
+```javascript
+actor({
+  operation: {
+    action: "run",
+    subagent_type: "general",
+    description: "正文写作 - 第{N}章",
+    prompt: "你是 narrative-writer，负责正文创作。\n\n" +
+      "【防偷懒铁律】必须写入文件，不在对话中输出。\n\n" +
+      "【输入】\n" +
+      "1. {project_dir}/.workflow/step03-context.json — 上下文摘要+约束参数\n" +
+      "2. {project_dir}/大纲/细纲_第{N}章.md — 章节细纲\n" +
+      "3. 质量规则：读取 $HOME/.config/mimocode/skills/_shared/references/quality-rules.md\n" +
+      "4. 去AI味指南：读取 $HOME/.config/mimocode/skills/_shared/references/anti-ai-writing.md\n" +
+      "5. 写作技法：读取 $HOME/.config/mimocode/skills/_shared/references/style-craft.md\n\n" +
+      "【写作要求】\n" +
+      "1. 身份设定：沉浸式叙事大师\n" +
+      "2. 文笔要求：代入感、细腻描写、逻辑缜密、去AI味\n" +
+      "3. 必须遵循小说人性化写作提示\n" +
+      "4. 字数：3000-4000字\n\n" +
+      "【输出】写入 {project_dir}/正文/第{N}章.md",
+    context: "none"
+  }
+})
+```
+
+#### Step 07: 严格综合修复 [子 agent 隔离]
+```javascript
+actor({
+  operation: {
+    action: "run",
+    subagent_type: "general",
+    description: "综合修复 - 第{N}章",
+    prompt: "你是 quality-fixer，负责综合修复。\n\n" +
+      "【防偷懒铁律】必须写入文件，不在对话中输出。\n\n" +
+      "【输入】\n" +
+      "1. {project_dir}/正文/第{N}章.md — 待修复章节\n" +
+      "2. {project_dir}/.workflow/step05-report.json — 脚本审查报告\n" +
+      "3. {project_dir}/.workflow/step06-report.json — LLM分析报告\n" +
+      "4. 质量规则：读取 $HOME/.config/mimocode/skills/_shared/references/quality-rules.md\n" +
+      "5. 去AI味指南：读取 $HOME/.config/mimocode/skills/_shared/references/anti-ai-writing.md\n\n" +
+      "【修复要求】\n" +
+      "1. BLOCK项必须修复，WARN项必须修复\n" +
+      "2. 必须遵循小说人性化写作提示\n" +
+      "3. 最小改动原则，但改动必须精准有效\n\n" +
+      "【输出】修复后的章节写入 {project_dir}/正文/第{N}章.md",
+    context: "none"
+  }
+})
+```
+
+#### Step 08.6: 严格评分修复 [子 agent 隔离]
+```javascript
+actor({
+  operation: {
+    action: "run",
+    subagent_type: "general",
+    description: "评分修复 - 第{N}章",
+    prompt: "你是 score-fixer，负责评分修复。\n\n" +
+      "【防偷懒铁律】必须写入文件，不在对话中输出。\n\n" +
+      "【输入】\n" +
+      "1. {project_dir}/正文/第{N}章.md — 待修复章节\n" +
+      "2. {project_dir}/.workflow/step08.5-report.json — 评分报告\n" +
+      "3. 质量规则：读取 $HOME/.config/mimocode/skills/_shared/references/quality-rules.md\n" +
+      "4. 去AI味指南：读取 $HOME/.config/mimocode/skills/_shared/references/anti-ai-writing.md\n\n" +
+      "【修复要求】\n" +
+      "1. 针对低分维度定向修复\n" +
+      "2. 必须遵循小说人性化写作提示\n" +
+      "3. 每次修复1-2个维度，最多3轮\n\n" +
+      "【输出】修复后的章节写入 {project_dir}/正文/第{N}章.md",
+    context: "none"
+  }
+})
+```
+
 ## 参考文档
 
 ### 写作时必读
