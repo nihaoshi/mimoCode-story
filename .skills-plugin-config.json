@@ -16,7 +16,12 @@
     {
       "name": "story-long-write-mimo",
       "path": "skills/story-long-write-mimo/SKILL.md",
-      "description": "长篇网文写作"
+      "description": "长篇网文写作（已转发到story-write-mimo）"
+    },
+    {
+      "name": "story-write-mimo",
+      "path": "skills/story-write-mimo/SKILL.md",
+      "description": "统一网文写作入口（标准/快速/极致/批量/修改模式）"
     },
     {
       "name": "story-short-write-mimo",
